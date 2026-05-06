@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+</head>
+
+<body>
+  
+</body>
+
+</html>
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ohoi Kyoza - สำรองและกู้คืนข้อมูล</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;600;700&family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --crimson: #9B2226;
+            --crimson-light: #AE2012;
+            --crimson-soft: rgba(155, 34, 38, 0.08);
+            --gold: #D4A373;
+            --gold-light: #E9C496;
+            --gold-soft: rgba(212, 163, 115, 0.15);
+            --jade: #588157;
+            --jade-soft: rgba(88, 129, 87, 0.12);
+            --warm-white: #FDF6EC;
+            --cream: #F5EBDC;
+            --paper: #FAF3E8;
+            --ink: #3D2B1F;
+            --ink-light: #6B5B4F;
+            --ink-muted: #9B8B7F;
+            --shadow-warm: rgba(155, 34, 38, 0.08);
+        }
+
+        body {
+            font-family: 'Noto Sans Thai', sans-serif;
+            background: var(--warm-white);
+            color: var(--ink);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0.6;
+        }
+
+        @keyframes slide-up {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes warm-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .header {
+            background: linear-gradient(160deg, var(--crimson) 0%, #7B181C 60%, #5A1216 100%);
+            padding: 35px 20px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '💾';
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            font-size: 2rem;
+            opacity: 0.4;
+            animation: warm-pulse 4s ease-in-out infinite;
+        }
+
+        .header::after {
+            content: '☁️';
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2rem;
+            opacity: 0.4;
+            animation: warm-pulse 4s ease-in-out infinite 2s;
+        }
+
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: var(--gold-light);
+            letter-spacing: 3px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .logo span {
+            color: #FFF8F0;
+            font-weight: 400;
+            font-style: italic;
+        }
+
+        .subtitle {
+            color: rgba(255, 248, 240, 0.7);
+            font-size: 0.9rem;
+            margin-top: 8px;
+            font-weight: 300;
+        }
+
+        .content {
+            padding: 25px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--paper);
+            min-height: calc(100vh - 180px);
+        }
+
+        .card {
+            background: #FFFFFF;
+            border-radius: 20px;
+            padding: 28px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(155, 34, 38, 0.06);
+            box-shadow: 0 2px 8px var(--shadow-warm), 0 8px 32px rgba(155, 34, 38, 0.04);
+            animation: slide-up 0.4s ease;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--crimson), var(--gold), var(--jade), var(--gold), var(--crimson));
+            opacity: 0.6;
+        }
+
+        .card-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--crimson);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-box {
+            background: var(--warm-white);
+            border-radius: 14px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--gold);
+        }
+
+        .info-box p {
+            color: var(--ink-light);
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        .info-box strong {
+            color: var(--crimson);
+        }
+
+        .data-preview {
+            background: #1a1a2e;
+            border-radius: 14px;
+            padding: 16px;
+            margin: 16px 0;
+            overflow-x: auto;
+        }
+
+        .data-preview pre {
+            color: #a8d8ea;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.75rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 14px;
+            font-family: 'Noto Sans Thai', sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--crimson), var(--crimson-light));
+            color: #FFF8F0;
+            box-shadow: 0 4px 15px rgba(155, 34, 38, 0.25);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(155, 34, 38, 0.35);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--jade), #6B9B6A);
+            color: #FFF8F0;
+            box-shadow: 0 4px 15px rgba(88, 129, 87, 0.25);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(88, 129, 87, 0.35);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #D4A373, #C9956C);
+            color: #FFF8F0;
+            box-shadow: 0 4px 15px rgba(212, 163, 115, 0.25);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #C0392B, #E74C3C);
+            color: #FFF8F0;
+            box-shadow: 0 4px 15px rgba(192, 57, 43, 0.25);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--crimson);
+            color: var(--crimson);
+        }
+
+        .btn-outline:hover {
+            background: var(--crimson);
+            color: white;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 14px 28px;
+            background: var(--warm-white);
+            border: 2px dashed var(--gold);
+            border-radius: 14px;
+            color: var(--gold);
+            font-weight: 700;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-input-label:hover {
+            background: var(--gold-soft);
+            border-style: solid;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            background: var(--warm-white);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid rgba(155, 34, 38, 0.08);
+        }
+
+        .stat-item-value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--crimson);
+        }
+
+        .stat-item-label {
+            font-size: 0.8rem;
+            color: var(--ink-muted);
+            margin-top: 4px;
+        }
+
+        .alert {
+            padding: 16px 20px;
+            border-radius: 14px;
+            margin-bottom: 16px;
+            border: 1px solid;
+            position: relative;
+            animation: slide-up 0.3s ease;
+        }
+
+        .alert-success {
+            border-color: rgba(88, 129, 87, 0.2);
+            background: linear-gradient(135deg, #F5FBF5 0%, #FFFFFF 100%);
+            color: var(--jade);
+        }
+
+        .alert-danger {
+            border-color: rgba(155, 34, 38, 0.2);
+            background: linear-gradient(135deg, #FFF5F5 0%, #FFFFFF 100%);
+            color: var(--crimson);
+        }
+
+        .alert-warning {
+            border-color: rgba(212, 163, 115, 0.3);
+            background: linear-gradient(135deg, #FFFBF5 0%, #FFFFFF 100%);
+            color: #8B6914;
+        }
+
+        .hidden { display: none !important; }
+
+        .footer-note {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--ink-muted);
+            font-size: 0.85rem;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .logo { font-size: 2rem; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .content { padding: 18px 15px; }
+            .card { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="logo">Ohoi <span>Kyoza</span></div>
+        <div class="subtitle">💾 สำรองและกู้คืนข้อมูล — ป้องกันข้อมูลสูญหาย</div>
+    </div>
+
+    <div class="content">
+        
+        <!-- DATA STATS -->
+        <div class="card">
+            <div class="card-title">📊 ข้อมูลปัจจุบัน</div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-item-value" id="stat-products">0</div>
+                    <div class="stat-item-label">สินค้าในสต๊อก</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-item-value" id="stat-menus">0</div>
+                    <div class="stat-item-label">เมนูอาหาร</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-item-value" id="stat-transactions">0</div>
+                    <div class="stat-item-label">รายการเคลื่อนไหว</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-item-value" id="stat-orders">0</div>
+                    <div class="stat-item-label">ออเดอร์ทั้งหมด</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BACKUP -->
+        <div class="card">
+            <div class="card-title">💾 สำรองข้อมูล (Backup)</div>
+            <div class="info-box">
+                <p>📥 กดปุ่มด้านล่างเพื่อ <strong>ดาวน์โหลดไฟล์ JSON</strong> เก็บไว้ในเครื่อง หรือส่งไปเก็บใน Google Drive / iCloud / Email</p>
+                <p style="margin-top:8px; font-size:0.8rem; color:var(--ink-muted);">💡 แนะนำสำรองทุกวันหลังปิดร้าน</p>
+            </div>
+            <button class="btn btn-primary" onclick="backupData()">
+                📥 ดาวน์โหลดไฟล์สำรอง
+            </button>
+            <div id="backup-preview" class="data-preview hidden">
+                <pre id="backup-json"></pre>
+            </div>
+        </div>
+
+        <!-- RESTORE -->
+        <div class="card">
+            <div class="card-title">📤 กู้คืนข้อมูล (Restore)</div>
+            <div class="info-box">
+                <p>📤 เลือกไฟล์ JSON ที่เคยสำรองไว้ เพื่อ <strong>นำข้อมูลกลับมาใช้</strong></p>
+                <p style="margin-top:8px; color:var(--crimson);">⚠️ ข้อมูลปัจจุบันจะถูกแทนที่ด้วยข้อมูลในไฟล์!</p>
+            </div>
+            <div class="file-input-wrapper">
+                <input type="file" id="restore-file" accept=".json" onchange="previewRestore(this)">
+                <label for="restore-file" class="file-input-label">
+                    📁 เลือกไฟล์ JSON ที่จะกู้คืน
+                </label>
+            </div>
+            <div id="restore-preview" class="hidden">
+                <div class="data-preview">
+                    <pre id="restore-json"></pre>
+                </div>
+                <button class="btn btn-success" onclick="restoreData()">
+                    ✅ ยืนยันกู้คืนข้อมูล
+                </button>
+                <button class="btn btn-outline" onclick="cancelRestore()">
+                    ❌ ยกเลิก
+                </button>
+            </div>
+        </div>
+
+        <!-- RESET -->
+        <div class="card">
+            <div class="card-title">🗑️ ล้างข้อมูลทั้งหมด</div>
+            <div class="info-box" style="border-left-color:var(--crimson);">
+                <p>🚨 <strong>ระวัง!</strong> การล้างข้อมูลจะลบทุกอย่างและไม่สามารถกู้คืนได้ (ยกเว้นมีไฟล์สำรอง)</p>
+            </div>
+            <button class="btn btn-danger" onclick="resetAllData()">
+                🗑️ ล้างข้อมูลทั้งหมด
+            </button>
+        </div>
+
+        <!-- AUTO BACKUP -->
+        <div class="card">
+            <div class="card-title">⚙️ ตั้งค่าสำรองอัตโนมัติ</div>
+            <div class="info-box">
+                <p>🔄 ระบบจะแจ้งเตือนให้สำรองข้อมูลทุกครั้งที่มีการเปลี่ยนแปลงสำคัญ</p>
+            </div>
+            <button class="btn btn-warning" onclick="exportToClipboard()">
+                📋 คัดลอกข้อมูลไป Clipboard
+            </button>
+        </div>
+
+    </div>
+
+    <div class="footer-note">
+        💾 Ohoi Kyoza — ข้อมูลของคุณ คือสมบัติของคุณ 🏮
+    </div>
+
+    <script>
+        // ===== LOAD STATS =====
+        function loadStats() {
+            const products = JSON.parse(localStorage.getItem('ok_products')) || [];
+            const menus = JSON.parse(localStorage.getItem('ok_menus')) || [];
+            const transactions = JSON.parse(localStorage.getItem('ok_transactions')) || [];
+            const cookHistory = JSON.parse(localStorage.getItem('ok_cook_history')) || [];
+            
+            document.getElementById('stat-products').textContent = products.length;
+            document.getElementById('stat-menus').textContent = menus.length;
+            document.getElementById('stat-transactions').textContent = transactions.length;
+            document.getElementById('stat-orders').textContent = cookHistory.reduce((sum, h) => sum + h.servings, 0);
+        }
+
+        // ===== BACKUP =====
+        function backupData() {
+            const data = {
+                version: '1.0',
+                exportedAt: new Date().toISOString(),
+                app: 'Ohoi Kyoza Stock System',
+                ok_products: JSON.parse(localStorage.getItem('ok_products')) || [],
+                ok_menus: JSON.parse(localStorage.getItem('ok_menus')) || [],
+                ok_transactions: JSON.parse(localStorage.getItem('ok_transactions')) || [],
+                ok_cook_history: JSON.parse(localStorage.getItem('ok_cook_history')) || [],
+                ok_lang: localStorage.getItem('ok_lang') || 'th'
+            };
+
+            const jsonStr = JSON.stringify(data, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ohoi-kyoza-backup-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            // Show preview
+            document.getElementById('backup-json').textContent = jsonStr.substring(0, 2000) + '...';
+            document.getElementById('backup-preview').classList.remove('hidden');
+            
+            showAlert('✅ สำรองข้อมูลสำเร็จ! ไฟล์ถูกดาวน์โหลดแล้ว', 'success');
+        }
+
+        // ===== RESTORE PREVIEW =====
+        let restoreDataObj = null;
+
+        function previewRestore(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    // Validate
+                    if (!data.ok_products || !data.ok_menus) {
+                        throw new Error('ไฟล์ไม่ถูกต้อง');
+                    }
+
+                    restoreDataObj = data;
+                    
+                    const preview = {
+                        version: data.version,
+                        exportedAt: data.exportedAt,
+                        products: (data.ok_products || []).length,
+                        menus: (data.ok_menus || []).length,
+                        transactions: (data.ok_transactions || []).length,
+                        orders: (data.ok_cook_history || []).reduce((s, h) => s + (h.servings || 0), 0)
+                    };
+
+                    document.getElementById('restore-json').textContent = JSON.stringify(preview, null, 2);
+                    document.getElementById('restore-preview').classList.remove('hidden');
+                } catch (err) {
+                    showAlert('❌ ไฟล์ไม่ถูกต้อง กรุณาเลือกไฟล์สำรองของ Ohoi Kyoza', 'danger');
+                    input.value = '';
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function cancelRestore() {
+            restoreDataObj = null;
+            document.getElementById('restore-file').value = '';
+            document.getElementById('restore-preview').classList.add('hidden');
+        }
+
+        // ===== RESTORE =====
+        function restoreData() {
+            if (!restoreDataObj) return;
+            
+            if (!confirm('⚠️ ข้อมูลปัจจุบันจะถูกแทนที่\\n\\nยืนยันกู้คืนข้อมูล?')) {
+                return;
+            }
+
+            localStorage.setItem('ok_products', JSON.stringify(restoreDataObj.ok_products || []));
+            localStorage.setItem('ok_menus', JSON.stringify(restoreDataObj.ok_menus || []));
+            localStorage.setItem('ok_transactions', JSON.stringify(restoreDataObj.ok_transactions || []));
+            localStorage.setItem('ok_cook_history', JSON.stringify(restoreDataObj.ok_cook_history || []));
+            if (restoreDataObj.ok_lang) {
+                localStorage.setItem('ok_lang', restoreDataObj.ok_lang);
+            }
+
+            loadStats();
+            cancelRestore();
+            showAlert('✅ กู้คืนข้อมูลสำเร็จ!', 'success');
+        }
+
+        // ===== RESET =====
+        function resetAllData() {
+            const confirmText = prompt('พิมพ์ "DELETE" เพื่อยืนยันการล้างข้อมูลทั้งหมด:');
+            if (confirmText !== 'DELETE') {
+                showAlert('❌ ยกเลิกการล้างข้อมูล', 'warning');
+                return;
+            }
+
+            localStorage.removeItem('ok_products');
+            localStorage.removeItem('ok_menus');
+            localStorage.removeItem('ok_transactions');
+            localStorage.removeItem('ok_cook_history');
+            localStorage.removeItem('ok_lang');
+
+            loadStats();
+            showAlert('🗑️ ล้างข้อมูลทั้งหมดแล้ว', 'danger');
+        }
+
+        // ===== CLIPBOARD =====
+        async function exportToClipboard() {
+            const data = {
+                version: '1.0',
+                exportedAt: new Date().toISOString(),
+                ok_products: JSON.parse(localStorage.getItem('ok_products')) || [],
+                ok_menus: JSON.parse(localStorage.getItem('ok_menus')) || [],
+                ok_transactions: JSON.parse(localStorage.getItem('ok_transactions')) || [],
+                ok_cook_history: JSON.parse(localStorage.getItem('ok_cook_history')) || []
+            };
+
+            try {
+                await navigator.clipboard.writeText(JSON.stringify(data));
+                showAlert('✅ คัดลอกข้อมูลไป Clipboard แล้ว! วางในแชท/ไลน์ได้เลย', 'success');
+            } catch (err) {
+                showAlert('❌ ไม่สามารถคัดลอกได้ กรุณาใช้วิธีดาวน์โหลดไฟล์', 'danger');
+            }
+        }
+
+        // ===== ALERT =====
+        function showAlert(message, type) {
+            const existing = document.querySelector('.alert');
+            if (existing) existing.remove();
+
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            document.querySelector('.content').insertBefore(alert, document.querySelector('.content').firstChild);
+
+            setTimeout(() => alert.remove(), 5000);
+        }
+
+        // Init
+        loadStats();
+    </script>
+</body>
+</html>

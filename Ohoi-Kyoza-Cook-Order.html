@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ohoi Kyoza</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;600;700&family=Noto+Sans+SC:wght@300;400;600;700&family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --crimson: #9B2226;
+            --crimson-light: #AE2012;
+            --crimson-soft: rgba(155, 34, 38, 0.08);
+            --gold: #D4A373;
+            --gold-light: #E9C496;
+            --gold-soft: rgba(212, 163, 115, 0.15);
+            --jade: #588157;
+            --jade-soft: rgba(88, 129, 87, 0.12);
+            --warm-white: #FDF6EC;
+            --cream: #F5EBDC;
+            --paper: #FAF3E8;
+            --ink: #3D2B1F;
+            --ink-light: #6B5B4F;
+            --ink-muted: #9B8B7F;
+            --shadow-warm: rgba(155, 34, 38, 0.08);
+        }
+
+        body {
+            font-family: 'Noto Sans Thai', 'Noto Sans SC', sans-serif;
+            background: var(--warm-white);
+            color: var(--ink);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0.6;
+        }
+
+        @keyframes slide-up {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes warm-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        @keyframes success-pop {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .header {
+            background: linear-gradient(160deg, var(--crimson) 0%, #7B181C 60%, #5A1216 100%);
+            padding: 20px 20px 25px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '👨‍🍳';
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            font-size: 2rem;
+            opacity: 0.4;
+            animation: warm-pulse 4s ease-in-out infinite;
+        }
+
+        .header::after {
+            content: '🔥';
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2rem;
+            opacity: 0.4;
+            animation: warm-pulse 4s ease-in-out infinite 2s;
+        }
+
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--gold-light);
+            letter-spacing: 3px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            color: rgba(255, 248, 240, 0.7);
+            font-size: 0.9rem;
+            margin-top: 6px;
+            font-weight: 300;
+        }
+
+        /* ===== LANGUAGE SWITCHER ===== */
+        .lang-switcher {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .lang-btn {
+            padding: 6px 14px;
+            border: 1.5px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.8);
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .lang-btn:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.5);
+        }
+
+        .lang-btn.active {
+            background: var(--gold);
+            color: var(--crimson);
+            border-color: var(--gold);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .content {
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--paper);
+            min-height: calc(100vh - 150px);
+        }
+
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .quick-stat {
+            background: #FFFFFF;
+            border-radius: 16px;
+            padding: 14px 10px;
+            text-align: center;
+            border: 1px solid rgba(155, 34, 38, 0.08);
+            box-shadow: 0 2px 8px var(--shadow-warm);
+        }
+
+        .quick-stat-value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--crimson);
+        }
+
+        .quick-stat-label {
+            font-size: 0.75rem;
+            color: var(--ink-muted);
+            margin-top: 2px;
+        }
+
+        .category-filter {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            padding-bottom: 4px;
+        }
+
+        .category-filter::-webkit-scrollbar { display: none; }
+
+        .cat-btn {
+            padding: 10px 18px;
+            border: 1.5px solid rgba(155, 34, 38, 0.15);
+            background: #FFFFFF;
+            color: var(--ink-muted);
+            border-radius: 24px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            font-family: inherit;
+        }
+
+        .cat-btn:hover {
+            border-color: var(--crimson);
+            color: var(--crimson);
+            transform: translateY(-1px);
+        }
+
+        .cat-btn.active {
+            background: linear-gradient(135deg, var(--crimson), var(--crimson-light));
+            color: white;
+            border-color: var(--crimson);
+            box-shadow: 0 4px 15px rgba(155, 34, 38, 0.25);
+        }
+
+        .search-box {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 14px 20px 14px 48px;
+            background: #FFFFFF;
+            border: 1.5px solid rgba(155, 34, 38, 0.12);
+            border-radius: 14px;
+            color: var(--ink);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px var(--shadow-warm);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--crimson);
+            box-shadow: 0 0 0 4px var(--crimson-soft), 0 4px 16px var(--shadow-warm);
+        }
+
+        .search-box::before {
+            content: '🔍';
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+            opacity: 0.5;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
+        }
+
+        .menu-card {
+            background: #FFFFFF;
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(155, 34, 38, 0.08);
+            box-shadow: 0 2px 8px var(--shadow-warm);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            animation: slide-up 0.4s ease;
+        }
+
+        .menu-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 3px;
+            background: linear-gradient(90deg, var(--crimson), var(--gold));
+        }
+
+        .menu-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(155, 34, 38, 0.12);
+        }
+
+        .menu-card.out-of-stock {
+            opacity: 0.55;
+            filter: grayscale(0.4);
+        }
+
+        .menu-card.out-of-stock::before {
+            background: linear-gradient(90deg, #999, #bbb);
+        }
+
+        .menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+
+        .menu-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--crimson);
+            line-height: 1.3;
+        }
+
+        .menu-price {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--gold);
+            white-space: nowrap;
+        }
+
+        .menu-category {
+            display: inline-block;
+            padding: 3px 10px;
+            background: var(--crimson-soft);
+            color: var(--crimson);
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .menu-ingredients {
+            color: var(--ink-muted);
+            font-size: 0.8rem;
+            line-height: 1.5;
+            margin-bottom: 12px;
+            max-height: 60px;
+            overflow: hidden;
+        }
+
+        .menu-ingredients strong {
+            color: var(--ink-light);
+        }
+
+        .menu-stock-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            margin-bottom: 12px;
+            padding: 6px 10px;
+            border-radius: 10px;
+            background: var(--warm-white);
+        }
+
+        .menu-stock-status.ready { color: var(--jade); }
+        .menu-stock-status.low { color: #B8860B; background: var(--gold-soft); }
+        .menu-stock-status.out { color: var(--crimson); background: rgba(155, 34, 38, 0.06); }
+
+        .qty-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .qty-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: 1.5px solid rgba(155, 34, 38, 0.2);
+            background: var(--warm-white);
+            color: var(--crimson);
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qty-btn:hover {
+            background: var(--crimson);
+            color: white;
+            border-color: var(--crimson);
+        }
+
+        .qty-btn:active { transform: scale(0.95); }
+
+        .qty-input {
+            width: 50px;
+            text-align: center;
+            padding: 8px;
+            border: 1.5px solid rgba(155, 34, 38, 0.2);
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--crimson);
+            background: white;
+        }
+
+        .qty-input:focus {
+            outline: none;
+            border-color: var(--crimson);
+            box-shadow: 0 0 0 3px var(--crimson-soft);
+        }
+
+        .cook-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 14px;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .cook-btn-ready {
+            background: linear-gradient(135deg, var(--jade), #6B9B6A);
+            color: #FFF8F0;
+            box-shadow: 0 4px 15px rgba(88, 129, 87, 0.25);
+        }
+
+        .cook-btn-ready:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(88, 129, 87, 0.35);
+        }
+
+        .cook-btn-ready:active { transform: translateY(0) scale(0.98); }
+
+        .cook-btn-disabled {
+            background: #E8E0D8;
+            color: #9B8B7F;
+            cursor: not-allowed;
+        }
+
+        .float-notify {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--jade), #6B9B6A);
+            color: white;
+            padding: 16px 28px;
+            border-radius: 16px;
+            font-weight: 700;
+            box-shadow: 0 8px 30px rgba(88, 129, 87, 0.4);
+            z-index: 3000;
+            animation: success-pop 0.4s ease;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .float-notify.show { display: flex; }
+        .float-notify.error {
+            background: linear-gradient(135deg, var(--crimson), var(--crimson-light));
+            box-shadow: 0 8px 30px rgba(155, 34, 38, 0.4);
+        }
+
+        .recent-orders { margin-top: 30px; }
+
+        .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--crimson);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .order-item {
+            background: #FFFFFF;
+            border-radius: 16px;
+            padding: 16px 20px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(155, 34, 38, 0.06);
+            box-shadow: 0 2px 8px var(--shadow-warm);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slide-up 0.3s ease;
+        }
+
+        .order-info { flex: 1; }
+
+        .order-name {
+            font-weight: 700;
+            color: var(--crimson);
+            font-size: 1rem;
+        }
+
+        .order-detail {
+            font-size: 0.8rem;
+            color: var(--ink-muted);
+            margin-top: 4px;
+        }
+
+        .order-qty {
+            background: var(--jade-soft);
+            color: var(--jade);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .order-time {
+            font-size: 0.75rem;
+            color: var(--ink-muted);
+            margin-left: 12px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--ink-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            opacity: 0.6;
+        }
+
+        .footer-note {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--ink-muted);
+            font-size: 0.85rem;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .logo { font-size: 1.8rem; }
+            .quick-stats { grid-template-columns: repeat(2, 1fr); }
+            .menu-grid { grid-template-columns: 1fr; }
+            .content { padding: 15px; }
+            .order-item { flex-direction: column; align-items: flex-start; gap: 8px; }
+            .order-time { margin-left: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="float-notify" id="float-notify"></div>
+
+    <div class="header">
+        <div class="logo">Ohoi <span style="color:#FFF8F0; font-weight:400; font-style:italic;">Kyoza</span></div>
+        <div class="subtitle" id="header-subtitle">👨‍🍳 หน้าทำอาหาร — ตัดสต๊อกอัตโนมัติ</div>
+        
+        <!-- LANGUAGE SWITCHER -->
+        <div class="lang-switcher">
+            <button class="lang-btn active" onclick="setLanguage('th')" data-lang="th">🇹🇭 ไทย</button>
+            <button class="lang-btn" onclick="setLanguage('en')" data-lang="en">🇬🇧 EN</button>
+            <button class="lang-btn" onclick="setLanguage('zh')" data-lang="zh">🇨🇳 中文</button>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="quick-stats">
+            <div class="quick-stat">
+                <div class="quick-stat-value" id="stat-total-menus">0</div>
+                <div class="quick-stat-label" data-i18n="statMenus">เมนู</div>
+            </div>
+            <div class="quick-stat">
+                <div class="quick-stat-value" id="stat-ready">0</div>
+                <div class="quick-stat-label" data-i18n="statReady">พร้อมทำ</div>
+            </div>
+            <div class="quick-stat">
+                <div class="quick-stat-value" id="stat-today">0</div>
+                <div class="quick-stat-label" data-i18n="statToday">ออเดอร์วันนี้</div>
+            </div>
+            <div class="quick-stat">
+                <div class="quick-stat-value" id="stat-revenue">0</div>
+                <div class="quick-stat-label" data-i18n="statRevenue">รายวัน (บาท)</div>
+            </div>
+        </div>
+
+        <div class="category-filter">
+            <button class="cat-btn active" onclick="filterCategory('all')" data-i18n="catAll">ทั้งหมด</button>
+            <button class="cat-btn" onclick="filterCategory('gyoza')" data-i18n="catGyoza">🥟 เกี๊ยวซ่า</button>
+            <button class="cat-btn" onclick="filterCategory('rice')" data-i18n="catRice">🍚 ข้าว</button>
+            <button class="cat-btn" onclick="filterCategory('noodle')" data-i18n="catNoodle">🍜 ก๋วยเตี๋ยว</button>
+            <button class="cat-btn" onclick="filterCategory('soup')" data-i18n="catSoup">🍲 ซุป</button>
+            <button class="cat-btn" onclick="filterCategory('drink')" data-i18n="catDrink">🥤 เครื่องดื่ม</button>
+            <button class="cat-btn" onclick="filterCategory('dessert')" data-i18n="catDessert">🍮 ของหวาน</button>
+            <button class="cat-btn" onclick="filterCategory('set')" data-i18n="catSet">🍱 เซ็ต</button>
+        </div>
+
+        <div class="search-box">
+            <input type="text" id="menu-search" data-i18n-placeholder="searchPlaceholder" placeholder="🔍 ค้นหาเมนู..." onkeyup="renderMenus()">
+        </div>
+
+        <div id="menus-container" class="menu-grid"></div>
+
+        <div class="recent-orders">
+            <div class="section-title" data-i18n="recentOrdersTitle">📋 ออเดอร์ล่าสุด (วันนี้)</div>
+            <div id="recent-orders-container"></div>
+        </div>
+    </div>
+
+    <div class="footer-note" data-i18n="footerNote">
+        🥟 Ohoi Kyoza — ทุกจานที่ทำ คือความใส่ใจ 🏮
+    </div>
+
+    <script>
+        // ===== I18N SYSTEM =====
+        const i18n = {
+            th: {
+                headerSubtitle: "👨‍🍳 หน้าทำอาหาร — ตัดสต๊อกอัตโนมัติ",
+                statMenus: "เมนู",
+                statReady: "พร้อมทำ",
+                statToday: "ออเดอร์วันนี้",
+                statRevenue: "รายวัน (บาท)",
+                catAll: "ทั้งหมด",
+                catGyoza: "🥟 เกี๊ยวซ่า",
+                catRice: "🍚 ข้าว",
+                catNoodle: "🍜 ก๋วยเตี๋ยว",
+                catSoup: "🍲 ซุป",
+                catDrink: "🥤 เครื่องดื่ม",
+                catDessert: "🍮 ของหวาน",
+                catSet: "🍱 เซ็ต",
+                searchPlaceholder: "🔍 ค้นหาเมนู...",
+                ingredientsLabel: "วัตถุดิบ",
+                ready: "✅ พร้อมทำ",
+                lowStock: "⚠️ วัตถุดิบใกล้หมด",
+                outOfStock: "❌ ขาด",
+                cookBtn: "👨‍🍳 ทำอาหาร",
+                cookBtnDisabled: "❌ ขาดวัตถุดิบ",
+                recentOrdersTitle: "📋 ออเดอร์ล่าสุด (วันนี้)",
+                emptySearch: "ไม่พบเมนูที่ค้นหา",
+                emptyOrders: "ยังไม่มีออเดอร์วันนี้",
+                footerNote: "🥟 Ohoi Kyoza — ทุกจานที่ทำ คือความใส่ใจ 🏮",
+                baht: "บาท",
+                servings: "จาน",
+                items: "รายการวัตถุดิบ",
+                successCook: "ตัดสต๊อกเรียบร้อย!",
+                insufficient: "วัตถุดิบไม่พอสำหรับ",
+                confirm: "จาน",
+                noMenuFound: "ไม่พบเมนูที่ค้นหา",
+                noOrdersToday: "ยังไม่มีออเดอร์วันนี้"
+            },
+            en: {
+                headerSubtitle: "👨‍🍳 Quick Cook — Auto Stock Deduction",
+                statMenus: "Menus",
+                statReady: "Ready",
+                statToday: "Today's Orders",
+                statRevenue: "Daily Revenue (THB)",
+                catAll: "All",
+                catGyoza: "🥟 Gyoza",
+                catRice: "🍚 Rice",
+                catNoodle: "🍜 Noodles",
+                catSoup: "🍲 Soup",
+                catDrink: "🥤 Drinks",
+                catDessert: "🍮 Dessert",
+                catSet: "🍱 Set",
+                searchPlaceholder: "🔍 Search menu...",
+                ingredientsLabel: "Ingredients",
+                ready: "✅ Ready",
+                lowStock: "⚠️ Low Stock",
+                outOfStock: "❌ Out of Stock",
+                cookBtn: "👨‍🍳 Cook",
+                cookBtnDisabled: "❌ Out of Stock",
+                recentOrdersTitle: "📋 Recent Orders (Today)",
+                emptySearch: "No menus found",
+                emptyOrders: "No orders today",
+                footerNote: "🥟 Ohoi Kyoza — Every dish is made with care 🏮",
+                baht: "THB",
+                servings: "servings",
+                items: "ingredients",
+                successCook: "Stock deducted successfully!",
+                insufficient: "Insufficient ingredients for",
+                confirm: "servings",
+                noMenuFound: "No menus found",
+                noOrdersToday: "No orders today"
+            },
+            zh: {
+                headerSubtitle: "👨‍🍳 快速烹饪 — 自动扣减库存",
+                statMenus: "菜单",
+                statReady: "可制作",
+                statToday: "今日订单",
+                statRevenue: "日收入 (泰铢)",
+                catAll: "全部",
+                catGyoza: "🥟 饺子",
+                catRice: "🍚 米饭",
+                catNoodle: "🍜 面条",
+                catSoup: "🍲 汤",
+                catDrink: "🥤 饮料",
+                catDessert: "🍮 甜点",
+                catSet: "🍱 套餐",
+                searchPlaceholder: "🔍 搜索菜单...",
+                ingredientsLabel: "食材",
+                ready: "✅ 可制作",
+                lowStock: "⚠️ 库存不足",
+                outOfStock: "❌ 缺货",
+                cookBtn: "👨‍🍳 烹饪",
+                cookBtnDisabled: "❌ 缺货",
+                recentOrdersTitle: "📋 最近订单 (今日)",
+                emptySearch: "未找到菜单",
+                emptyOrders: "今日暂无订单",
+                footerNote: "🥟 Ohoi Kyoza — 每一道菜都用心制作 🏮",
+                baht: "泰铢",
+                servings: "份",
+                items: "种食材",
+                successCook: "库存扣减成功！",
+                insufficient: "食材不足，无法制作",
+                confirm: "份",
+                noMenuFound: "未找到菜单",
+                noOrdersToday: "今日暂无订单"
+            }
+        };
+
+        let currentLang = localStorage.getItem('ok_lang') || 'th';
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('ok_lang', lang);
+            
+            // Update active button
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+            
+            // Update all i18n elements
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.dataset.i18n;
+                if (i18n[lang][key]) {
+                    el.textContent = i18n[lang][key];
+                }
+            });
+            
+            // Update placeholders
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.dataset.i18nPlaceholder;
+                if (i18n[lang][key]) {
+                    el.placeholder = i18n[lang][key];
+                }
+            });
+            
+            // Update header subtitle
+            const subtitle = document.getElementById('header-subtitle');
+            if (subtitle && i18n[lang].headerSubtitle) {
+                subtitle.textContent = i18n[lang].headerSubtitle;
+            }
+            
+            // Re-render dynamic content
+            renderMenus();
+            renderRecentOrders();
+            updateStats();
+        }
+
+        function t(key, fallback) {
+            return i18n[currentLang]?.[key] || fallback || key;
+        }
+
+        // ===== STATE =====
+        let products = JSON.parse(localStorage.getItem('ok_products')) || [];
+        let transactions = JSON.parse(localStorage.getItem('ok_transactions')) || [];
+        let menus = JSON.parse(localStorage.getItem('ok_menus')) || [];
+        let cookHistory = JSON.parse(localStorage.getItem('ok_cook_history')) || [];
+        let currentCategory = 'all';
+
+        // ===== INIT =====
+        document.addEventListener('DOMContentLoaded', () => {
+            setLanguage(currentLang);
+        });
+
+        // ===== CATEGORY FILTER =====
+        function filterCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                const btnCat = btn.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
+                btn.classList.toggle('active', 
+                    (cat === 'all' && btnCat === 'all') || btnCat === cat
+                );
+            });
+            renderMenus();
+        }
+
+        // ===== CHECK STOCK =====
+        function checkMenuStock(menu, servings = 1) {
+            products = JSON.parse(localStorage.getItem('ok_products')) || [];
+            const insufficient = [];
+            let canCook = true;
+            let isLow = false;
+
+            menu.ingredients.forEach(ing => {
+                const product = products.find(p => p.id === ing.productId);
+                if (!product) {
+                    canCook = false;
+                    insufficient.push({ name: ing.productName, need: ing.quantity * servings, have: 0 });
+                } else {
+                    const need = ing.quantity * servings;
+                    if (product.stock < need) {
+                        canCook = false;
+                        insufficient.push({ name: product.name, need: need, have: product.stock });
+                    } else if (product.stock <= product.minStock + need) {
+                        isLow = true;
+                    }
+                }
+            });
+
+            return { canCook, insufficient, isLow };
+        }
+
+        // ===== RENDER MENUS =====
+        function renderMenus() {
+            products = JSON.parse(localStorage.getItem('ok_products')) || [];
+            menus = JSON.parse(localStorage.getItem('ok_menus')) || [];
+            
+            const searchInput = document.getElementById('menu-search');
+            const search = searchInput ? searchInput.value.toLowerCase() : '';
+            
+            let filtered = menus.filter(m => {
+                const matchSearch = m.name.toLowerCase().includes(search);
+                const matchCategory = currentCategory === 'all' || m.category === currentCategory;
+                return matchSearch && matchCategory;
+            });
+
+            const container = document.getElementById('menus-container');
+            
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <div class="empty-state-icon">🍽️</div>
+                        <p>${t('noMenuFound', 'No menus found')}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const categoryLabels = {
+                gyoza: t('catGyoza', '🥟 Gyoza'),
+                rice: t('catRice', '🍚 Rice'),
+                noodle: t('catNoodle', '🍜 Noodles'),
+                soup: t('catSoup', '🍲 Soup'),
+                drink: t('catDrink', '🥤 Drinks'),
+                dessert: t('catDessert', '🍮 Dessert'),
+                set: t('catSet', '🍱 Set')
+            };
+
+            container.innerHTML = filtered.map(menu => {
+                const stockCheck = checkMenuStock(menu);
+                const outOfStock = !stockCheck.canCook;
+                const isLow = stockCheck.isLow;
+                
+                const ingPreview = menu.ingredients.slice(0, 3).map(ing => ing.productName).join(', ') + 
+                    (menu.ingredients.length > 3 ? ` +${menu.ingredients.length - 3}` : '');
+
+                let stockText = '';
+                let stockClass = '';
+                if (outOfStock) {
+                    stockText = `${t('outOfStock', '❌ Out of Stock')}: ${stockCheck.insufficient.map(i => i.name).join(', ')}`;
+                    stockClass = 'out';
+                } else if (isLow) {
+                    stockText = t('lowStock', '⚠️ Low Stock');
+                    stockClass = 'low';
+                } else {
+                    stockText = t('ready', '✅ Ready');
+                    stockClass = 'ready';
+                }
+
+                return `
+                    <div class="menu-card ${outOfStock ? 'out-of-stock' : ''}" data-menu-id="${menu.id}">
+                        <div class="menu-header">
+                            <div class="menu-name">${menu.name}</div>
+                            <div class="menu-price">${menu.price}฿</div>
+                        </div>
+                        <span class="menu-category">${categoryLabels[menu.category] || menu.category}</span>
+                        <div class="menu-ingredients">
+                            <strong>${t('ingredientsLabel', 'Ingredients')}:</strong> ${ingPreview}
+                        </div>
+                        <div class="menu-stock-status ${stockClass}">
+                            ${stockText}
+                        </div>
+                        <div class="qty-control">
+                            <button class="qty-btn" onclick="changeQty(${menu.id}, -1)" ${outOfStock ? 'disabled' : ''}>−</button>
+                            <input type="number" class="qty-input" id="qty-${menu.id}" value="1" min="1" max="50" 
+                                onchange="validateQty(${menu.id})" ${outOfStock ? 'disabled' : ''}>
+                            <button class="qty-btn" onclick="changeQty(${menu.id}, 1)" ${outOfStock ? 'disabled' : ''}>+</button>
+                        </div>
+                        <button class="cook-btn ${outOfStock ? 'cook-btn-disabled' : 'cook-btn-ready'}" 
+                            onclick="cookMenu(${menu.id})" ${outOfStock ? 'disabled' : ''}>
+                            ${outOfStock ? t('cookBtnDisabled', '❌ Out of Stock') : t('cookBtn', '👨‍🍳 Cook')}
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ===== QUANTITY CONTROL =====
+        function changeQty(menuId, delta) {
+            const input = document.getElementById(`qty-${menuId}`);
+            let val = parseInt(input.value) || 1;
+            val += delta;
+            if (val < 1) val = 1;
+            if (val > 50) val = 50;
+            input.value = val;
+        }
+
+        function validateQty(menuId) {
+            const input = document.getElementById(`qty-${menuId}`);
+            let val = parseInt(input.value) || 1;
+            if (val < 1) val = 1;
+            if (val > 50) val = 50;
+            input.value = val;
+        }
+
+        // ===== COOK MENU =====
+        function cookMenu(menuId) {
+            products = JSON.parse(localStorage.getItem('ok_products')) || [];
+            transactions = JSON.parse(localStorage.getItem('ok_transactions')) || [];
+            cookHistory = JSON.parse(localStorage.getItem('ok_cook_history')) || [];
+            
+            const menu = menus.find(m => m.id === menuId);
+            if (!menu) return;
+            
+            const servings = parseInt(document.getElementById(`qty-${menuId}`).value) || 1;
+            const stockCheck = checkMenuStock(menu, servings);
+            
+            if (!stockCheck.canCook) {
+                showNotify(`❌ ${t('insufficient', 'Insufficient ingredients for')} ${servings} ${t('confirm', 'servings')}`, true);
+                return;
+            }
+
+            menu.ingredients.forEach(ing => {
+                const product = products.find(p => p.id === ing.productId);
+                if (product) {
+                    const deductQty = ing.quantity * servings;
+                    product.stock -= deductQty;
+                    
+                    transactions.push({
+                        id: Date.now() + Math.random(),
+                        type: 'out',
+                        productId: product.id,
+                        productName: product.name,
+                        productCode: product.code,
+                        quantity: deductQty,
+                        outType: 'cooking',
+                        reason: menu.name + ' x' + servings,
+                        note: 'Auto stock deduction from cook page',
+                        date: new Date().toISOString()
+                    });
+                }
+            });
+
+            cookHistory.push({
+                id: Date.now(),
+                menuId: menu.id,
+                menuName: menu.name,
+                servings: servings,
+                totalPrice: menu.price * servings,
+                ingredients: menu.ingredients.map(ing => ({
+                    productName: ing.productName,
+                    quantity: ing.quantity * servings,
+                    unit: ing.unit
+                })),
+                date: new Date().toISOString()
+            });
+
+            saveData();
+            
+            showNotify(`✅ ${menu.name} ${servings} ${t('confirm', 'servings')} — ${t('successCook', 'Stock deducted successfully!')}`);
+            
+            document.getElementById(`qty-${menuId}`).value = 1;
+            
+            updateStats();
+            renderMenus();
+            renderRecentOrders();
+        }
+
+        // ===== FLOATING NOTIFICATION =====
+        function showNotify(message, isError = false) {
+            const notify = document.getElementById('float-notify');
+            notify.textContent = message;
+            notify.classList.toggle('error', isError);
+            notify.classList.add('show');
+            
+            setTimeout(() => {
+                notify.classList.remove('show');
+            }, 3000);
+        }
+
+        // ===== UPDATE STATS =====
+        function updateStats() {
+            products = JSON.parse(localStorage.getItem('ok_products')) || [];
+            menus = JSON.parse(localStorage.getItem('ok_menus')) || [];
+            cookHistory = JSON.parse(localStorage.getItem('ok_cook_history')) || [];
+            
+            document.getElementById('stat-total-menus').textContent = menus.length;
+            
+            const readyMenus = menus.filter(m => checkMenuStock(m).canCook);
+            document.getElementById('stat-ready').textContent = readyMenus.length;
+            
+            const today = new Date().toDateString();
+            const todayOrders = cookHistory.filter(h => new Date(h.date).toDateString() === today);
+            const todayCount = todayOrders.reduce((sum, h) => sum + h.servings, 0);
+            document.getElementById('stat-today').textContent = todayCount;
+            
+            const todayRevenue = todayOrders.reduce((sum, h) => sum + h.totalPrice, 0);
+            document.getElementById('stat-revenue').textContent = todayRevenue.toLocaleString();
+        }
+
+        // ===== RECENT ORDERS =====
+        function renderRecentOrders() {
+            cookHistory = JSON.parse(localStorage.getItem('ok_cook_history')) || [];
+            
+            const today = new Date().toDateString();
+            const todayOrders = cookHistory
+                .filter(h => new Date(h.date).toDateString() === today)
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .slice(0, 10);
+
+            const container = document.getElementById('recent-orders-container');
+            
+            if (todayOrders.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="padding: 30px;">
+                        <div class="empty-state-icon">📋</div>
+                        <p>${t('noOrdersToday', 'No orders today')}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = todayOrders.map(order => {
+                const time = new Date(order.date).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+                return `
+                    <div class="order-item">
+                        <div class="order-info">
+                            <div class="order-name">${order.menuName}</div>
+                            <div class="order-detail">${order.totalPrice} ${t('baht', 'THB')} • ${order.ingredients.length} ${t('items', 'ingredients')}</div>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <span class="order-qty">${order.servings} ${t('servings', 'servings')}</span>
+                            <span class="order-time">${time}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ===== SAVE DATA =====
+        function saveData() {
+            localStorage.setItem('ok_products', JSON.stringify(products));
+            localStorage.setItem('ok_transactions', JSON.stringify(transactions));
+            localStorage.setItem('ok_cook_history', JSON.stringify(cookHistory));
+        }
+
+        // Refresh every 30 seconds
+        setInterval(() => {
+            updateStats();
+            renderMenus();
+            renderRecentOrders();
+        }, 30000);
+    </script>
+</body>
+</html>

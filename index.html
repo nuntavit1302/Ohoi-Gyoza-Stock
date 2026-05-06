@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+</head>
+
+<body>
+  
+</body>
+
+</html>
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ohoi Kyoza - ระบบร้านอาหาร</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;600;700&family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --crimson: #9B2226;
+            --crimson-light: #AE2012;
+            --crimson-soft: rgba(155, 34, 38, 0.08);
+            --gold: #D4A373;
+            --gold-light: #E9C496;
+            --gold-soft: rgba(212, 163, 115, 0.15);
+            --jade: #588157;
+            --jade-soft: rgba(88, 129, 87, 0.12);
+            --warm-white: #FDF6EC;
+            --cream: #F5EBDC;
+            --paper: #FAF3E8;
+            --ink: #3D2B1F;
+            --ink-light: #6B5B4F;
+            --ink-muted: #9B8B7F;
+            --shadow-warm: rgba(155, 34, 38, 0.08);
+        }
+
+        body {
+            font-family: 'Noto Sans Thai', sans-serif;
+            background: var(--warm-white);
+            color: var(--ink);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0.6;
+        }
+
+        @keyframes slide-up {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes warm-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            background: linear-gradient(160deg, var(--crimson) 0%, #7B181C 50%, #5A1216 100%);
+            padding: 50px 20px 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '🏮';
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            font-size: 2.5rem;
+            opacity: 0.3;
+            animation: warm-pulse 5s ease-in-out infinite;
+        }
+
+        .hero::after {
+            content: '🥟';
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 2.5rem;
+            opacity: 0.3;
+            animation: warm-pulse 5s ease-in-out infinite 2.5s;
+        }
+
+        .hero-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--gold-light);
+            letter-spacing: 4px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 15px rgba(0,0,0,0.4);
+            animation: slide-up 0.6s ease;
+        }
+
+        .hero-logo span {
+            color: #FFF8F0;
+            font-weight: 400;
+            font-style: italic;
+        }
+
+        .hero-subtitle {
+            color: rgba(255, 248, 240, 0.7);
+            font-size: 1rem;
+            margin-top: 10px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            animation: slide-up 0.6s ease 0.1s both;
+        }
+
+        .hero-date {
+            color: rgba(255, 248, 240, 0.5);
+            font-size: 0.85rem;
+            margin-top: 8px;
+            animation: slide-up 0.6s ease 0.2s both;
+        }
+
+        /* ===== STATS BAR ===== */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            max-width: 800px;
+            margin: -30px auto 0;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .stat-box {
+            background: #FFFFFF;
+            border-radius: 20px;
+            padding: 20px 10px;
+            text-align: center;
+            border: 1px solid rgba(155, 34, 38, 0.08);
+            box-shadow: 0 4px 20px rgba(155, 34, 38, 0.1);
+            animation: slide-up 0.5s ease 0.3s both;
+            transition: all 0.3s ease;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(155, 34, 38, 0.15);
+        }
+
+        .stat-box:nth-child(1) { border-top: 3px solid var(--crimson); }
+        .stat-box:nth-child(2) { border-top: 3px solid var(--gold); animation-delay: 0.4s; }
+        .stat-box:nth-child(3) { border-top: 3px solid var(--jade); animation-delay: 0.5s; }
+        .stat-box:nth-child(4) { border-top: 3px solid #6B5B95; animation-delay: 0.6s; }
+
+        .stat-value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-box:nth-child(1) .stat-value { color: var(--crimson); }
+        .stat-box:nth-child(2) .stat-value { color: var(--gold); }
+        .stat-box:nth-child(3) .stat-value { color: var(--jade); }
+        .stat-box:nth-child(4) .stat-value { color: #6B5B95; }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--ink-muted);
+            font-weight: 600;
+        }
+
+        /* ===== MENU CARDS ===== */
+        .menu-section {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--crimson);
+            margin-bottom: 24px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .section-title::before,
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            max-width: 100px;
+        }
+
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .app-card {
+            background: #FFFFFF;
+            border-radius: 24px;
+            padding: 28px 20px;
+            text-align: center;
+            border: 1px solid rgba(155, 34, 38, 0.08);
+            box-shadow: 0 4px 16px var(--shadow-warm);
+            transition: all 0.4s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            position: relative;
+            overflow: hidden;
+            animation: slide-up 0.5s ease both;
+        }
+
+        .app-card:nth-child(1) { animation-delay: 0.4s; }
+        .app-card:nth-child(2) { animation-delay: 0.5s; }
+        .app-card:nth-child(3) { animation-delay: 0.6s; }
+
+        .app-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--crimson), var(--gold));
+            opacity: 0.7;
+        }
+
+        .app-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 40px rgba(155, 34, 38, 0.15);
+        }
+
+        .app-card:active {
+            transform: translateY(-2px) scale(0.98);
+        }
+
+        .app-icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+            display: block;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .app-card:nth-child(2) .app-icon { animation-delay: 0.5s; }
+        .app-card:nth-child(3) .app-icon { animation-delay: 1s; }
+
+        .app-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--crimson);
+            margin-bottom: 6px;
+        }
+
+        .app-desc {
+            font-size: 0.8rem;
+            color: var(--ink-muted);
+            line-height: 1.5;
+        }
+
+        .app-badge {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 4px 12px;
+            background: var(--crimson-soft);
+            color: var(--crimson);
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        /* ===== ALERTS ===== */
+        .alerts-section {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px 30px;
+        }
+
+        .alert-card {
+            background: #FFFFFF;
+            border-radius: 16px;
+            padding: 18px 22px;
+            margin-bottom: 12px;
+            border: 1px solid;
+            position: relative;
+            animation: slide-up 0.4s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .alert-card::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 4px;
+            border-radius: 16px 0 0 16px;
+        }
+
+        .alert-danger {
+            border-color: rgba(155, 34, 38, 0.2);
+            background: linear-gradient(135deg, #FFF5F5 0%, #FFFFFF 100%);
+            color: var(--crimson);
+        }
+        .alert-danger::before { background: linear-gradient(180deg, var(--crimson), var(--crimson-light)); }
+
+        .alert-warning {
+            border-color: rgba(212, 163, 115, 0.3);
+            background: linear-gradient(135deg, #FFFBF5 0%, #FFFFFF 100%);
+            color: #8B6914;
+        }
+        .alert-warning::before { background: linear-gradient(180deg, var(--gold), var(--gold-light)); }
+
+        .alert-success {
+            border-color: rgba(88, 129, 87, 0.2);
+            background: linear-gradient(135deg, #F5FBF5 0%, #FFFFFF 100%);
+            color: var(--jade);
+        }
+        .alert-success::before { background: linear-gradient(180deg, var(--jade), #6B9B6A); }
+
+        .alert-icon { font-size: 1.5rem; }
+        .alert-text { font-size: 0.9rem; font-weight: 600; }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            padding: 30px 20px 40px;
+            color: var(--ink-muted);
+            font-size: 0.85rem;
+        }
+
+        .footer strong { color: var(--crimson); }
+
+        /* ===== MOBILE ===== */
+        @media (max-width: 768px) {
+            .hero-logo { font-size: 2.2rem; }
+            .stats-bar { grid-template-columns: repeat(2, 1fr); }
+            .app-grid { grid-template-columns: 1fr; }
+            .stat-value { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HERO -->
+    <div class="hero">
+        <div class="hero-logo">Ohoi <span>Kyoza</span></div>
+        <div class="hero-subtitle">ระบบจัดการร้านอาหาร — เกี๊ยวซ่าไต้หวัน</div>
+        <div class="hero-date" id="current-date"></div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-bar">
+        <div class="stat-box">
+            <div class="stat-value" id="stat-products">0</div>
+            <div class="stat-label">รายการสินค้า</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value" id="stat-menus">0</div>
+            <div class="stat-label">เมนูอาหาร</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value" id="stat-orders">0</div>
+            <div class="stat-label">ออเดอร์วันนี้</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value" id="stat-revenue">0</div>
+            <div class="stat-label">รายได้วันนี้</div>
+        </div>
+    </div>
+
+    <!-- ALERTS -->
+    <div class="alerts-section" id="alerts-section"></div>
+
+    <!-- APP MENU -->
+    <div class="menu-section">
+        <div class="section-title">เลือกระบบ</div>
+        <div class="app-grid">
+            <a href="ohoi-kyoza-stock-cozy.html" class="app-card">
+                <span class="app-icon">📦</span>
+                <div class="app-name">จัดการสต๊อก</div>
+                <div class="app-desc">เพิ่มสินค้า รับเข้า จ่ายออก ตรวจสอบวัตถุดิบ</div>
+                <span class="app-badge">STOCK</span>
+            </a>
+            <a href="ohoi-kyoza-menu-recipe.html" class="app-card">
+                <span class="app-icon">🍽️</span>
+                <div class="app-name">เมนูและสูตร</div>
+                <div class="app-desc">เพิ่มเมนูอาหาร กำหนดวัตถุดิบในสูตร</div>
+                <span class="app-badge">MENU</span>
+            </a>
+            <a href="ohoi-kyoza-cook-order.html" class="app-card">
+                <span class="app-icon">👨‍🍳</span>
+                <div class="app-name">ทำอาหาร</div>
+                <div class="app-desc">กดทำอาหาร ตัดสต๊อกอัตโนมัติ ดูออเดอร์</div>
+                <span class="app-badge">COOK</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        🏮 <strong>Ohoi Kyoza</strong> — บ้านหลังที่สองของคุณ 🥟<br>
+        <span style="font-size:0.75rem; opacity:0.7;">ระบบทำงานแบบ Offline ผ่าน Browser</span>
+    </div>
+
+    <script>
+        // ===== SHOW DATE =====
+        const now = new Date();
+        const thaiDays = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
+        const thaiMonths = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+            'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+        document.getElementById('current-date').textContent = 
+            `วัน${thaiDays[now.getDay()]}ที่ ${now.getDate()} ${thaiMonths[now.getMonth()]} ${now.getFullYear() + 543}`;
+
+        // ===== LOAD STATS =====
+        function loadStats() {
+            const products = JSON.parse(localStorage.getItem('ok_products')) || [];
+            const menus = JSON.parse(localStorage.getItem('ok_menus')) || [];
+            const cookHistory = JSON.parse(localStorage.getItem('ok_cook_history')) || [];
+            
+            document.getElementById('stat-products').textContent = products.length;
+            document.getElementById('stat-menus').textContent = menus.length;
+            
+            const today = new Date().toDateString();
+            const todayOrders = cookHistory.filter(h => new Date(h.date).toDateString() === today);
+            const orderCount = todayOrders.reduce((sum, h) => sum + h.servings, 0);
+            document.getElementById('stat-orders').textContent = orderCount;
+            
+            const revenue = todayOrders.reduce((sum, h) => sum + h.totalPrice, 0);
+            document.getElementById('stat-revenue').textContent = revenue.toLocaleString();
+
+            // Alerts
+            const alertsContainer = document.getElementById('alerts-section');
+            let html = '';
+            
+            const lowStock = products.filter(p => p.stock <= p.minStock);
+            if (lowStock.length > 0) {
+                html += `<div class="alert-card alert-danger">
+                    <span class="alert-icon">⚠️</span>
+                    <span class="alert-text">วัตถุดิบใกล้หมด ${lowStock.length} รายการ — ไปที่ "จัดการสต๊อก" เพื่อเติม</span>
+                </div>`;
+            }
+            
+            const cantCook = menus.filter(m => {
+                return m.ingredients.some(ing => {
+                    const p = products.find(pr => pr.id === ing.productId);
+                    return !p || p.stock < ing.quantity;
+                });
+            });
+            if (cantCook.length > 0) {
+                html += `<div class="alert-card alert-warning">
+                    <span class="alert-icon">🚨</span>
+                    <span class="alert-text">${cantCook.length} เมนูทำไม่ได้ — ขาดวัตถุดิบ</span>
+                </div>`;
+            }
+            
+            if (html === '') {
+                html = `<div class="alert-card alert-success">
+                    <span class="alert-icon">✅</span>
+                    <span class="alert-text">ทุกอย่างพร้อม! สามารถทำอาหารได้ทุกเมนู</span>
+                </div>`;
+            }
+            
+            alertsContainer.innerHTML = html;
+        }
+
+        loadStats();
+        
+        // Refresh every 10 seconds
+        setInterval(loadStats, 10000);
+    </script>
+</body>
+</html>
