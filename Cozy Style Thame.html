@@ -1,18 +1,4 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title></title>
-</head>
-
-<body>
-  
-</body>
-
-</html>
-<!DOCTYPE html>
+DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
@@ -73,6 +59,7 @@
             to { transform: translateY(0); opacity: 1; }
         }
 
+        /* ===== HEADER ===== */
         .header {
             background: linear-gradient(160deg, var(--crimson) 0%, #7B181C 60%, #5A1216 100%);
             padding: 35px 20px 40px;
@@ -84,8 +71,7 @@
         .header::before {
             content: '🏮';
             position: absolute;
-            top: 15px;
-            left: 20px;
+            top: 15px; left: 20px;
             font-size: 2rem;
             opacity: 0.4;
             animation: warm-pulse 4s ease-in-out infinite;
@@ -94,11 +80,38 @@
         .header::after {
             content: '🏮';
             position: absolute;
-            top: 15px;
-            right: 20px;
+            top: 15px; right: 20px;
             font-size: 2rem;
             opacity: 0.4;
             animation: warm-pulse 4s ease-in-out infinite 2s;
+        }
+
+        /* ===== BACK BUTTON ===== */
+        .back-btn {
+            position: absolute;
+            top: 15px;
+            left: 60px;
+            background: rgba(255,255,255,0.15);
+            border: 1.5px solid rgba(255,255,255,0.3);
+            color: rgba(255,248,240,0.9);
+            padding: 7px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            font-family: 'Noto Sans Thai', sans-serif;
+            transition: all 0.3s ease;
+            z-index: 2;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.25);
+            border-color: rgba(255,255,255,0.5);
+            transform: translateX(-2px);
         }
 
         .logo {
@@ -146,6 +159,7 @@
             font-size: 0.8rem;
             transition: all 0.4s ease;
             backdrop-filter: blur(5px);
+            font-family: 'Noto Sans Thai', sans-serif;
         }
 
         .lang-btn:hover {
@@ -161,6 +175,7 @@
             box-shadow: 0 2px 15px rgba(212, 163, 115, 0.2);
         }
 
+        /* ===== NAV TABS ===== */
         .nav-tabs {
             display: flex;
             background: var(--cream);
@@ -216,6 +231,7 @@
             border-radius: 3px;
         }
 
+        /* ===== CONTENT ===== */
         .content {
             padding: 25px 20px;
             max-width: 900px;
@@ -227,6 +243,7 @@
         .tab-content { display: none; animation: slide-up 0.4s ease; }
         .tab-content.active { display: block; }
 
+        /* ===== CARD ===== */
         .card {
             background: #FFFFFF;
             border-radius: 20px;
@@ -266,6 +283,7 @@
             border-bottom: 1px solid rgba(155, 34, 38, 0.1);
         }
 
+        /* ===== STATS ===== */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -289,10 +307,7 @@
         .stat-card:nth-child(2) { border-top: 3px solid var(--gold); animation-delay: 1.3s; }
         .stat-card:nth-child(3) { border-top: 3px solid var(--jade); animation-delay: 2.6s; }
 
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 30px rgba(155, 34, 38, 0.12);
-        }
+        .stat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(155, 34, 38, 0.12); }
 
         .stat-card h3 {
             font-family: 'Cormorant Garamond', serif;
@@ -304,13 +319,9 @@
         .stat-card:nth-child(1) h3 { color: var(--crimson); }
         .stat-card:nth-child(2) h3 { color: var(--gold); }
         .stat-card:nth-child(3) h3 { color: var(--jade); }
+        .stat-card p { color: var(--ink-muted); font-size: 0.85rem; font-weight: 600; }
 
-        .stat-card p {
-            color: var(--ink-muted);
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
+        /* ===== FORM ===== */
         .form-group { margin-bottom: 18px; }
 
         .form-group label {
@@ -344,12 +355,37 @@
 
         .form-group input::placeholder { color: var(--ink-muted); opacity: 0.6; }
 
+        /* ชื่อ 3 ภาษา section */
+        .lang-name-section {
+            background: var(--warm-white);
+            border: 1.5px solid rgba(155,34,38,0.1);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 18px;
+        }
+
+        .lang-name-section .lang-label {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--ink-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
         .form-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
         }
 
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        /* ===== BUTTONS ===== */
         .btn {
             padding: 14px 32px;
             border: none;
@@ -360,8 +396,6 @@
             cursor: pointer;
             transition: all 0.4s ease;
             letter-spacing: 0.5px;
-            position: relative;
-            overflow: hidden;
         }
 
         .btn-primary {
@@ -370,12 +404,7 @@
             box-shadow: 0 4px 15px rgba(155, 34, 38, 0.25);
         }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(155, 34, 38, 0.35);
-        }
-
-        .btn-primary:active { transform: translateY(0); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(155, 34, 38, 0.35); }
 
         .btn-success {
             background: linear-gradient(135deg, var(--jade), #6B9B6A);
@@ -383,10 +412,15 @@
             box-shadow: 0 4px 15px rgba(88, 129, 87, 0.25);
         }
 
-        .btn-success:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(88, 129, 87, 0.35);
+        .btn-success:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(88, 129, 87, 0.35); }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #B8860B, #D4A373);
+            color: #FFF8F0;
+            box-shadow: 0 4px 15px rgba(184, 134, 11, 0.25);
         }
+
+        .btn-warning:hover { transform: translateY(-2px); }
 
         .btn-danger {
             background: linear-gradient(135deg, #C0392B, #E74C3C);
@@ -394,12 +428,21 @@
             box-shadow: 0 4px 15px rgba(192, 57, 43, 0.25);
         }
 
+        .btn-danger:hover { transform: translateY(-2px); }
+
         .btn-sm {
-            padding: 8px 16px;
-            font-size: 0.8rem;
+            padding: 7px 14px;
+            font-size: 0.78rem;
             border-radius: 10px;
+            letter-spacing: 0;
         }
 
+        .btn-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* ===== TABLE ===== */
         .table-container {
             overflow-x: auto;
             border-radius: 16px;
@@ -407,65 +450,45 @@
             background: #FFFFFF;
         }
 
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            font-size: 0.9rem;
-        }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.88rem; }
 
         th {
             background: linear-gradient(180deg, var(--cream) 0%, var(--warm-white) 100%);
             color: var(--crimson);
-            padding: 16px 12px;
+            padding: 14px 10px;
             font-weight: 700;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             border-bottom: 2px solid rgba(155, 34, 38, 0.1);
-            position: sticky;
-            top: 0;
+            white-space: nowrap;
         }
 
         td {
-            padding: 14px 12px;
+            padding: 13px 10px;
             border-bottom: 1px solid rgba(155, 34, 38, 0.05);
             color: var(--ink-light);
+            vertical-align: middle;
         }
 
-        tr:hover td {
-            background: var(--crimson-soft);
-            color: var(--ink);
-        }
-
+        tr:hover td { background: var(--crimson-soft); color: var(--ink); }
         tr:last-child td { border-bottom: none; }
 
+        /* ===== BADGES ===== */
         .badge {
-            padding: 6px 14px;
+            padding: 5px 12px;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
             display: inline-block;
+            white-space: nowrap;
         }
 
-        .badge-success {
-            background: var(--jade-soft);
-            color: var(--jade);
-            border: 1px solid rgba(88, 129, 87, 0.3);
-        }
+        .badge-success { background: var(--jade-soft); color: var(--jade); border: 1px solid rgba(88,129,87,0.3); }
+        .badge-warning { background: var(--gold-soft); color: #B8860B; border: 1px solid rgba(212,163,115,0.4); }
+        .badge-danger { background: rgba(155,34,38,0.08); color: var(--crimson); border: 1px solid rgba(155,34,38,0.3); }
 
-        .badge-warning {
-            background: var(--gold-soft);
-            color: #B8860B;
-            border: 1px solid rgba(212, 163, 115, 0.4);
-        }
-
-        .badge-danger {
-            background: rgba(155, 34, 38, 0.08);
-            color: var(--crimson);
-            border: 1px solid rgba(155, 34, 38, 0.3);
-        }
-
+        /* ===== ALERTS ===== */
         .alert {
             padding: 18px 22px;
             border-radius: 16px;
@@ -475,61 +498,23 @@
             background: #FFFFFF;
         }
 
-        .alert-danger {
-            border-color: rgba(155, 34, 38, 0.2);
-            background: linear-gradient(135deg, #FFF5F5 0%, #FFFFFF 100%);
-            color: var(--crimson);
-        }
+        .alert-danger { border-color: rgba(155,34,38,0.2); background: linear-gradient(135deg, #FFF5F5, #FFFFFF); color: var(--crimson); }
+        .alert-danger::before { content:''; position:absolute; left:0; top:0; bottom:0; width:4px; background:linear-gradient(180deg,var(--crimson),var(--crimson-light)); border-radius:16px 0 0 16px; }
 
-        .alert-danger::before {
-            content: '';
-            position: absolute;
-            left: 0; top: 0; bottom: 0;
-            width: 4px;
-            background: linear-gradient(180deg, var(--crimson), var(--crimson-light));
-            border-radius: 16px 0 0 16px;
-        }
+        .alert-warning { border-color: rgba(212,163,115,0.3); background: linear-gradient(135deg, #FFFBF5, #FFFFFF); color: #8B6914; }
+        .alert-warning::before { content:''; position:absolute; left:0; top:0; bottom:0; width:4px; background:linear-gradient(180deg,var(--gold),var(--gold-light)); border-radius:16px 0 0 16px; }
 
-        .alert-warning {
-            border-color: rgba(212, 163, 115, 0.3);
-            background: linear-gradient(135deg, #FFFBF5 0%, #FFFFFF 100%);
-            color: #8B6914;
-        }
+        .alert-success { border-color: rgba(88,129,87,0.2); background: linear-gradient(135deg, #F5FBF5, #FFFFFF); color: var(--jade); }
+        .alert-success::before { content:''; position:absolute; left:0; top:0; bottom:0; width:4px; background:linear-gradient(180deg,var(--jade),#6B9B6A); border-radius:16px 0 0 16px; }
 
-        .alert-warning::before {
-            content: '';
-            position: absolute;
-            left: 0; top: 0; bottom: 0;
-            width: 4px;
-            background: linear-gradient(180deg, var(--gold), var(--gold-light));
-            border-radius: 16px 0 0 16px;
-        }
-
-        .alert-success {
-            border-color: rgba(88, 129, 87, 0.2);
-            background: linear-gradient(135deg, #F5FBF5 0%, #FFFFFF 100%);
-            color: var(--jade);
-        }
-
-        .alert-success::before {
-            content: '';
-            position: absolute;
-            left: 0; top: 0; bottom: 0;
-            width: 4px;
-            background: linear-gradient(180deg, var(--jade), #6B9B6A);
-            border-radius: 16px 0 0 16px;
-        }
-
-        .search-box {
-            margin-bottom: 20px;
-            position: relative;
-        }
+        /* ===== SEARCH ===== */
+        .search-box { margin-bottom: 20px; position: relative; }
 
         .search-box input {
             width: 100%;
             padding: 14px 20px 14px 48px;
             background: var(--warm-white);
-            border: 1.5px solid rgba(155, 34, 38, 0.12);
+            border: 1.5px solid rgba(155,34,38,0.12);
             border-radius: 14px;
             color: var(--ink);
             font-family: 'Noto Sans Thai', sans-serif;
@@ -554,24 +539,90 @@
             opacity: 0.5;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 50px 20px;
-            color: var(--ink-muted);
+        /* ===== EMPTY STATE ===== */
+        .empty-state { text-align: center; padding: 50px 20px; color: var(--ink-muted); }
+        .empty-state-icon { font-size: 3.5rem; margin-bottom: 15px; opacity: 0.6; }
+
+        /* ===== EDIT MODAL ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(61, 43, 31, 0.6);
+            z-index: 9000;
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
 
-        .empty-state-icon {
-            font-size: 3.5rem;
-            margin-bottom: 15px;
-            opacity: 0.6;
+        .modal-overlay.show { display: flex; }
+
+        .modal-box {
+            background: #FFFFFF;
+            border-radius: 24px;
+            padding: 32px;
+            width: 100%;
+            max-width: 520px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(155, 34, 38, 0.25);
+            animation: slide-up 0.3s ease;
+            position: relative;
         }
 
+        .modal-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 5px;
+            background: linear-gradient(90deg, var(--crimson), var(--gold), var(--jade));
+            border-radius: 24px 24px 0 0;
+        }
+
+        .modal-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--crimson);
+            margin-bottom: 22px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(155,34,38,0.1);
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px; right: 16px;
+            background: rgba(155,34,38,0.1);
+            border: none;
+            color: var(--crimson);
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            font-size: 1.1rem;
+            cursor: pointer;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover { background: var(--crimson); color: white; }
+
+        /* ===== UTILS ===== */
         .warm-text { color: var(--gold); font-weight: 700; }
         .crimson-text { color: var(--crimson); font-weight: 700; }
 
         .warm-divider {
             height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(155, 34, 38, 0.15), var(--gold), rgba(155, 34, 38, 0.15), transparent);
+            background: linear-gradient(90deg, transparent, rgba(155,34,38,0.15), var(--gold), rgba(155,34,38,0.15), transparent);
             margin: 25px 0;
         }
 
@@ -583,22 +634,28 @@
             font-style: italic;
         }
 
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             .logo { font-size: 2rem; }
             .stats-grid { grid-template-columns: 1fr; gap: 12px; }
             .form-row { grid-template-columns: 1fr; }
+            .form-row-3 { grid-template-columns: 1fr; }
             .nav-tab { font-size: 0.75rem; padding: 14px 6px; min-width: 80px; }
             .content { padding: 18px 15px; }
             .card { padding: 20px; border-radius: 16px; }
-            table { font-size: 0.8rem; }
-            th, td { padding: 12px 8px; }
-            .header::before, .header::after { font-size: 1.5rem; }
+            table { font-size: 0.78rem; }
+            th, td { padding: 10px 7px; }
+            .btn-sm { padding: 6px 10px; font-size: 0.72rem; }
+            .back-btn { left: 54px; font-size: 0.72rem; padding: 5px 10px; }
+            .modal-box { padding: 24px 18px; }
         }
     </style>
 </head>
 <body>
 
+    <!-- HEADER -->
     <div class="header">
+        <a href="index.html" class="back-btn" id="back-btn">← <span data-i18n="btn_back">หน้าหลัก</span></a>
         <div class="logo">Ohoi <span>Kyoza</span></div>
         <div class="subtitle" data-i18n="header_subtitle">ระบบจัดการสต๊อก — ร้านเกี๊ยวซ่าไต้หวัน</div>
         <div class="lang-switcher">
@@ -608,16 +665,18 @@
         </div>
     </div>
 
+    <!-- NAV TABS -->
     <div class="nav-tabs">
-        <button class="nav-tab active" onclick="showTab('dashboard')" data-i18n="tab_dashboard">📊 แดชบอร์ด</button>
-        <button class="nav-tab" onclick="showTab('products')" data-i18n="tab_products">📦 สินค้า</button>
-        <button class="nav-tab" onclick="showTab('stock-in')" data-i18n="tab_stock_in">📥 รับเข้า</button>
-        <button class="nav-tab" onclick="showTab('stock-out')" data-i18n="tab_stock_out">📤 จ่ายออก</button>
-        <button class="nav-tab" onclick="showTab('history')" data-i18n="tab_history">📋 ประวัติ</button>
+        <button class="nav-tab active" onclick="showTab('dashboard', this)" data-i18n="tab_dashboard">📊 แดชบอร์ด</button>
+        <button class="nav-tab" onclick="showTab('products', this)" data-i18n="tab_products">📦 สินค้า</button>
+        <button class="nav-tab" onclick="showTab('stock-in', this)" data-i18n="tab_stock_in">📥 รับเข้า</button>
+        <button class="nav-tab" onclick="showTab('stock-out', this)" data-i18n="tab_stock_out">📤 จ่ายออก</button>
+        <button class="nav-tab" onclick="showTab('history', this)" data-i18n="tab_history">📋 ประวัติ</button>
     </div>
 
     <div class="content">
-        
+
+        <!-- DASHBOARD TAB -->
         <div id="dashboard" class="tab-content active">
             <div class="stats-grid">
                 <div class="stat-card">
@@ -639,30 +698,46 @@
             </div>
         </div>
 
+        <!-- PRODUCTS TAB -->
         <div id="products" class="tab-content">
             <div class="card">
                 <div class="card-title" data-i18n="add_product_title">➕ เพิ่มสินค้าใหม่</div>
                 <form id="product-form" onsubmit="addProduct(event)">
+
                     <div class="form-row">
                         <div class="form-group">
                             <label data-i18n="label_code">รหัสสินค้า</label>
                             <input type="text" id="prod-code" placeholder="RAW-001" required>
                         </div>
                         <div class="form-group">
-                            <label data-i18n="label_name">ชื่อสินค้า</label>
-                            <input type="text" id="prod-name" placeholder="เนื้อหมูสับ" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
                             <label data-i18n="label_category">หมวดหมู่</label>
                             <select id="prod-category" required></select>
                         </div>
                         <div class="form-group">
-                            <label data-i18n="label_unit">หน่วย</label>
+                            <label data-i18n="label_unit">หน่วยนับ</label>
                             <select id="prod-unit" required></select>
                         </div>
                     </div>
+
+                    <!-- ชื่อสินค้า 3 ภาษา -->
+                    <div class="lang-name-section">
+                        <div class="lang-label" data-i18n="label_name_multilang">ชื่อสินค้า (กรอกทุกภาษา)</div>
+                        <div class="form-row-3">
+                            <div class="form-group" style="margin-bottom:0">
+                                <label>🇹🇭 ภาษาไทย *</label>
+                                <input type="text" id="prod-name-th" placeholder="เนื้อหมูสับ" required>
+                            </div>
+                            <div class="form-group" style="margin-bottom:0">
+                                <label>🇬🇧 English</label>
+                                <input type="text" id="prod-name-en" placeholder="Minced Pork">
+                            </div>
+                            <div class="form-group" style="margin-bottom:0">
+                                <label>🇨🇳 中文</label>
+                                <input type="text" id="prod-name-zh" placeholder="猪肉末">
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="form-row">
                         <div class="form-group">
                             <label data-i18n="label_min">สต๊อกขั้นต่ำ</label>
@@ -684,10 +759,11 @@
                     <button type="submit" class="btn btn-primary" data-i18n="btn_save_product">💾 บันทึกสินค้า</button>
                 </form>
             </div>
+
             <div class="card">
-                <div class="card-title" data-i18n="product_list_title">📋 รายการสินค้า</div>
+                <div class="card-title" data-i18n="product_list_title">📋 รายการสินค้าทั้งหมด</div>
                 <div class="search-box">
-                    <input type="text" id="product-search" placeholder="ค้นหาสินค้า..." onkeyup="searchProducts()">
+                    <input type="text" id="product-search" data-i18n-placeholder="placeholder_search_product" placeholder="ค้นหาสินค้า..." onkeyup="renderProducts()">
                 </div>
                 <div class="table-container">
                     <div id="products-table-container"></div>
@@ -695,9 +771,10 @@
             </div>
         </div>
 
+        <!-- STOCK IN TAB -->
         <div id="stock-in" class="tab-content">
             <div class="card">
-                <div class="card-title" data-i18n="stock_in_title">📥 รับสินค้าเข้า</div>
+                <div class="card-title" data-i18n="stock_in_title">📥 บันทึกรับสินค้าเข้า</div>
                 <form id="stock-in-form" onsubmit="addStockIn(event)">
                     <div class="form-row">
                         <div class="form-group">
@@ -705,17 +782,17 @@
                             <select id="in-product" required></select>
                         </div>
                         <div class="form-group">
-                            <label data-i18n="label_quantity_in">จำนวน</label>
+                            <label data-i18n="label_quantity_in">จำนวนที่รับเข้า</label>
                             <input type="number" id="in-quantity" min="0.01" step="0.01" required>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label data-i18n="label_price">ราคา/หน่วย (บาท)</label>
+                            <label data-i18n="label_price">ราคาต้นทุน/หน่วย (บาท)</label>
                             <input type="number" id="in-price" min="0" step="0.01" placeholder="45.50">
                         </div>
                         <div class="form-group">
-                            <label data-i18n="label_expiry_new">วันหมดอายุใหม่</label>
+                            <label data-i18n="label_expiry_new">วันหมดอายุใหม่ (ถ้ามี)</label>
                             <input type="date" id="in-expiry">
                         </div>
                     </div>
@@ -728,9 +805,10 @@
             </div>
         </div>
 
+        <!-- STOCK OUT TAB -->
         <div id="stock-out" class="tab-content">
             <div class="card">
-                <div class="card-title" data-i18n="stock_out_title">📤 จ่ายสินค้าออก</div>
+                <div class="card-title" data-i18n="stock_out_title">📤 บันทึกจ่ายสินค้าออก</div>
                 <form id="stock-out-form" onsubmit="addStockOut(event)">
                     <div class="form-row">
                         <div class="form-group">
@@ -738,13 +816,13 @@
                             <select id="out-product" required></select>
                         </div>
                         <div class="form-group">
-                            <label data-i18n="label_quantity_out">จำนวน</label>
+                            <label data-i18n="label_quantity_out">จำนวนที่จ่ายออก</label>
                             <input type="number" id="out-quantity" min="0.01" step="0.01" required>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label data-i18n="label_out_type">ประเภท</label>
+                            <label data-i18n="label_out_type">ประเภทการจ่ายออก</label>
                             <select id="out-type" required></select>
                         </div>
                         <div class="form-group">
@@ -753,7 +831,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label data-i18n="label_note_extra">หมายเหตุ</label>
+                        <label data-i18n="label_note_extra">หมายเหตุเพิ่มเติม</label>
                         <input type="text" id="out-note" placeholder="รายละเอียดเพิ่มเติม">
                     </div>
                     <button type="submit" class="btn btn-danger" data-i18n="btn_stock_out">📤 บันทึกจ่ายออก</button>
@@ -761,15 +839,89 @@
             </div>
         </div>
 
+        <!-- HISTORY TAB -->
         <div id="history" class="tab-content">
             <div class="card">
                 <div class="card-title" data-i18n="history_title">📋 ประวัติการเคลื่อนไหว</div>
                 <div class="search-box">
-                    <input type="text" id="history-search" placeholder="ค้นหาประวัติ..." onkeyup="searchHistory()">
+                    <input type="text" id="history-search" data-i18n-placeholder="placeholder_search_history" placeholder="ค้นหาประวัติ..." onkeyup="renderHistory()">
                 </div>
                 <div class="table-container">
                     <div id="history-table-container"></div>
                 </div>
+            </div>
+        </div>
+
+    </div><!-- /content -->
+
+    <!-- ===== EDIT MODAL ===== -->
+    <div class="modal-overlay" id="edit-modal">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeEditModal()">✕</button>
+            <div class="modal-title" data-i18n="modal_edit_title">✏️ แก้ไขสินค้า</div>
+
+            <input type="hidden" id="edit-id">
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label data-i18n="label_code">รหัสสินค้า</label>
+                    <input type="text" id="edit-code">
+                </div>
+                <div class="form-group">
+                    <label data-i18n="label_category">หมวดหมู่</label>
+                    <select id="edit-category"></select>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="label_unit">หน่วยนับ</label>
+                    <select id="edit-unit"></select>
+                </div>
+            </div>
+
+            <!-- ชื่อ 3 ภาษา -->
+            <div class="lang-name-section">
+                <div class="lang-label" data-i18n="label_name_multilang">ชื่อสินค้า (ทุกภาษา)</div>
+                <div class="form-row-3">
+                    <div class="form-group" style="margin-bottom:0">
+                        <label>🇹🇭 ภาษาไทย</label>
+                        <input type="text" id="edit-name-th">
+                    </div>
+                    <div class="form-group" style="margin-bottom:0">
+                        <label>🇬🇧 English</label>
+                        <input type="text" id="edit-name-en">
+                    </div>
+                    <div class="form-group" style="margin-bottom:0">
+                        <label>🇨🇳 中文</label>
+                        <input type="text" id="edit-name-zh">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label data-i18n="label_stock">สต๊อกปัจจุบัน</label>
+                    <input type="number" id="edit-stock" min="0" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label data-i18n="label_min">สต๊อกขั้นต่ำ</label>
+                    <input type="number" id="edit-min" min="0" step="0.01">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label data-i18n="label_expiry">วันหมดอายุ</label>
+                    <input type="date" id="edit-expiry">
+                </div>
+                <div class="form-group">
+                    <label data-i18n="label_location">ที่จัดเก็บ</label>
+                    <input type="text" id="edit-location">
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="saveEdit()" data-i18n="btn_save_edit">💾 บันทึกการแก้ไข</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteProductFromModal()" data-i18n="btn_delete">🗑️ ลบสินค้า</button>
+                <button class="btn btn-sm" style="background:var(--cream);color:var(--ink);" onclick="closeEditModal()" data-i18n="btn_cancel">ยกเลิก</button>
             </div>
         </div>
     </div>
@@ -778,492 +930,672 @@
         🏮 Ohoi Kyoza — บ้านหลังที่สองของคุณ 🥟
     </div>
 
-    <script>
-        // ===== DROPDOWN OPTIONS DATA =====
-        const dropdownData = {
-            categories: {
-                fresh: { th: '🥩 วัตถุดิบสด', en: '🥩 Fresh Ingredients', zh: '🥩 新鲜食材' },
-                dry: { th: '🧂 เครื่องปรุง', en: '🧂 Seasonings', zh: '🧂 调味料' },
-                frozen: { th: '🧊 แช่แข็ง', en: '🧊 Frozen', zh: '🧊 冷冻' },
-                drink: { th: '🥤 เครื่องดื่ม', en: '🥤 Drinks', zh: '🥤 饮料' },
-                packaging: { th: '📦 บรรจุภัณฑ์', en: '📦 Packaging', zh: '📦 包装材料' },
-                other: { th: '🔧 อื่นๆ', en: '🔧 Others', zh: '🔧 其他' }
-            },
-            units: {
-                kg: { th: 'กิโลกรัม (kg)', en: 'Kilogram (kg)', zh: '公斤 (kg)' },
-                g: { th: 'กรัม (g)', en: 'Gram (g)', zh: '克 (g)' },
-                l: { th: 'ลิตร (L)', en: 'Liter (L)', zh: '升 (L)' },
-                ml: { th: 'มิลลิลิตร (ml)', en: 'Milliliter (ml)', zh: '毫升 (ml)' },
-                bottle: { th: 'ขวด', en: 'Bottle', zh: '瓶' },
-                can: { th: 'กระป๋อง', en: 'Can', zh: '罐' },
-                box: { th: 'กล่อง', en: 'Box', zh: '盒' },
-                pack: { th: 'ซอง', en: 'Pack', zh: '包' },
-                piece: { th: 'ชิ้น', en: 'Piece', zh: '个' },
-                bag: { th: 'ถุง', en: 'Bag', zh: '袋' }
-            },
-            outTypes: {
-                cooking: { th: '👨‍🍳 ใช้ทำอาหาร', en: '👨‍🍳 Cooking', zh: '👨‍🍳 烹饪用' },
-                damaged: { th: '💔 เสียหาย', en: '💔 Damaged', zh: '💔 损坏' },
-                expired: { th: '⏰ หมดอายุ', en: '⏰ Expired', zh: '⏰ 过期' },
-                return: { th: '↩️ ส่งคืน', en: '↩️ Return', zh: '↩️ 退货' },
-                other: { th: '📝 อื่นๆ', en: '📝 Others', zh: '📝 其他' }
-            }
-        };
-
-        // ===== TRANSLATIONS =====
-        const translations = {
-            th: {
-                header_subtitle: "ระบบจัดการสต๊อก — ร้านเกี๊ยวซ่าไต้หวัน",
-                tab_dashboard: "📊 แดชบอร์ด", tab_products: "📦 สินค้า",
-                tab_stock_in: "📥 รับเข้า", tab_stock_out: "📤 จ่ายออก", tab_history: "📋 ประวัติ",
-                stat_total: "รายการสินค้า", stat_low: "สินค้าใกล้หมด", stat_expiring: "ใกล้หมดอายุ",
-                alerts_title: "⚠️ แจ้งเตือน",
-                alert_no_issue: "✅ ไม่มีปัญหา! สต๊อกปกติทุกรายการ",
-                alert_low_stock: "⚠️ สินค้าใกล้หมดสต๊อก:",
-                alert_expired: "🚨 สินค้าหมดอายุแล้ว:",
-                alert_expiring: "⏰ สินค้าใกล้หมดอายุ (7 วัน):",
-                add_product_title: "➕ เพิ่มสินค้าใหม่",
-                label_code: "รหัสสินค้า", label_name: "ชื่อสินค้า",
-                label_category: "หมวดหมู่", label_unit: "หน่วยนับ",
-                label_min: "สต๊อกขั้นต่ำ", label_stock: "สต๊อกเริ่มต้น",
-                label_expiry: "วันหมดอายุ (ถ้ามี)", label_location: "ที่จัดเก็บ",
-                label_select_product: "เลือกสินค้า", label_quantity_in: "จำนวนที่รับเข้า",
-                label_price: "ราคาต้นทุน/หน่วย (บาท)", label_expiry_new: "วันหมดอายุใหม่ (ถ้ามี)",
-                label_note: "หมายเหตุ", label_quantity_out: "จำนวนที่จ่ายออก",
-                label_out_type: "ประเภทการจ่ายออก", label_reason: "เมนู/เหตุผล",
-                label_note_extra: "หมายเหตุเพิ่มเติม",
-                btn_save_product: "💾 บันทึกสินค้า", btn_stock_in: "✅ บันทึกรับเข้า",
-                btn_stock_out: "📤 บันทึกจ่ายออก",
-                product_list_title: "📋 รายการสินค้าทั้งหมด",
-                stock_in_title: "📥 บันทึกรับสินค้าเข้า",
-                stock_out_title: "📤 บันทึกจ่ายสินค้าออก",
-                history_title: "📋 ประวัติการเคลื่อนไหว",
-                table_code: "รหัส", table_name: "ชื่อสินค้า", table_category: "หมวดหมู่",
-                table_stock: "คงเหลือ", table_min: "ขั้นต่ำ", table_status: "สถานะ",
-                table_expiry: "วันหมดอายุ", table_action: "จัดการ",
-                table_date: "วันที่", table_type: "ประเภท", table_quantity: "จำนวน", table_detail: "รายละเอียด",
-                status_normal: "ปกติ", status_low: "ใกล้หมด", status_out: "หมด!",
-                empty_products: "ยังไม่มีรายการสินค้า", empty_history: "ยังไม่มีประวัติการเคลื่อนไหว",
-                msg_add_success: "✅ เพิ่มสินค้าเรียบร้อยแล้ว!",
-                msg_stock_in_success: "✅ รับเข้า {name} จำนวน {qty} {unit} เรียบร้อยแล้ว!",
-                msg_stock_out_success: "✅ จ่ายออก {name} จำนวน {qty} {unit} เรียบร้อยแล้ว!",
-                msg_stock_low: "❌ สต๊อกไม่พอ! คงเหลือ {stock} {unit}",
-                msg_delete_confirm: "ต้องการลบสินค้านี้ใช่หรือไม่?",
-                days_left: "อีก {days} วัน",
-                in_type: "📥 รับเข้า", out_type: "📤 จ่ายออก",
-                select_category: "เลือกหมวดหมู่", select_unit: "เลือกหน่วย", select_type: "เลือกประเภท"
-            },
-            en: {
-                header_subtitle: "Stock System — Taiwanese Gyoza Restaurant",
-                tab_dashboard: "📊 Dashboard", tab_products: "📦 Products",
-                tab_stock_in: "📥 Stock In", tab_stock_out: "📤 Stock Out", tab_history: "📋 History",
-                stat_total: "Total Items", stat_low: "Low Stock", stat_expiring: "Expiring Soon",
-                alerts_title: "⚠️ Alerts",
-                alert_no_issue: "✅ All good! Stock levels are normal",
-                alert_low_stock: "⚠️ Low Stock Items:",
-                alert_expired: "🚨 Expired Items:",
-                alert_expiring: "⏰ Expiring Soon (7 days):",
-                add_product_title: "➕ Add New Product",
-                label_code: "Product Code", label_name: "Product Name",
-                label_category: "Category", label_unit: "Unit",
-                label_min: "Min Stock", label_stock: "Initial Stock",
-                label_expiry: "Expiry Date (if any)", label_location: "Storage Location",
-                label_select_product: "Select Product", label_quantity_in: "Quantity In",
-                label_price: "Cost per Unit (THB)", label_expiry_new: "New Expiry Date (if any)",
-                label_note: "Note", label_quantity_out: "Quantity Out",
-                label_out_type: "Out Type", label_reason: "Menu/Reason",
-                label_note_extra: "Additional Note",
-                btn_save_product: "💾 Save Product", btn_stock_in: "✅ Save Stock In",
-                btn_stock_out: "📤 Save Stock Out",
-                product_list_title: "📋 All Products",
-                stock_in_title: "📥 Record Stock In",
-                stock_out_title: "📤 Record Stock Out",
-                history_title: "📋 Transaction History",
-                table_code: "Code", table_name: "Product", table_category: "Category",
-                table_stock: "Stock", table_min: "Min", table_status: "Status",
-                table_expiry: "Expiry", table_action: "Action",
-                table_date: "Date", table_type: "Type", table_quantity: "Qty", table_detail: "Details",
-                status_normal: "Normal", status_low: "Low", status_out: "Out!",
-                empty_products: "No products yet", empty_history: "No transactions yet",
-                msg_add_success: "✅ Product added successfully!",
-                msg_stock_in_success: "✅ Stock in {name} qty {qty} {unit} saved!",
-                msg_stock_out_success: "✅ Stock out {name} qty {qty} {unit} saved!",
-                msg_stock_low: "❌ Not enough stock! Remaining: {stock} {unit}",
-                msg_delete_confirm: "Delete this product?",
-                days_left: "{days} days left",
-                in_type: "📥 Stock In", out_type: "📤 Stock Out",
-                select_category: "Select Category", select_unit: "Select Unit", select_type: "Select Type"
-            },
-            zh: {
-                header_subtitle: "库存系统 — 台湾饺子店",
-                tab_dashboard: "📊 仪表板", tab_products: "📦 商品",
-                tab_stock_in: "📥 入库", tab_stock_out: "📤 出库", tab_history: "📋 历史记录",
-                stat_total: "商品总数", stat_low: "库存不足", stat_expiring: "即将过期",
-                alerts_title: "⚠️ 提醒",
-                alert_no_issue: "✅ 一切正常！库存水平正常",
-                alert_low_stock: "⚠️ 库存不足商品：",
-                alert_expired: "🚨 已过期商品：",
-                alert_expiring: "⏰ 即将过期（7天内）：",
-                add_product_title: "➕ 添加新商品",
-                label_code: "商品编码", label_name: "商品名称",
-                label_category: "分类", label_unit: "单位",
-                label_min: "最低库存", label_stock: "初始库存",
-                label_expiry: "保质期（如有）", label_location: "存放位置",
-                label_select_product: "选择商品", label_quantity_in: "入库数量",
-                label_price: "单价（泰铢）", label_expiry_new: "新保质期（如有）",
-                label_note: "备注", label_quantity_out: "出库数量",
-                label_out_type: "出库类型", label_reason: "菜单/原因",
-                label_note_extra: "补充备注",
-                btn_save_product: "💾 保存商品", btn_stock_in: "✅ 保存入库",
-                btn_stock_out: "📤 保存出库",
-                product_list_title: "📋 所有商品",
-                stock_in_title: "📥 记录入库",
-                stock_out_title: "📤 记录出库",
-                history_title: "📋 交易历史",
-                table_code: "编码", table_name: "商品", table_category: "分类",
-                table_stock: "库存", table_min: "最低", table_status: "状态",
-                table_expiry: "保质期", table_action: "操作",
-                table_date: "日期", table_type: "类型", table_quantity: "数量", table_detail: "详情",
-                status_normal: "正常", status_low: "不足", status_out: "缺货!",
-                empty_products: "暂无商品", empty_history: "暂无交易记录",
-                msg_add_success: "✅ 商品添加成功！",
-                msg_stock_in_success: "✅ 入库 {name} 数量 {qty} {unit} 已保存！",
-                msg_stock_out_success: "✅ 出库 {name} 数量 {qty} {unit} 已保存！",
-                msg_stock_low: "❌ 库存不足！剩余 {stock} {unit}",
-                msg_delete_confirm: "确定删除此商品？",
-                days_left: "还剩 {days} 天",
-                in_type: "📥 入库", out_type: "📤 出库",
-                select_category: "选择分类", select_unit: "选择单位", select_type: "选择类型"
-            }
-        };
-
-        // ===== STATE =====
-        let currentLang = localStorage.getItem('ok_lang') || 'th';
-        let products = JSON.parse(localStorage.getItem('ok_products')) || [];
-        let transactions = JSON.parse(localStorage.getItem('ok_transactions')) || [];
-
-        // ===== RENDER DROPDOWNS =====
-        function renderDropdowns() {
-            // Categories
-            const catSelect = document.getElementById('prod-category');
-            catSelect.innerHTML = `<option value="">${t('select_category')}</option>` +
-                Object.entries(dropdownData.categories).map(([key, val]) => 
-                    `<option value="${key}">${val[currentLang]}</option>`
-                ).join('');
-
-            // Units
-            const unitSelect = document.getElementById('prod-unit');
-            unitSelect.innerHTML = `<option value="">${t('select_unit')}</option>` +
-                Object.entries(dropdownData.units).map(([key, val]) => 
-                    `<option value="${key}">${val[currentLang]}</option>`
-                ).join('');
-
-            // Out types
-            const outTypeSelect = document.getElementById('out-type');
-            outTypeSelect.innerHTML = `<option value="">${t('select_type')}</option>` +
-                Object.entries(dropdownData.outTypes).map(([key, val]) => 
-                    `<option value="${key}">${val[currentLang]}</option>`
-                ).join('');
+<script>
+    // ===== DROPDOWN DATA (3 ภาษา) =====
+    const dropdownData = {
+        categories: {
+            fresh:     { th: '🥩 วัตถุดิบสด',    en: '🥩 Fresh',       zh: '🥩 新鲜食材' },
+            dry:       { th: '🧂 เครื่องปรุง',    en: '🧂 Seasonings',  zh: '🧂 调味料' },
+            frozen:    { th: '🧊 แช่แข็ง',       en: '🧊 Frozen',      zh: '🧊 冷冻' },
+            drink:     { th: '🥤 เครื่องดื่ม',   en: '🥤 Drinks',      zh: '🥤 饮料' },
+            packaging: { th: '📦 บรรจุภัณฑ์',   en: '📦 Packaging',   zh: '📦 包装材料' },
+            other:     { th: '🔧 อื่นๆ',         en: '🔧 Others',      zh: '🔧 其他' }
+        },
+        units: {
+            kg:     { th: 'กิโลกรัม (kg)', en: 'Kilogram (kg)',     zh: '公斤 (kg)' },
+            g:      { th: 'กรัม (g)',      en: 'Gram (g)',           zh: '克 (g)' },
+            l:      { th: 'ลิตร (L)',      en: 'Liter (L)',          zh: '升 (L)' },
+            ml:     { th: 'มิลลิลิตร (ml)', en: 'Milliliter (ml)', zh: '毫升 (ml)' },
+            bottle: { th: 'ขวด',           en: 'Bottle',            zh: '瓶' },
+            can:    { th: 'กระป๋อง',       en: 'Can',               zh: '罐' },
+            box:    { th: 'กล่อง',         en: 'Box',               zh: '盒' },
+            pack:   { th: 'ซอง',           en: 'Pack',              zh: '包' },
+            piece:  { th: 'ชิ้น',          en: 'Piece',             zh: '个' },
+            bag:    { th: 'ถุง',           en: 'Bag',               zh: '袋' }
+        },
+        outTypes: {
+            cooking: { th: '👨‍🍳 ใช้ทำอาหาร', en: '👨‍🍳 Cooking', zh: '👨‍🍳 烹饪用' },
+            damaged: { th: '💔 เสียหาย',    en: '💔 Damaged',  zh: '💔 损坏' },
+            expired: { th: '⏰ หมดอายุ',    en: '⏰ Expired',  zh: '⏰ 过期' },
+            return:  { th: '↩️ ส่งคืน',    en: '↩️ Return',   zh: '↩️ 退货' },
+            other:   { th: '📝 อื่นๆ',      en: '📝 Others',   zh: '📝 其他' }
         }
+    };
 
-        // ===== GET DISPLAY NAME =====
-        function getCategoryDisplay(key) {
-            return dropdownData.categories[key]?.[currentLang] || key;
+    // ===== TRANSLATIONS =====
+    const translations = {
+        th: {
+            btn_back: "หน้าหลัก",
+            header_subtitle: "ระบบจัดการสต๊อก — ร้านเกี๊ยวซ่าไต้หวัน",
+            tab_dashboard: "📊 แดชบอร์ด", tab_products: "📦 สินค้า",
+            tab_stock_in: "📥 รับเข้า", tab_stock_out: "📤 จ่ายออก", tab_history: "📋 ประวัติ",
+            stat_total: "รายการสินค้า", stat_low: "สินค้าใกล้หมด", stat_expiring: "ใกล้หมดอายุ",
+            alerts_title: "⚠️ แจ้งเตือน",
+            alert_no_issue: "✅ ไม่มีปัญหา! สต๊อกปกติทุกรายการ",
+            alert_low_stock: "⚠️ สินค้าใกล้หมดสต๊อก:",
+            alert_expired: "🚨 สินค้าหมดอายุแล้ว:",
+            alert_expiring: "⏰ สินค้าใกล้หมดอายุ (7 วัน):",
+            add_product_title: "➕ เพิ่มสินค้าใหม่",
+            label_name_multilang: "ชื่อสินค้า (กรอกทุกภาษา)",
+            label_code: "รหัสสินค้า", label_category: "หมวดหมู่", label_unit: "หน่วยนับ",
+            label_min: "สต๊อกขั้นต่ำ", label_stock: "สต๊อกเริ่มต้น",
+            label_expiry: "วันหมดอายุ (ถ้ามี)", label_location: "ที่จัดเก็บ",
+            label_select_product: "เลือกสินค้า", label_quantity_in: "จำนวนที่รับเข้า",
+            label_price: "ราคาต้นทุน/หน่วย (บาท)", label_expiry_new: "วันหมดอายุใหม่ (ถ้ามี)",
+            label_note: "หมายเหตุ", label_quantity_out: "จำนวนที่จ่ายออก",
+            label_out_type: "ประเภทการจ่ายออก", label_reason: "เมนู/เหตุผล",
+            label_note_extra: "หมายเหตุเพิ่มเติม",
+            btn_save_product: "💾 บันทึกสินค้า", btn_stock_in: "✅ บันทึกรับเข้า",
+            btn_stock_out: "📤 บันทึกจ่ายออก",
+            modal_edit_title: "✏️ แก้ไขสินค้า",
+            btn_save_edit: "💾 บันทึกการแก้ไข",
+            btn_delete: "🗑️ ลบสินค้า",
+            btn_cancel: "ยกเลิก",
+            btn_edit: "✏️ แก้ไข",
+            product_list_title: "📋 รายการสินค้าทั้งหมด",
+            stock_in_title: "📥 บันทึกรับสินค้าเข้า",
+            stock_out_title: "📤 บันทึกจ่ายสินค้าออก",
+            history_title: "📋 ประวัติการเคลื่อนไหว",
+            table_code: "รหัส", table_name: "ชื่อสินค้า", table_category: "หมวดหมู่",
+            table_stock: "คงเหลือ", table_min: "ขั้นต่ำ", table_status: "สถานะ",
+            table_expiry: "วันหมดอายุ", table_action: "จัดการ",
+            table_date: "วันที่", table_type: "ประเภท", table_quantity: "จำนวน", table_detail: "รายละเอียด",
+            status_normal: "ปกติ", status_low: "ใกล้หมด", status_out: "หมด!",
+            empty_products: "ยังไม่มีรายการสินค้า", empty_history: "ยังไม่มีประวัติการเคลื่อนไหว",
+            msg_add_success: "✅ เพิ่มสินค้าเรียบร้อยแล้ว!",
+            msg_edit_success: "✅ แก้ไขสินค้าเรียบร้อยแล้ว!",
+            msg_stock_in_success: "✅ รับเข้า {name} จำนวน {qty} {unit} เรียบร้อยแล้ว!",
+            msg_stock_out_success: "✅ จ่ายออก {name} จำนวน {qty} {unit} เรียบร้อยแล้ว!",
+            msg_stock_low: "❌ สต๊อกไม่พอ! คงเหลือ {stock} {unit}",
+            msg_delete_confirm: "ต้องการลบสินค้า '{name}' ใช่หรือไม่?\nการลบจะไม่สามารถกู้คืนได้",
+            days_left: "อีก {days} วัน",
+            in_type: "📥 รับเข้า", out_type: "📤 จ่ายออก",
+            select_category: "เลือกหมวดหมู่", select_unit: "เลือกหน่วย", select_type: "เลือกประเภท",
+            placeholder_search_product: "ค้นหาสินค้า...", placeholder_search_history: "ค้นหาประวัติ..."
+        },
+        en: {
+            btn_back: "Home",
+            header_subtitle: "Stock System — Taiwanese Gyoza Restaurant",
+            tab_dashboard: "📊 Dashboard", tab_products: "📦 Products",
+            tab_stock_in: "📥 Stock In", tab_stock_out: "📤 Stock Out", tab_history: "📋 History",
+            stat_total: "Total Items", stat_low: "Low Stock", stat_expiring: "Expiring Soon",
+            alerts_title: "⚠️ Alerts",
+            alert_no_issue: "✅ All good! Stock levels are normal",
+            alert_low_stock: "⚠️ Low Stock Items:",
+            alert_expired: "🚨 Expired Items:",
+            alert_expiring: "⏰ Expiring Soon (7 days):",
+            add_product_title: "➕ Add New Product",
+            label_name_multilang: "Product Name (fill all languages)",
+            label_code: "Product Code", label_category: "Category", label_unit: "Unit",
+            label_min: "Min Stock", label_stock: "Initial Stock",
+            label_expiry: "Expiry Date (if any)", label_location: "Storage Location",
+            label_select_product: "Select Product", label_quantity_in: "Quantity In",
+            label_price: "Cost per Unit (THB)", label_expiry_new: "New Expiry Date (if any)",
+            label_note: "Note", label_quantity_out: "Quantity Out",
+            label_out_type: "Out Type", label_reason: "Menu/Reason",
+            label_note_extra: "Additional Note",
+            btn_save_product: "💾 Save Product", btn_stock_in: "✅ Save Stock In",
+            btn_stock_out: "📤 Save Stock Out",
+            modal_edit_title: "✏️ Edit Product",
+            btn_save_edit: "💾 Save Changes",
+            btn_delete: "🗑️ Delete",
+            btn_cancel: "Cancel",
+            btn_edit: "✏️ Edit",
+            product_list_title: "📋 All Products",
+            stock_in_title: "📥 Record Stock In",
+            stock_out_title: "📤 Record Stock Out",
+            history_title: "📋 Transaction History",
+            table_code: "Code", table_name: "Product", table_category: "Category",
+            table_stock: "Stock", table_min: "Min", table_status: "Status",
+            table_expiry: "Expiry", table_action: "Action",
+            table_date: "Date", table_type: "Type", table_quantity: "Qty", table_detail: "Details",
+            status_normal: "Normal", status_low: "Low", status_out: "Out!",
+            empty_products: "No products yet", empty_history: "No transactions yet",
+            msg_add_success: "✅ Product added successfully!",
+            msg_edit_success: "✅ Product updated successfully!",
+            msg_stock_in_success: "✅ Stock in {name} qty {qty} {unit} saved!",
+            msg_stock_out_success: "✅ Stock out {name} qty {qty} {unit} saved!",
+            msg_stock_low: "❌ Not enough stock! Remaining: {stock} {unit}",
+            msg_delete_confirm: "Delete product '{name}'?\nThis cannot be undone.",
+            days_left: "{days} days left",
+            in_type: "📥 Stock In", out_type: "📤 Stock Out",
+            select_category: "Select Category", select_unit: "Select Unit", select_type: "Select Type",
+            placeholder_search_product: "Search products...", placeholder_search_history: "Search history..."
+        },
+        zh: {
+            btn_back: "首页",
+            header_subtitle: "库存系统 — 台湾饺子店",
+            tab_dashboard: "📊 仪表板", tab_products: "📦 商品",
+            tab_stock_in: "📥 入库", tab_stock_out: "📤 出库", tab_history: "📋 历史记录",
+            stat_total: "商品总数", stat_low: "库存不足", stat_expiring: "即将过期",
+            alerts_title: "⚠️ 提醒",
+            alert_no_issue: "✅ 一切正常！库存水平正常",
+            alert_low_stock: "⚠️ 库存不足商品：",
+            alert_expired: "🚨 已过期商品：",
+            alert_expiring: "⏰ 即将过期（7天内）：",
+            add_product_title: "➕ 添加新商品",
+            label_name_multilang: "商品名称（请填写所有语言）",
+            label_code: "商品编码", label_category: "分类", label_unit: "单位",
+            label_min: "最低库存", label_stock: "初始库存",
+            label_expiry: "保质期（如有）", label_location: "存放位置",
+            label_select_product: "选择商品", label_quantity_in: "入库数量",
+            label_price: "单价（泰铢）", label_expiry_new: "新保质期（如有）",
+            label_note: "备注", label_quantity_out: "出库数量",
+            label_out_type: "出库类型", label_reason: "菜单/原因",
+            label_note_extra: "补充备注",
+            btn_save_product: "💾 保存商品", btn_stock_in: "✅ 保存入库",
+            btn_stock_out: "📤 保存出库",
+            modal_edit_title: "✏️ 编辑商品",
+            btn_save_edit: "💾 保存修改",
+            btn_delete: "🗑️ 删除商品",
+            btn_cancel: "取消",
+            btn_edit: "✏️ 编辑",
+            product_list_title: "📋 所有商品",
+            stock_in_title: "📥 记录入库",
+            stock_out_title: "📤 记录出库",
+            history_title: "📋 交易历史",
+            table_code: "编码", table_name: "商品", table_category: "分类",
+            table_stock: "库存", table_min: "最低", table_status: "状态",
+            table_expiry: "保质期", table_action: "操作",
+            table_date: "日期", table_type: "类型", table_quantity: "数量", table_detail: "详情",
+            status_normal: "正常", status_low: "不足", status_out: "缺货!",
+            empty_products: "暂无商品", empty_history: "暂无交易记录",
+            msg_add_success: "✅ 商品添加成功！",
+            msg_edit_success: "✅ 商品修改成功！",
+            msg_stock_in_success: "✅ 入库 {name} 数量 {qty} {unit} 已保存！",
+            msg_stock_out_success: "✅ 出库 {name} 数量 {qty} {unit} 已保存！",
+            msg_stock_low: "❌ 库存不足！剩余 {stock} {unit}",
+            msg_delete_confirm: "确定删除商品 '{name}'？\n删除后无法恢复。",
+            days_left: "还剩 {days} 天",
+            in_type: "📥 入库", out_type: "📤 出库",
+            select_category: "选择分类", select_unit: "选择单位", select_type: "选择类型",
+            placeholder_search_product: "搜索商品...", placeholder_search_history: "搜索记录..."
         }
-        function getUnitDisplay(key) {
-            return dropdownData.units[key]?.[currentLang] || key;
-        }
-        function getOutTypeDisplay(key) {
-            return dropdownData.outTypes[key]?.[currentLang] || key;
-        }
+    };
 
-        // ===== LANGUAGE =====
-        function changeLanguage(lang) {
-            currentLang = lang;
-            localStorage.setItem('ok_lang', lang);
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.lang === lang);
-            });
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.dataset.i18n;
-                if (translations[lang][key]) el.textContent = translations[lang][key];
-            });
-            renderDropdowns();
-            renderProducts();
-            renderHistory();
-            updateDashboard();
-            updateProductSelects();
-        }
+    // ===== STATE =====
+    let currentLang = localStorage.getItem('ok_lang') || 'th';
+    let products = JSON.parse(localStorage.getItem('ok_products')) || [];
+    let transactions = JSON.parse(localStorage.getItem('ok_transactions')) || [];
+    let editingId = null;
 
-        function t(key, params = {}) {
-            let text = translations[currentLang][key] || key;
-            Object.keys(params).forEach(k => { text = text.replace(`{${k}}`, params[k]); });
-            return text;
-        }
+    // ===== TRANSLATION =====
+    function t(key, params = {}) {
+        let text = translations[currentLang][key] || key;
+        Object.keys(params).forEach(k => { text = text.replace(`{${k}}`, params[k]); });
+        return text;
+    }
 
-        // ===== INIT =====
-        document.addEventListener('DOMContentLoaded', () => {
-            renderDropdowns();
-            changeLanguage(currentLang);
+    // ===== GET PRODUCT NAME (by current lang) =====
+    function getProductName(p) {
+        if (currentLang === 'en' && p.name_en) return p.name_en;
+        if (currentLang === 'zh' && p.name_zh) return p.name_zh;
+        return p.name_th || p.name || '—';
+    }
+
+    // ===== DISPLAY HELPERS =====
+    function getCategoryDisplay(key) { return dropdownData.categories[key]?.[currentLang] || key; }
+    function getUnitDisplay(key) { return dropdownData.units[key]?.[currentLang] || key; }
+    function getOutTypeDisplay(key) { return dropdownData.outTypes[key]?.[currentLang] || key; }
+
+    // ===== RENDER DROPDOWNS =====
+    function renderDropdowns() {
+        const catOpts = `<option value="">${t('select_category')}</option>` +
+            Object.entries(dropdownData.categories).map(([k, v]) =>
+                `<option value="${k}">${v[currentLang]}</option>`
+            ).join('');
+
+        const unitOpts = `<option value="">${t('select_unit')}</option>` +
+            Object.entries(dropdownData.units).map(([k, v]) =>
+                `<option value="${k}">${v[currentLang]}</option>`
+            ).join('');
+
+        const outTypeOpts = `<option value="">${t('select_type')}</option>` +
+            Object.entries(dropdownData.outTypes).map(([k, v]) =>
+                `<option value="${k}">${v[currentLang]}</option>`
+            ).join('');
+
+        document.getElementById('prod-category').innerHTML = catOpts;
+        document.getElementById('prod-unit').innerHTML = unitOpts;
+        document.getElementById('out-type').innerHTML = outTypeOpts;
+        // Edit modal dropdowns
+        document.getElementById('edit-category').innerHTML = catOpts;
+        document.getElementById('edit-unit').innerHTML = unitOpts;
+    }
+
+    // ===== LANGUAGE =====
+    function changeLanguage(lang) {
+        currentLang = lang;
+        localStorage.setItem('ok_lang', lang);
+
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.lang === lang);
         });
 
-        // ===== TABS =====
-        function showTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            event.target.classList.add('active');
-            if (tabId === 'dashboard') updateDashboard();
-            if (tabId === 'products') renderProducts();
-            if (tabId === 'history') renderHistory();
-        }
+        // Update data-i18n elements
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.dataset.i18n;
+            if (translations[lang][key]) el.textContent = translations[lang][key];
+        });
 
-        // ===== PRODUCTS =====
-        function addProduct(e) {
-            e.preventDefault();
-            const product = {
-                id: Date.now(),
-                code: document.getElementById('prod-code').value,
-                name: document.getElementById('prod-name').value,
-                category: document.getElementById('prod-category').value,
-                unit: document.getElementById('prod-unit').value,
-                minStock: parseFloat(document.getElementById('prod-min').value),
-                stock: parseFloat(document.getElementById('prod-stock').value),
-                expiry: document.getElementById('prod-expiry').value,
-                location: document.getElementById('prod-location').value,
-                createdAt: new Date().toISOString()
-            };
-            products.push(product);
+        // Update placeholder
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+            const key = el.dataset.i18nPlaceholder;
+            if (translations[lang][key]) el.placeholder = translations[lang][key];
+        });
+
+        renderDropdowns();
+        updateProductSelects();
+        renderProducts();
+        renderHistory();
+        updateDashboard();
+    }
+
+    // ===== INIT =====
+    document.addEventListener('DOMContentLoaded', () => {
+        renderDropdowns();
+        changeLanguage(currentLang);
+    });
+
+    // ===== TABS =====
+    function showTab(tabId, btn) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        if (btn) btn.classList.add('active');
+        if (tabId === 'dashboard') updateDashboard();
+        if (tabId === 'products') renderProducts();
+        if (tabId === 'history') renderHistory();
+    }
+
+    // ===== ADD PRODUCT =====
+    function addProduct(e) {
+        e.preventDefault();
+        const nameTh = document.getElementById('prod-name-th').value.trim();
+        const nameEn = document.getElementById('prod-name-en').value.trim();
+        const nameZh = document.getElementById('prod-name-zh').value.trim();
+
+        const product = {
+            id: Date.now(),
+            code: document.getElementById('prod-code').value.trim(),
+            // เก็บชื่อทั้ง 3 ภาษา
+            name_th: nameTh,
+            name_en: nameEn || nameTh,
+            name_zh: nameZh || nameTh,
+            // compat: name สำหรับระบบอื่น
+            name: nameTh,
+            category: document.getElementById('prod-category').value,
+            unit: document.getElementById('prod-unit').value,
+            minStock: parseFloat(document.getElementById('prod-min').value),
+            stock: parseFloat(document.getElementById('prod-stock').value),
+            expiry: document.getElementById('prod-expiry').value,
+            location: document.getElementById('prod-location').value,
+            createdAt: new Date().toISOString()
+        };
+
+        products.push(product);
+        saveData();
+        document.getElementById('product-form').reset();
+        renderProducts();
+        updateProductSelects();
+        updateDashboard();
+        alert(t('msg_add_success'));
+    }
+
+    // ===== EDIT MODAL =====
+    function openEditModal(id) {
+        const p = products.find(pr => pr.id === id);
+        if (!p) return;
+        editingId = id;
+
+        document.getElementById('edit-id').value = id;
+        document.getElementById('edit-code').value = p.code || '';
+        document.getElementById('edit-name-th').value = p.name_th || p.name || '';
+        document.getElementById('edit-name-en').value = p.name_en || p.name || '';
+        document.getElementById('edit-name-zh').value = p.name_zh || p.name || '';
+        document.getElementById('edit-stock').value = p.stock;
+        document.getElementById('edit-min').value = p.minStock;
+        document.getElementById('edit-expiry').value = p.expiry || '';
+        document.getElementById('edit-location').value = p.location || '';
+
+        // Set select values after renderDropdowns already ran
+        document.getElementById('edit-category').value = p.category || '';
+        document.getElementById('edit-unit').value = p.unit || '';
+
+        document.getElementById('edit-modal').classList.add('show');
+    }
+
+    function closeEditModal() {
+        document.getElementById('edit-modal').classList.remove('show');
+        editingId = null;
+    }
+
+    function saveEdit() {
+        if (!editingId) return;
+        const p = products.find(pr => pr.id === editingId);
+        if (!p) return;
+
+        const nameTh = document.getElementById('edit-name-th').value.trim();
+        const nameEn = document.getElementById('edit-name-en').value.trim();
+        const nameZh = document.getElementById('edit-name-zh').value.trim();
+
+        p.code     = document.getElementById('edit-code').value.trim();
+        p.name_th  = nameTh;
+        p.name_en  = nameEn || nameTh;
+        p.name_zh  = nameZh || nameTh;
+        p.name     = nameTh; // compat
+        p.category = document.getElementById('edit-category').value;
+        p.unit     = document.getElementById('edit-unit').value;
+        p.stock    = parseFloat(document.getElementById('edit-stock').value) || 0;
+        p.minStock = parseFloat(document.getElementById('edit-min').value) || 0;
+        p.expiry   = document.getElementById('edit-expiry').value;
+        p.location = document.getElementById('edit-location').value;
+
+        saveData();
+        closeEditModal();
+        renderProducts();
+        updateProductSelects();
+        updateDashboard();
+        alert(t('msg_edit_success'));
+    }
+
+    // ===== DELETE =====
+    function deleteProduct(id) {
+        const p = products.find(pr => pr.id === id);
+        if (!p) return;
+        if (confirm(t('msg_delete_confirm', { name: getProductName(p) }))) {
+            products = products.filter(pr => pr.id !== id);
             saveData();
-            document.getElementById('product-form').reset();
             renderProducts();
             updateProductSelects();
             updateDashboard();
-            alert(t('msg_add_success'));
         }
+    }
 
-        function deleteProduct(id) {
-            if (confirm(t('msg_delete_confirm'))) {
-                products = products.filter(p => p.id !== id);
-                saveData();
-                renderProducts();
-                updateProductSelects();
-                updateDashboard();
-            }
-        }
-
-        // ===== STOCK IN =====
-        function addStockIn(e) {
-            e.preventDefault();
-            const productId = parseInt(document.getElementById('in-product').value);
-            const quantity = parseFloat(document.getElementById('in-quantity').value);
-            const price = parseFloat(document.getElementById('in-price').value) || 0;
-            const expiry = document.getElementById('in-expiry').value;
-            const note = document.getElementById('in-note').value;
-            const product = products.find(p => p.id === productId);
-            if (!product) return;
-            product.stock += quantity;
-            if (expiry) product.expiry = expiry;
-            const transaction = {
-                id: Date.now(), type: 'in', productId, productName: product.name,
-                productCode: product.code, quantity, price, total: price * quantity,
-                note, date: new Date().toISOString()
-            };
-            transactions.push(transaction);
+    function deleteProductFromModal() {
+        if (!editingId) return;
+        const p = products.find(pr => pr.id === editingId);
+        if (!p) return;
+        if (confirm(t('msg_delete_confirm', { name: getProductName(p) }))) {
+            products = products.filter(pr => pr.id !== editingId);
             saveData();
-            document.getElementById('stock-in-form').reset();
+            closeEditModal();
             renderProducts();
+            updateProductSelects();
             updateDashboard();
-            alert(t('msg_stock_in_success', {name: product.name, qty: quantity, unit: getUnitDisplay(product.unit)}));
+        }
+    }
+
+    // Close modal when clicking overlay
+    document.getElementById('edit-modal').addEventListener('click', function(e) {
+        if (e.target === this) closeEditModal();
+    });
+
+    // ===== STOCK IN =====
+    function addStockIn(e) {
+        e.preventDefault();
+        const productId = parseInt(document.getElementById('in-product').value);
+        const quantity  = parseFloat(document.getElementById('in-quantity').value);
+        const price     = parseFloat(document.getElementById('in-price').value) || 0;
+        const expiry    = document.getElementById('in-expiry').value;
+        const note      = document.getElementById('in-note').value;
+        const product   = products.find(p => p.id === productId);
+        if (!product) return;
+
+        product.stock += quantity;
+        if (expiry) product.expiry = expiry;
+
+        transactions.push({
+            id: Date.now(), type: 'in', productId,
+            productName: getProductName(product),
+            productCode: product.code, quantity, price,
+            total: price * quantity, note, date: new Date().toISOString()
+        });
+
+        saveData();
+        document.getElementById('stock-in-form').reset();
+        renderProducts();
+        updateDashboard();
+        alert(t('msg_stock_in_success', { name: getProductName(product), qty: quantity, unit: getUnitDisplay(product.unit) }));
+    }
+
+    // ===== STOCK OUT =====
+    function addStockOut(e) {
+        e.preventDefault();
+        const productId = parseInt(document.getElementById('out-product').value);
+        const quantity  = parseFloat(document.getElementById('out-quantity').value);
+        const type      = document.getElementById('out-type').value;
+        const reason    = document.getElementById('out-reason').value;
+        const note      = document.getElementById('out-note').value;
+        const product   = products.find(p => p.id === productId);
+        if (!product) return;
+
+        if (product.stock < quantity) {
+            alert(t('msg_stock_low', { stock: product.stock, unit: getUnitDisplay(product.unit) }));
+            return;
         }
 
-        // ===== STOCK OUT =====
-        function addStockOut(e) {
-            e.preventDefault();
-            const productId = parseInt(document.getElementById('out-product').value);
-            const quantity = parseFloat(document.getElementById('out-quantity').value);
-            const type = document.getElementById('out-type').value;
-            const reason = document.getElementById('out-reason').value;
-            const note = document.getElementById('out-note').value;
-            const product = products.find(p => p.id === productId);
-            if (!product) return;
-            if (product.stock < quantity) {
-                alert(t('msg_stock_low', {stock: product.stock, unit: getUnitDisplay(product.unit)}));
-                return;
-            }
-            product.stock -= quantity;
-            const transaction = {
-                id: Date.now(), type: 'out', productId, productName: product.name,
-                productCode: product.code, quantity, outType: type, reason, note,
-                date: new Date().toISOString()
-            };
-            transactions.push(transaction);
-            saveData();
-            document.getElementById('stock-out-form').reset();
-            renderProducts();
-            updateDashboard();
-            alert(t('msg_stock_out_success', {name: product.name, qty: quantity, unit: getUnitDisplay(product.unit)}));
-        }
+        product.stock -= quantity;
 
-        // ===== RENDER =====
-        function renderProducts() {
-            const search = document.getElementById('product-search')?.value.toLowerCase() || '';
-            const filtered = products.filter(p =>
-                p.name.toLowerCase().includes(search) ||
-                p.code.toLowerCase().includes(search)
-            );
-            let html = `<table><thead><tr>
-                <th>${t('table_code')}</th><th>${t('table_name')}</th><th>${t('table_category')}</th>
-                <th>${t('table_stock')}</th><th>${t('table_min')}</th><th>${t('table_status')}</th>
-                <th>${t('table_expiry')}</th><th>${t('table_action')}</th>
-            </tr></thead><tbody>`;
-            if (filtered.length === 0) {
-                html += `<tr><td colspan="8" class="empty-state">
-                    <div class="empty-state-icon">📦</div><p>${t('empty_products')}</p></td></tr>`;
-            } else {
-                filtered.forEach(p => {
-                    const status = getStockStatus(p);
-                    const expWarn = getExpiryWarning(p.expiry);
-                    html += `<tr>
-                        <td><strong class="crimson-text">${p.code}</strong></td>
-                        <td>${p.name}</td>
-                        <td>${getCategoryDisplay(p.category)}</td>
-                        <td><span class="warm-text">${p.stock}</span> ${getUnitDisplay(p.unit)}</td>
-                        <td>${p.minStock} ${getUnitDisplay(p.unit)}</td>
-                        <td><span class="badge ${status.class}">${status.text}</span></td>
-                        <td>${p.expiry ? formatDate(p.expiry) + ' ' + expWarn : '-'}</td>
-                        <td><button class="btn btn-danger btn-sm" onclick="deleteProduct(${p.id})">🗑️</button></td>
-                    </tr>`;
-                });
-            }
-            html += '</tbody></table>';
-            document.getElementById('products-table-container').innerHTML = html;
-        }
+        transactions.push({
+            id: Date.now(), type: 'out', productId,
+            productName: getProductName(product),
+            productCode: product.code, quantity,
+            outType: type, reason, note, date: new Date().toISOString()
+        });
 
-        function renderHistory() {
-            const search = document.getElementById('history-search')?.value.toLowerCase() || '';
-            const filtered = transactions.filter(t =>
-                t.productName.toLowerCase().includes(search) ||
-                t.productCode.toLowerCase().includes(search)
-            ).sort((a, b) => new Date(b.date) - new Date(a.date));
-            let html = `<table><thead><tr>
-                <th>${t('table_date')}</th><th>${t('table_type')}</th><th>${t('table_code')}</th>
-                <th>${t('table_name')}</th><th>${t('table_quantity')}</th><th>${t('table_detail')}</th>
-            </tr></thead><tbody>`;
-            if (filtered.length === 0) {
-                html += `<tr><td colspan="6" class="empty-state">
-                    <div class="empty-state-icon">📋</div><p>${t('empty_history')}</p></td></tr>`;
-            } else {
-                filtered.forEach(t => {
-                    const badge = t.type === 'in'
-                        ? `<span class="badge badge-success">${t('in_type')}</span>`
-                        : `<span class="badge badge-danger">${t('out_type')}</span>`;
-                    const detail = t.type === 'in'
-                        ? `${t.note || ''}`
-                        : `${getOutTypeDisplay(t.outType)} ${t.reason ? '- ' + t.reason : ''} ${t.note ? '(' + t.note + ')' : ''}`;
-                    html += `<tr>
-                        <td>${formatDateTime(t.date)}</td>
-                        <td>${badge}</td>
-                        <td><span class="crimson-text">${t.productCode}</span></td>
-                        <td>${t.productName}</td>
-                        <td><strong class="warm-text">${t.quantity}</strong> ${getUnitDisplay(t.unit || '')}</td>
-                        <td>${detail}</td>
-                    </tr>`;
-                });
-            }
-            html += '</tbody></table>';
-            document.getElementById('history-table-container').innerHTML = html;
-        }
+        saveData();
+        document.getElementById('stock-out-form').reset();
+        renderProducts();
+        updateDashboard();
+        alert(t('msg_stock_out_success', { name: getProductName(product), qty: quantity, unit: getUnitDisplay(product.unit) }));
+    }
 
-        function updateDashboard() {
-            document.getElementById('total-products').textContent = products.length;
-            const low = products.filter(p => p.stock <= p.minStock);
-            document.getElementById('low-stock-count').textContent = low.length;
-            const expSoon = products.filter(p => {
-                if (!p.expiry) return false;
-                const days = getDaysUntilExpiry(p.expiry);
-                return days <= 7 && days >= 0;
+    // ===== RENDER PRODUCTS TABLE =====
+    function renderProducts() {
+        const search   = (document.getElementById('product-search')?.value || '').toLowerCase();
+        const filtered = products.filter(p =>
+            (p.name_th || '').toLowerCase().includes(search) ||
+            (p.name_en || '').toLowerCase().includes(search) ||
+            (p.name_zh || '').toLowerCase().includes(search) ||
+            (p.code   || '').toLowerCase().includes(search)
+        );
+
+        let html = `<table><thead><tr>
+            <th>${t('table_code')}</th>
+            <th>${t('table_name')}</th>
+            <th>${t('table_category')}</th>
+            <th>${t('table_stock')}</th>
+            <th>${t('table_min')}</th>
+            <th>${t('table_status')}</th>
+            <th>${t('table_expiry')}</th>
+            <th>${t('table_action')}</th>
+        </tr></thead><tbody>`;
+
+        if (filtered.length === 0) {
+            html += `<tr><td colspan="8" class="empty-state">
+                <div class="empty-state-icon">📦</div>
+                <p>${t('empty_products')}</p>
+            </td></tr>`;
+        } else {
+            filtered.forEach(p => {
+                const status  = getStockStatus(p);
+                const expWarn = getExpiryWarning(p.expiry);
+                const expText = p.expiry ? formatDate(p.expiry) + ' ' + expWarn : '—';
+
+                // แสดงชื่อทุกภาษาในแถว
+                const nameDisplay = `<strong class="crimson-text">${getProductName(p)}</strong>
+                    <div style="font-size:0.72rem;color:var(--ink-muted);margin-top:2px;">
+                        ${p.name_th && currentLang !== 'th' ? '🇹🇭 ' + p.name_th + ' ' : ''}
+                        ${p.name_en && currentLang !== 'en' ? '🇬🇧 ' + p.name_en + ' ' : ''}
+                        ${p.name_zh && currentLang !== 'zh' ? '🇨🇳 ' + p.name_zh : ''}
+                    </div>`;
+
+                html += `<tr>
+                    <td><strong class="crimson-text">${p.code}</strong></td>
+                    <td>${nameDisplay}</td>
+                    <td>${getCategoryDisplay(p.category)}</td>
+                    <td><span class="warm-text">${p.stock}</span> ${getUnitDisplay(p.unit)}</td>
+                    <td>${p.minStock} ${getUnitDisplay(p.unit)}</td>
+                    <td><span class="badge ${status.class}">${status.text}</span></td>
+                    <td style="font-size:0.82rem;">${expText}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="openEditModal(${p.id})">${t('btn_edit')}</button>
+                    </td>
+                </tr>`;
             });
-            document.getElementById('expiring-count').textContent = expSoon.length;
-
-            let html = '';
-            if (low.length > 0) {
-                html += `<div class="alert alert-danger"><strong>${t('alert_low_stock')}</strong><ul style="margin-top:10px; padding-left:20px;">`;
-                low.forEach(p => html += `<li>${p.name} (${p.stock}/${p.minStock} ${getUnitDisplay(p.unit)})</li>`);
-                html += '</ul></div>';
-            }
-            const expired = products.filter(p => p.expiry && getDaysUntilExpiry(p.expiry) < 0);
-            if (expired.length > 0) {
-                html += `<div class="alert alert-danger"><strong>${t('alert_expired')}</strong><ul style="margin-top:10px; padding-left:20px;">`;
-                expired.forEach(p => html += `<li>${p.name} (${formatDate(p.expiry)})</li>`);
-                html += '</ul></div>';
-            }
-            if (expSoon.length > 0) {
-                html += `<div class="alert alert-warning"><strong>${t('alert_expiring')}</strong><ul style="margin-top:10px; padding-left:20px;">`;
-                expSoon.forEach(p => {
-                    const days = getDaysUntilExpiry(p.expiry);
-                    html += `<li>${p.name} (${t('days_left', {days})} - ${formatDate(p.expiry)})</li>`;
-                });
-                html += '</ul></div>';
-            }
-            if (html === '') {
-                html = `<div class="alert alert-success"><strong>${t('alert_no_issue')}</strong></div>`;
-            }
-            document.getElementById('alerts-container').innerHTML = html;
         }
 
-        function updateProductSelects() {
-            const inSel = document.getElementById('in-product');
-            const outSel = document.getElementById('out-product');
-            const opts = products.map(p =>
-                `<option value="${p.id}">${p.code} - ${p.name} (${p.stock} ${getUnitDisplay(p.unit)})</option>`
-            ).join('');
-            inSel.innerHTML = `<option value="">${t('label_select_product')}</option>` + opts;
-            outSel.innerHTML = `<option value="">${t('label_select_product')}</option>` + opts;
+        html += '</tbody></table>';
+        document.getElementById('products-table-container').innerHTML = html;
+    }
+
+    // ===== RENDER HISTORY =====
+    function renderHistory() {
+        const search   = (document.getElementById('history-search')?.value || '').toLowerCase();
+        const filtered = transactions.filter(tx =>
+            (tx.productName || '').toLowerCase().includes(search) ||
+            (tx.productCode || '').toLowerCase().includes(search)
+        ).sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        let html = `<table><thead><tr>
+            <th>${t('table_date')}</th>
+            <th>${t('table_type')}</th>
+            <th>${t('table_code')}</th>
+            <th>${t('table_name')}</th>
+            <th>${t('table_quantity')}</th>
+            <th>${t('table_detail')}</th>
+        </tr></thead><tbody>`;
+
+        if (filtered.length === 0) {
+            html += `<tr><td colspan="6" class="empty-state">
+                <div class="empty-state-icon">📋</div>
+                <p>${t('empty_history')}</p>
+            </td></tr>`;
+        } else {
+            filtered.forEach(tx => {
+                // หา product เพื่อเอาชื่อตามภาษาปัจจุบัน
+                const prod   = products.find(p => p.id === tx.productId);
+                const txName = prod ? getProductName(prod) : (tx.productName || '—');
+                const badge  = tx.type === 'in'
+                    ? `<span class="badge badge-success">${t('in_type')}</span>`
+                    : `<span class="badge badge-danger">${t('out_type')}</span>`;
+                const detail = tx.type === 'in'
+                    ? (tx.note || '')
+                    : `${getOutTypeDisplay(tx.outType || '')} ${tx.reason ? '— ' + tx.reason : ''} ${tx.note ? '(' + tx.note + ')' : ''}`;
+
+                html += `<tr>
+                    <td style="white-space:nowrap;">${formatDateTime(tx.date)}</td>
+                    <td>${badge}</td>
+                    <td><span class="crimson-text">${tx.productCode || '—'}</span></td>
+                    <td>${txName}</td>
+                    <td><strong class="warm-text">${tx.quantity}</strong> ${getUnitDisplay(tx.unit || prod?.unit || '')}</td>
+                    <td style="font-size:0.82rem;">${detail}</td>
+                </tr>`;
+            });
         }
 
-        function searchProducts() { renderProducts(); }
-        function searchHistory() { renderHistory(); }
+        html += '</tbody></table>';
+        document.getElementById('history-table-container').innerHTML = html;
+    }
 
-        function getStockStatus(p) {
-            if (p.stock <= 0) return { class: 'badge-danger', text: t('status_out') };
-            if (p.stock <= p.minStock) return { class: 'badge-warning', text: t('status_low') };
-            return { class: 'badge-success', text: t('status_normal') };
+    // ===== UPDATE PRODUCT SELECTS =====
+    function updateProductSelects() {
+        const opts = products.map(p =>
+            `<option value="${p.id}">${p.code} — ${getProductName(p)} (${p.stock} ${getUnitDisplay(p.unit)})</option>`
+        ).join('');
+        const placeholder = `<option value="">${t('label_select_product')}</option>`;
+        document.getElementById('in-product').innerHTML  = placeholder + opts;
+        document.getElementById('out-product').innerHTML = placeholder + opts;
+    }
+
+    // ===== UPDATE DASHBOARD =====
+    function updateDashboard() {
+        document.getElementById('total-products').textContent = products.length;
+
+        const low    = products.filter(p => p.stock <= p.minStock);
+        const expSoon = products.filter(p => {
+            if (!p.expiry) return false;
+            const days = getDaysUntilExpiry(p.expiry);
+            return days <= 7 && days >= 0;
+        });
+
+        document.getElementById('low-stock-count').textContent  = low.length;
+        document.getElementById('expiring-count').textContent    = expSoon.length;
+
+        let html = '';
+
+        if (low.length > 0) {
+            html += `<div class="alert alert-danger"><strong>${t('alert_low_stock')}</strong>
+                <ul style="margin-top:10px; padding-left:20px;">`;
+            low.forEach(p => html += `<li>${getProductName(p)} (${p.stock}/${p.minStock} ${getUnitDisplay(p.unit)})</li>`);
+            html += '</ul></div>';
         }
 
-        function getExpiryWarning(date) {
-            if (!date) return '';
-            const days = getDaysUntilExpiry(date);
-            if (days < 0) return '<span class="badge badge-danger">' + t('status_out') + '</span>';
-            if (days <= 3) return '<span class="badge badge-danger">' + t('status_low') + '</span>';
-            if (days <= 7) return '<span class="badge badge-warning">' + t('days_left', {days}) + '</span>';
-            return '';
+        const expired = products.filter(p => p.expiry && getDaysUntilExpiry(p.expiry) < 0);
+        if (expired.length > 0) {
+            html += `<div class="alert alert-danger"><strong>${t('alert_expired')}</strong>
+                <ul style="margin-top:10px; padding-left:20px;">`;
+            expired.forEach(p => html += `<li>${getProductName(p)} (${formatDate(p.expiry)})</li>`);
+            html += '</ul></div>';
         }
 
-        function getDaysUntilExpiry(date) {
-            const today = new Date(); today.setHours(0,0,0,0);
-            const exp = new Date(date); exp.setHours(0,0,0,0);
-            return Math.ceil((exp - today) / (1000*60*60*24));
+        if (expSoon.length > 0) {
+            html += `<div class="alert alert-warning"><strong>${t('alert_expiring')}</strong>
+                <ul style="margin-top:10px; padding-left:20px;">`;
+            expSoon.forEach(p => {
+                const days = getDaysUntilExpiry(p.expiry);
+                html += `<li>${getProductName(p)} (${t('days_left', { days })} — ${formatDate(p.expiry)})</li>`;
+            });
+            html += '</ul></div>';
         }
 
-        function formatDate(dateStr) {
-            const d = new Date(dateStr);
-            if (currentLang === 'zh') return d.toLocaleDateString('zh-CN', {year:'numeric', month:'short', day:'numeric'});
-            if (currentLang === 'en') return d.toLocaleDateString('en-US', {year:'numeric', month:'short', day:'numeric'});
-            return d.toLocaleDateString('th-TH', {year:'numeric', month:'short', day:'numeric'});
+        if (html === '') {
+            html = `<div class="alert alert-success"><strong>${t('alert_no_issue')}</strong></div>`;
         }
 
-        function formatDateTime(dateStr) {
-            const d = new Date(dateStr);
-            if (currentLang === 'zh') return d.toLocaleString('zh-CN', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
-            if (currentLang === 'en') return d.toLocaleString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
-            return d.toLocaleString('th-TH', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
-        }
+        document.getElementById('alerts-container').innerHTML = html;
+    }
 
-        function saveData() {
-            localStorage.setItem('ok_products', JSON.stringify(products));
-            localStorage.setItem('ok_transactions', JSON.stringify(transactions));
-        }
-    </script>
+    // ===== STOCK STATUS =====
+    function getStockStatus(p) {
+        if (p.stock <= 0)              return { class: 'badge-danger',  text: t('status_out') };
+        if (p.stock <= p.minStock)     return { class: 'badge-warning', text: t('status_low') };
+        return { class: 'badge-success', text: t('status_normal') };
+    }
+
+    function getExpiryWarning(date) {
+        if (!date) return '';
+        const days = getDaysUntilExpiry(date);
+        if (days < 0)  return `<span class="badge badge-danger">${t('status_out')}</span>`;
+        if (days <= 3) return `<span class="badge badge-danger">${t('days_left', { days })}</span>`;
+        if (days <= 7) return `<span class="badge badge-warning">${t('days_left', { days })}</span>`;
+        return '';
+    }
+
+    function getDaysUntilExpiry(date) {
+        const today = new Date(); today.setHours(0,0,0,0);
+        const exp   = new Date(date); exp.setHours(0,0,0,0);
+        return Math.ceil((exp - today) / (1000 * 60 * 60 * 24));
+    }
+
+    function formatDate(dateStr) {
+        const d = new Date(dateStr);
+        const locale = currentLang === 'zh' ? 'zh-CN' : currentLang === 'en' ? 'en-US' : 'th-TH';
+        return d.toLocaleDateString(locale, { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+    function formatDateTime(dateStr) {
+        const d = new Date(dateStr);
+        const locale = currentLang === 'zh' ? 'zh-CN' : currentLang === 'en' ? 'en-US' : 'th-TH';
+        return d.toLocaleString(locale, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    }
+
+    // ===== SAVE =====
+    function saveData() {
+        localStorage.setItem('ok_products',    JSON.stringify(products));
+        localStorage.setItem('ok_transactions', JSON.stringify(transactions));
+    }
+</script>
 </body>
-</html>
+</html>>
