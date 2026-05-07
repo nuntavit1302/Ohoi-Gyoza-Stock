@@ -1,18 +1,4 @@
 <!DOCTYPE html>
-<html>
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title></title>
-</head>
-
-<body>
-  
-</body>
-
-</html>
-<!DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
@@ -21,1578 +7,893 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;600;700&family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+
         :root {
-            --crimson: #9B2226;
-            --crimson-light: #AE2012;
-            --crimson-soft: rgba(155, 34, 38, 0.08);
-            --gold: #D4A373;
-            --gold-light: #E9C496;
-            --gold-soft: rgba(212, 163, 115, 0.15);
-            --jade: #588157;
-            --jade-soft: rgba(88, 129, 87, 0.12);
-            --warm-white: #FDF6EC;
-            --cream: #F5EBDC;
-            --paper: #FAF3E8;
-            --ink: #3D2B1F;
-            --ink-light: #6B5B4F;
-            --ink-muted: #9B8B7F;
-            --shadow-warm: rgba(155, 34, 38, 0.08);
-        }
-
-        body {
-            font-family: 'Noto Sans Thai', sans-serif;
-            background: var(--warm-white);
-            color: var(--ink);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-            pointer-events: none;
-            z-index: 1000;
-            opacity: 0.6;
-        }
-
-        @keyframes lantern-glow {
-            0%, 100% { box-shadow: 0 4px 20px rgba(155, 34, 38, 0.15), 0 0 60px rgba(212, 163, 115, 0.1); }
-            50% { box-shadow: 0 4px 30px rgba(155, 34, 38, 0.2), 0 0 80px rgba(212, 163, 115, 0.15); }
-        }
-
-        @keyframes slide-up {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        @keyframes warm-pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-        }
-
-        .header {
-            background: linear-gradient(160deg, var(--crimson) 0%, #7B181C 60%, #5A1216 100%);
-            padding: 35px 20px 40px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .header::before {
-            content: '🥟';
-            position: absolute;
-            top: 15px;
-            left: 20px;
-            font-size: 2rem;
-            opacity: 0.4;
-            animation: warm-pulse 4s ease-in-out infinite;
-        }
-
-        .header::after {
-            content: '🥟';
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 2rem;
-            opacity: 0.4;
-            animation: warm-pulse 4s ease-in-out infinite 2s;
-        }
-
-        .logo {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 2.6rem;
-            font-weight: 700;
-            color: var(--gold-light);
-            letter-spacing: 3px;
-            position: relative;
-            z-index: 1;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
-
-        .logo span {
-            color: #FFF8F0;
-            font-weight: 400;
-            font-style: italic;
-        }
-
-        .subtitle {
-            color: rgba(255, 248, 240, 0.7);
-            font-size: 0.95rem;
-            margin-top: 8px;
-            font-weight: 300;
-            letter-spacing: 1px;
-        }
-
-        .nav-tabs {
-            display: flex;
-            background: var(--cream);
-            border-bottom: 1px solid rgba(155, 34, 38, 0.1);
-            overflow-x: auto;
-            scrollbar-width: none;
-            padding: 0 10px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            backdrop-filter: blur(10px);
-        }
-
-        .nav-tabs::-webkit-scrollbar { display: none; }
-
-        .nav-tab {
-            flex: 1;
-            min-width: 100px;
-            padding: 16px 10px;
-            border: none;
-            background: none;
-            color: var(--ink-muted);
-            font-family: 'Noto Sans Thai', sans-serif;
-            font-weight: 600;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            position: relative;
-            white-space: nowrap;
-            border-radius: 12px 12px 0 0;
-            margin: 0 2px;
-        }
-
-        .nav-tab:hover {
-            color: var(--crimson);
-            background: rgba(155, 34, 38, 0.05);
-        }
-
-        .nav-tab.active {
-            color: var(--crimson);
-            background: var(--paper);
-            font-weight: 700;
-        }
-
-        .nav-tab.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 20%;
-            width: 60%;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, var(--crimson), var(--gold), var(--crimson), transparent);
-            border-radius: 3px;
-        }
-
-        .content {
-            padding: 25px 20px;
-            max-width: 900px;
-            margin: 0 auto;
-            background: var(--paper);
-            min-height: calc(100vh - 200px);
-        }
-
-        .tab-content { display: none; animation: slide-up 0.4s ease; }
-        .tab-content.active { display: block; }
-
-        .card {
-            background: #FFFFFF;
-            border-radius: 20px;
-            padding: 28px;
-            margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.4s ease;
-            border: 1px solid rgba(155, 34, 38, 0.06);
-            box-shadow: 0 2px 8px var(--shadow-warm), 0 8px 32px rgba(155, 34, 38, 0.04);
-        }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 4px;
-            background: linear-gradient(90deg, var(--crimson), var(--gold), var(--jade), var(--gold), var(--crimson));
-            opacity: 0.6;
-        }
-
-        .card:hover {
-            box-shadow: 0 4px 16px var(--shadow-warm), 0 12px 40px rgba(155, 34, 38, 0.08);
-            transform: translateY(-2px);
-        }
-
-        .card-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: var(--crimson);
-            margin-bottom: 22px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid rgba(155, 34, 38, 0.1);
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .stat-card {
-            background: linear-gradient(145deg, #FFFFFF 0%, var(--warm-white) 100%);
-            border: 1px solid rgba(155, 34, 38, 0.1);
-            border-radius: 20px;
-            padding: 22px 15px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.4s ease;
-            animation: lantern-glow 4s ease-in-out infinite;
-        }
-
-        .stat-card:nth-child(1) { border-top: 3px solid var(--crimson); }
-        .stat-card:nth-child(2) { border-top: 3px solid var(--gold); animation-delay: 1.3s; }
-        .stat-card:nth-child(3) { border-top: 3px solid var(--jade); animation-delay: 2.6s; }
-
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 30px rgba(155, 34, 38, 0.12);
-        }
-
-        .stat-card h3 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 2.4rem;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-
-        .stat-card:nth-child(1) h3 { color: var(--crimson); }
-        .stat-card:nth-child(2) h3 { color: var(--gold); }
-        .stat-card:nth-child(3) h3 { color: var(--jade); }
-
-        .stat-card p {
-            color: var(--ink-muted);
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        .form-group { margin-bottom: 18px; }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--crimson);
-            font-size: 0.9rem;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 14px 18px;
-            background: var(--warm-white);
-            border: 1.5px solid rgba(155, 34, 38, 0.15);
-            border-radius: 14px;
-            color: var(--ink);
-            font-family: 'Noto Sans Thai', sans-serif;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--crimson);
-            box-shadow: 0 0 0 4px var(--crimson-soft);
-            background: #FFFFFF;
-        }
-
-        .form-group textarea {
-            min-height: 80px;
-            resize: vertical;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-        }
-
-        .btn {
-            padding: 14px 32px;
-            border: none;
-            border-radius: 14px;
-            font-family: 'Noto Sans Thai', sans-serif;
-            font-weight: 700;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            letter-spacing: 0.5px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--crimson), var(--crimson-light));
-            color: #FFF8F0;
-            box-shadow: 0 4px 15px rgba(155, 34, 38, 0.25);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(155, 34, 38, 0.35);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, var(--jade), #6B9B6A);
-            color: #FFF8F0;
-            box-shadow: 0 4px 15px rgba(88, 129, 87, 0.25);
-        }
-
-        .btn-success:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(88, 129, 87, 0.35);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #C0392B, #E74C3C);
-            color: #FFF8F0;
-            box-shadow: 0 4px 15px rgba(192, 57, 43, 0.25);
-        }
-
-        .btn-sm {
-            padding: 8px 16px;
-            font-size: 0.8rem;
-            border-radius: 10px;
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 2px solid var(--crimson);
-            color: var(--crimson);
-        }
-
-        .btn-outline:hover {
-            background: var(--crimson);
-            color: white;
-        }
-
-        .table-container {
-            overflow-x: auto;
-            border-radius: 16px;
-            border: 1px solid rgba(155, 34, 38, 0.08);
-            background: #FFFFFF;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            font-size: 0.9rem;
-        }
-
-        th {
-            background: linear-gradient(180deg, var(--cream) 0%, var(--warm-white) 100%);
-            color: var(--crimson);
-            padding: 16px 12px;
-            font-weight: 700;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 2px solid rgba(155, 34, 38, 0.1);
-            position: sticky;
-            top: 0;
-        }
-
-        td {
-            padding: 14px 12px;
-            border-bottom: 1px solid rgba(155, 34, 38, 0.05);
-            color: var(--ink-light);
-        }
-
-        tr:hover td {
-            background: var(--crimson-soft);
-            color: var(--ink);
-        }
-
-        tr:last-child td { border-bottom: none; }
-
-        .badge {
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            display: inline-block;
-        }
-
-        .badge-success {
-            background: var(--jade-soft);
-            color: var(--jade);
-            border: 1px solid rgba(88, 129, 87, 0.3);
-        }
-
-        .badge-warning {
-            background: var(--gold-soft);
-            color: #B8860B;
-            border: 1px solid rgba(212, 163, 115, 0.4);
-        }
-
-        .badge-danger {
-            background: rgba(155, 34, 38, 0.08);
-            color: var(--crimson);
-            border: 1px solid rgba(155, 34, 38, 0.3);
-        }
-
-        .alert {
-            padding: 18px 22px;
-            border-radius: 16px;
-            margin-bottom: 15px;
-            border: 1px solid;
-            position: relative;
-            background: #FFFFFF;
-        }
-
-        .alert-danger {
-            border-color: rgba(155, 34, 38, 0.2);
-            background: linear-gradient(135deg, #FFF5F5 0%, #FFFFFF 100%);
-            color: var(--crimson);
-        }
-
-        .alert-danger::before {
-            content: '';
-            position: absolute;
-            left: 0; top: 0; bottom: 0;
-            width: 4px;
-            background: linear-gradient(180deg, var(--crimson), var(--crimson-light));
-            border-radius: 16px 0 0 16px;
-        }
-
-        .alert-success {
-            border-color: rgba(88, 129, 87, 0.2);
-            background: linear-gradient(135deg, #F5FBF5 0%, #FFFFFF 100%);
-            color: var(--jade);
-        }
-
-        .alert-success::before {
-            content: '';
-            position: absolute;
-            left: 0; top: 0; bottom: 0;
-            width: 4px;
-            background: linear-gradient(180deg, var(--jade), #6B9B6A);
-            border-radius: 16px 0 0 16px;
-        }
-
-        .search-box {
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: 14px 20px 14px 48px;
-            background: var(--warm-white);
-            border: 1.5px solid rgba(155, 34, 38, 0.12);
-            border-radius: 14px;
-            color: var(--ink);
-            font-family: 'Noto Sans Thai', sans-serif;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .search-box input:focus {
-            outline: none;
-            border-color: var(--crimson);
-            box-shadow: 0 0 0 4px var(--crimson-soft);
-            background: #FFFFFF;
-        }
-
-        .search-box::before {
-            content: '🔍';
-            position: absolute;
-            left: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 1rem;
-            opacity: 0.5;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 50px 20px;
-            color: var(--ink-muted);
-        }
-
-        .empty-state-icon {
-            font-size: 3.5rem;
-            margin-bottom: 15px;
-            opacity: 0.6;
-        }
-
-        .warm-text { color: var(--gold); font-weight: 700; }
-        .crimson-text { color: var(--crimson); font-weight: 700; }
-
-        .warm-divider {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(155, 34, 38, 0.15), var(--gold), rgba(155, 34, 38, 0.15), transparent);
-            margin: 25px 0;
-        }
-
-        .footer-note {
-            text-align: center;
-            padding: 30px 20px;
-            color: var(--ink-muted);
-            font-size: 0.85rem;
-            font-style: italic;
-        }
-
-        /* ===== INGREDIENT ROW ===== */
-        .ingredient-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr auto;
-            gap: 10px;
-            align-items: end;
-            margin-bottom: 12px;
-            padding: 12px;
-            background: var(--warm-white);
-            border-radius: 12px;
-            border: 1px solid rgba(155, 34, 38, 0.08);
-        }
-
-        .ingredient-row .form-group { margin-bottom: 0; }
-
-        .remove-ingredient {
-            background: #FFE5E5;
-            border: none;
-            color: var(--crimson);
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 1.2rem;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .remove-ingredient:hover {
-            background: var(--crimson);
-            color: white;
-            transform: scale(1.1);
-        }
-
-        .add-ingredient-btn {
-            width: 100%;
-            padding: 12px;
-            background: var(--gold-soft);
-            border: 2px dashed var(--gold);
-            border-radius: 12px;
-            color: var(--gold);
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 8px;
-        }
-
-        .add-ingredient-btn:hover {
-            background: var(--gold);
-            color: white;
-            border-style: solid;
-        }
-
-        /* ===== MENU CARD ===== */
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-        }
-
-        .menu-card {
-            background: #FFFFFF;
-            border-radius: 20px;
-            padding: 24px;
-            border: 1px solid rgba(155, 34, 38, 0.08);
-            box-shadow: 0 2px 8px var(--shadow-warm);
-            transition: all 0.4s ease;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .menu-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 3px;
-            background: linear-gradient(90deg, var(--crimson), var(--gold));
-        }
-
-        .menu-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 30px rgba(155, 34, 38, 0.12);
-        }
-
-        .menu-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 12px;
-        }
-
-        .menu-card-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--crimson);
-        }
-
-        .menu-card-price {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--gold);
-        }
-
-        .menu-card-category {
-            display: inline-block;
-            padding: 4px 12px;
-            background: var(--crimson-soft);
-            color: var(--crimson);
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-bottom: 12px;
-        }
-
-        .menu-card-ingredients {
-            color: var(--ink-muted);
-            font-size: 0.85rem;
-            line-height: 1.6;
-        }
-
-        .menu-card-ingredients strong {
-            color: var(--ink-light);
-        }
-
-        .menu-card-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 16px;
-            padding-top: 12px;
-            border-top: 1px solid rgba(155, 34, 38, 0.08);
-        }
-
-        /* ===== COOK MODAL ===== */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(61, 43, 31, 0.6);
-            z-index: 2000;
-            backdrop-filter: blur(5px);
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .modal-overlay.active { display: flex; }
-
-        .modal {
-            background: var(--paper);
-            border-radius: 24px;
-            padding: 32px;
-            max-width: 500px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
-            animation: slide-up 0.3s ease;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--ink-muted);
-            transition: all 0.3s ease;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-close:hover {
-            background: var(--crimson-soft);
-            color: var(--crimson);
-        }
-
-        .modal-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--crimson);
-            margin-bottom: 20px;
-            padding-right: 40px;
-        }
-
-        .cook-ingredient-list {
-            background: var(--warm-white);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 20px;
-        }
-
-        .cook-ingredient-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(155, 34, 38, 0.06);
-        }
-
-        .cook-ingredient-item:last-child { border-bottom: none; }
-
-        .cook-ingredient-name { font-weight: 600; color: var(--ink); }
-        .cook-ingredient-qty { color: var(--crimson); font-weight: 700; }
-        .cook-ingredient-stock { font-size: 0.8rem; color: var(--ink-muted); }
-
-        .cook-ingredient-item.insufficient {
-            background: rgba(255, 0, 0, 0.05);
-            border-radius: 8px;
-            padding: 10px;
-            margin: 0 -8px;
-        }
-
-        .cook-ingredient-item.insufficient .cook-ingredient-name {
-            color: var(--crimson);
-        }
-
-        .qty-input {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .qty-input label {
-            font-weight: 700;
-            color: var(--crimson);
-            white-space: nowrap;
-        }
-
-        .qty-input input {
-            width: 80px;
-            text-align: center;
-            padding: 12px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            border: 2px solid var(--crimson);
-            border-radius: 12px;
-            background: white;
-        }
-
-        .qty-input input:focus {
-            outline: none;
-            box-shadow: 0 0 0 4px var(--crimson-soft);
-        }
-
-        .cook-total {
-            background: linear-gradient(135deg, var(--crimson-soft), var(--gold-soft));
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .cook-total-label {
-            font-size: 0.85rem;
-            color: var(--ink-muted);
-            margin-bottom: 4px;
-        }
-
-        .cook-total-value {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--crimson);
-        }
-
-        .btn-cook {
-            width: 100%;
-            padding: 16px;
-            font-size: 1.1rem;
-        }
-
-        .btn-cook:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-
-        /* ===== RECIPE VIEW ===== */
-        .recipe-detail {
-            background: var(--warm-white);
-            border-radius: 16px;
-            padding: 20px;
-            margin-top: 16px;
-        }
-
-        .recipe-detail h4 {
-            color: var(--crimson);
-            margin-bottom: 12px;
-            font-size: 1rem;
-        }
-
-        .recipe-detail ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .recipe-detail li {
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(155, 34, 38, 0.06);
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .recipe-detail li:last-child { border-bottom: none; }
-
-        .recipe-detail .ing-name { font-weight: 600; }
-        .recipe-detail .ing-qty { color: var(--gold); font-weight: 700; }
+            --crimson: #9B2226; --crimson-light: #AE2012;
+            --crimson-soft: rgba(155,34,38,0.08);
+            --gold: #D4A373; --gold-light: #E9C496;
+            --gold-soft: rgba(212,163,115,0.15);
+            --jade: #588157; --jade-soft: rgba(88,129,87,0.12);
+            --warm-white: #FDF6EC; --cream: #F5EBDC; --paper: #FAF3E8;
+            --ink: #3D2B1F; --ink-light: #6B5B4F; --ink-muted: #9B8B7F;
+            --shadow-warm: rgba(155,34,38,0.08);
+        }
+
+        body { font-family:'Noto Sans Thai',sans-serif; background:var(--warm-white); color:var(--ink); min-height:100vh; overflow-x:hidden; }
+
+        body::before { content:''; position:fixed; top:0;left:0;right:0;bottom:0; background-image:url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E"); pointer-events:none; z-index:1000; opacity:0.6; }
+
+        @keyframes lantern-glow { 0%,100%{box-shadow:0 4px 20px rgba(155,34,38,0.15);} 50%{box-shadow:0 4px 30px rgba(155,34,38,0.22);} }
+        @keyframes slide-up { from{transform:translateY(20px);opacity:0;} to{transform:translateY(0);opacity:1;} }
+        @keyframes warm-pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.02);} }
+
+        /* HEADER */
+        .header { background:linear-gradient(160deg,var(--crimson) 0%,#7B181C 60%,#5A1216 100%); padding:35px 20px 40px; text-align:center; position:relative; overflow:hidden; }
+        .header::before { content:'🥟'; position:absolute; top:15px;left:20px; font-size:2rem; opacity:0.4; animation:warm-pulse 4s ease-in-out infinite; }
+        .header::after  { content:'🥟'; position:absolute; top:15px;right:20px; font-size:2rem; opacity:0.4; animation:warm-pulse 4s ease-in-out infinite 2s; }
+
+        .back-btn { position:absolute;top:15px;left:60px; background:rgba(255,255,255,0.15); border:1.5px solid rgba(255,255,255,0.3); color:rgba(255,248,240,0.9); padding:7px 14px; border-radius:20px; cursor:pointer; font-size:0.8rem;font-weight:600; font-family:'Noto Sans Thai',sans-serif; transition:all 0.3s ease; z-index:2; text-decoration:none; display:inline-flex; align-items:center; gap:5px; }
+        .back-btn:hover { background:rgba(255,255,255,0.25); transform:translateX(-2px); }
+
+        .logo { font-family:'Cormorant Garamond',serif; font-size:2.6rem;font-weight:700; color:var(--gold-light); letter-spacing:3px; position:relative;z-index:1; text-shadow:0 2px 10px rgba(0,0,0,0.3); }
+        .logo span { color:#FFF8F0; font-weight:400; font-style:italic; }
+        .subtitle { color:rgba(255,248,240,0.7); font-size:0.95rem; margin-top:8px; font-weight:300; letter-spacing:1px; }
+
+        .lang-switcher { display:flex; justify-content:center; gap:8px; margin-top:18px; position:relative;z-index:1; }
+        .lang-btn { padding:6px 14px; border:1.5px solid rgba(212,163,115,0.4); background:rgba(255,255,255,0.08); color:rgba(255,248,240,0.8); border-radius:20px; cursor:pointer; font-weight:600;font-size:0.8rem; transition:all 0.4s ease; font-family:'Noto Sans Thai',sans-serif; }
+        .lang-btn:hover { background:rgba(212,163,115,0.2); border-color:var(--gold); transform:translateY(-1px); }
+        .lang-btn.active { background:rgba(212,163,115,0.25); border-color:var(--gold-light); color:var(--gold-light); }
+
+        /* NAV */
+        .nav-tabs { display:flex; background:var(--cream); border-bottom:1px solid rgba(155,34,38,0.1); overflow-x:auto; scrollbar-width:none; padding:0 10px; position:sticky;top:0;z-index:100; backdrop-filter:blur(10px); }
+        .nav-tabs::-webkit-scrollbar { display:none; }
+        .nav-tab { flex:1; min-width:90px; padding:16px 10px; border:none; background:none; color:var(--ink-muted); font-family:'Noto Sans Thai',sans-serif; font-weight:600; font-size:0.85rem; cursor:pointer; transition:all 0.4s ease; position:relative; white-space:nowrap; border-radius:12px 12px 0 0; margin:0 2px; }
+        .nav-tab:hover { color:var(--crimson); background:rgba(155,34,38,0.05); }
+        .nav-tab.active { color:var(--crimson); background:var(--paper); font-weight:700; }
+        .nav-tab.active::after { content:''; position:absolute; bottom:0;left:20%;width:60%;height:3px; background:linear-gradient(90deg,transparent,var(--crimson),var(--gold),var(--crimson),transparent); border-radius:3px; }
+
+        /* CONTENT */
+        .content { padding:25px 20px; max-width:900px; margin:0 auto; background:var(--paper); min-height:calc(100vh - 200px); }
+        .tab-content { display:none; animation:slide-up 0.4s ease; }
+        .tab-content.active { display:block; }
+
+        /* CARD */
+        .card { background:#FFFFFF; border-radius:20px; padding:28px; margin-bottom:20px; position:relative; overflow:hidden; transition:all 0.4s ease; border:1px solid rgba(155,34,38,0.06); box-shadow:0 2px 8px var(--shadow-warm),0 8px 32px rgba(155,34,38,0.04); }
+        .card::before { content:''; position:absolute; top:0;left:0; width:100%;height:4px; background:linear-gradient(90deg,var(--crimson),var(--gold),var(--jade),var(--gold),var(--crimson)); opacity:0.6; }
+        .card:hover { box-shadow:0 4px 16px var(--shadow-warm),0 12px 40px rgba(155,34,38,0.08); transform:translateY(-2px); }
+        .card-title { font-family:'Cormorant Garamond',serif; font-size:1.6rem;font-weight:700; color:var(--crimson); margin-bottom:22px; display:flex;align-items:center;gap:10px; padding-bottom:12px; border-bottom:1px solid rgba(155,34,38,0.1); }
+
+        /* STATS */
+        .stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:15px; margin-bottom:25px; }
+        .stat-card { background:linear-gradient(145deg,#FFFFFF,var(--warm-white)); border:1px solid rgba(155,34,38,0.1); border-radius:20px; padding:22px 15px; text-align:center; animation:lantern-glow 4s ease-in-out infinite; transition:all 0.4s ease; }
+        .stat-card:nth-child(1){border-top:3px solid var(--crimson);} .stat-card:nth-child(2){border-top:3px solid var(--gold);animation-delay:1.3s;} .stat-card:nth-child(3){border-top:3px solid var(--jade);animation-delay:2.6s;}
+        .stat-card:hover { transform:translateY(-4px); box-shadow:0 8px 30px rgba(155,34,38,0.12); }
+        .stat-card h3 { font-family:'Cormorant Garamond',serif; font-size:2.4rem;font-weight:700; margin-bottom:6px; }
+        .stat-card:nth-child(1) h3{color:var(--crimson);} .stat-card:nth-child(2) h3{color:var(--gold);} .stat-card:nth-child(3) h3{color:var(--jade);}
+        .stat-card p { color:var(--ink-muted); font-size:0.85rem;font-weight:600; }
+
+        /* FORM */
+        .form-group { margin-bottom:18px; }
+        .form-group label { display:block; margin-bottom:8px; font-weight:600; color:var(--crimson); font-size:0.9rem; }
+        .form-group input, .form-group select, .form-group textarea { width:100%; padding:14px 18px; background:var(--warm-white); border:1.5px solid rgba(155,34,38,0.15); border-radius:14px; color:var(--ink); font-family:'Noto Sans Thai',sans-serif; font-size:1rem; transition:all 0.3s ease; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline:none; border-color:var(--crimson); box-shadow:0 0 0 4px var(--crimson-soft); background:#FFFFFF; }
+        .form-group textarea { min-height:65px; resize:vertical; }
+        .form-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:15px; }
+        .form-row-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+
+        .lang-name-section { background:var(--warm-white); border:1.5px solid rgba(155,34,38,0.1); border-radius:14px; padding:16px; margin-bottom:18px; }
+        .lang-name-section .lang-label { font-size:0.78rem;font-weight:700; color:var(--ink-muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px; }
+
+        /* BUTTONS */
+        .btn { padding:13px 26px; border:none; border-radius:14px; font-family:'Noto Sans Thai',sans-serif; font-weight:700; font-size:0.9rem; cursor:pointer; transition:all 0.4s ease; }
+        .btn-primary { background:linear-gradient(135deg,var(--crimson),var(--crimson-light)); color:#FFF8F0; box-shadow:0 4px 15px rgba(155,34,38,0.25); }
+        .btn-primary:hover { transform:translateY(-2px); box-shadow:0 6px 25px rgba(155,34,38,0.35); }
+        .btn-success { background:linear-gradient(135deg,var(--jade),#6B9B6A); color:#FFF8F0; box-shadow:0 4px 15px rgba(88,129,87,0.25); }
+        .btn-success:hover { transform:translateY(-2px); }
+        .btn-warning { background:linear-gradient(135deg,#B8860B,#D4A373); color:#FFF8F0; }
+        .btn-warning:hover { transform:translateY(-2px); }
+        .btn-danger { background:linear-gradient(135deg,#C0392B,#E74C3C); color:#FFF8F0; box-shadow:0 4px 15px rgba(192,57,43,0.25); }
+        .btn-danger:hover { transform:translateY(-2px); }
+        .btn-sm { padding:7px 13px; font-size:0.78rem; border-radius:10px; }
+        .btn:disabled { opacity:0.45; cursor:not-allowed; transform:none !important; }
+
+        /* ALERTS */
+        .alert { padding:16px 20px; border-radius:14px; margin-bottom:12px; border:1px solid; position:relative; background:#FFFFFF; }
+        .alert-danger { border-color:rgba(155,34,38,0.2); background:linear-gradient(135deg,#FFF5F5,#FFFFFF); color:var(--crimson); }
+        .alert-danger::before { content:''; position:absolute; left:0;top:0;bottom:0; width:4px; background:linear-gradient(180deg,var(--crimson),var(--crimson-light)); border-radius:14px 0 0 14px; }
+        .alert-warning { border-color:rgba(212,163,115,0.3); background:linear-gradient(135deg,#FFFBF5,#FFFFFF); color:#8B6914; }
+        .alert-warning::before { content:''; position:absolute; left:0;top:0;bottom:0; width:4px; background:linear-gradient(180deg,var(--gold),var(--gold-light)); border-radius:14px 0 0 14px; }
+        .alert-success { border-color:rgba(88,129,87,0.2); background:linear-gradient(135deg,#F5FBF5,#FFFFFF); color:var(--jade); }
+        .alert-success::before { content:''; position:absolute; left:0;top:0;bottom:0; width:4px; background:linear-gradient(180deg,var(--jade),#6B9B6A); border-radius:14px 0 0 14px; }
+
+        /* SEARCH */
+        .search-box { margin-bottom:20px; position:relative; }
+        .search-box input { width:100%; padding:14px 20px 14px 48px; background:var(--warm-white); border:1.5px solid rgba(155,34,38,0.12); border-radius:14px; color:var(--ink); font-family:'Noto Sans Thai',sans-serif; font-size:1rem; transition:all 0.3s ease; }
+        .search-box input:focus { outline:none; border-color:var(--crimson); box-shadow:0 0 0 4px var(--crimson-soft); background:#FFFFFF; }
+        .search-box::before { content:'🔍'; position:absolute; left:18px;top:50%; transform:translateY(-50%); font-size:1rem; opacity:0.5; }
+
+        /* EMPTY */
+        .empty-state { text-align:center; padding:50px 20px; color:var(--ink-muted); }
+        .empty-state-icon { font-size:3.5rem; margin-bottom:15px; opacity:0.6; }
+
+        /* TABLE */
+        .table-container { overflow-x:auto; border-radius:16px; border:1px solid rgba(155,34,38,0.08); background:#FFFFFF; }
+        table { width:100%; border-collapse:separate; border-spacing:0; font-size:0.88rem; }
+        th { background:linear-gradient(180deg,var(--cream),var(--warm-white)); color:var(--crimson); padding:14px 10px; font-weight:700; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.5px; border-bottom:2px solid rgba(155,34,38,0.1); white-space:nowrap; }
+        td { padding:13px 10px; border-bottom:1px solid rgba(155,34,38,0.05); color:var(--ink-light); vertical-align:middle; }
+        tr:hover td { background:var(--crimson-soft); color:var(--ink); }
+        tr:last-child td { border-bottom:none; }
+
+        /* INGREDIENT ROW */
+        .ingredient-row { display:grid; grid-template-columns:2fr 1fr 1fr auto; gap:10px; align-items:end; margin-bottom:12px; padding:12px; background:var(--warm-white); border-radius:12px; border:1px solid rgba(155,34,38,0.08); }
+        .ingredient-row .form-group { margin-bottom:0; }
+        .remove-ingredient { background:#FFE5E5; border:none; color:var(--crimson); width:36px;height:36px; border-radius:10px; cursor:pointer; font-size:1.2rem; transition:all 0.3s ease; display:flex;align-items:center;justify-content:center; }
+        .remove-ingredient:hover { background:var(--crimson); color:white; transform:scale(1.1); }
+        .add-ingredient-btn { width:100%; padding:12px; background:var(--gold-soft); border:2px dashed var(--gold); border-radius:12px; color:var(--gold); font-weight:700; cursor:pointer; transition:all 0.3s ease; margin-top:8px; font-family:'Noto Sans Thai',sans-serif; font-size:0.9rem; }
+        .add-ingredient-btn:hover { background:var(--gold); color:white; border-style:solid; }
+
+        /* MENU GRID */
+        .menu-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(265px,1fr)); gap:20px; }
+        .menu-card { background:#FFFFFF; border-radius:20px; padding:22px; border:1px solid rgba(155,34,38,0.08); box-shadow:0 2px 8px var(--shadow-warm); transition:all 0.4s ease; position:relative; overflow:hidden; }
+        .menu-card::before { content:''; position:absolute; top:0;left:0; width:100%;height:3px; background:linear-gradient(90deg,var(--crimson),var(--gold)); }
+        .menu-card:hover { transform:translateY(-4px); box-shadow:0 8px 30px rgba(155,34,38,0.12); }
+        .menu-card-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px; }
+        .menu-card-title { font-family:'Cormorant Garamond',serif; font-size:1.3rem;font-weight:700; color:var(--crimson); }
+        .menu-card-price { font-size:1.1rem;font-weight:700; color:var(--gold); white-space:nowrap; }
+        .menu-card-names { font-size:0.72rem; color:var(--ink-muted); margin-bottom:8px; line-height:1.5; }
+        .menu-card-category { display:inline-block; padding:4px 12px; background:var(--crimson-soft); color:var(--crimson); border-radius:20px; font-size:0.72rem;font-weight:600; margin-bottom:10px; }
+        .menu-card-desc { font-size:0.8rem; color:var(--ink-muted); margin-bottom:8px; line-height:1.5; }
+        .menu-card-ingredients { color:var(--ink-muted); font-size:0.82rem; line-height:1.6; margin-bottom:10px; }
+        .menu-card-time { font-size:0.75rem; color:var(--ink-muted); margin-bottom:6px; }
+        .menu-card-actions { display:flex; gap:7px; padding-top:12px; border-top:1px solid rgba(155,34,38,0.08); flex-wrap:wrap; }
+
+        /* COOK MODAL */
+        .modal-overlay { display:none; position:fixed; top:0;left:0;right:0;bottom:0; background:rgba(61,43,31,0.6); z-index:2000; backdrop-filter:blur(5px); align-items:center;justify-content:center; padding:20px; }
+        .modal-overlay.active { display:flex; }
+        .modal { background:var(--paper); border-radius:24px; padding:32px; max-width:500px;width:100%; max-height:90vh; overflow-y:auto; position:relative; animation:slide-up 0.3s ease; box-shadow:0 20px 60px rgba(0,0,0,0.3); }
+        .modal::before { content:''; position:absolute; top:0;left:0;width:100%;height:5px; background:linear-gradient(90deg,var(--crimson),var(--gold),var(--jade)); border-radius:24px 24px 0 0; }
+
+        .modal-close { position:absolute; top:16px;right:16px; background:rgba(155,34,38,0.1); border:none; color:var(--crimson); width:36px;height:36px; border-radius:50%; font-size:1.1rem; cursor:pointer;font-weight:700; display:flex;align-items:center;justify-content:center; transition:all 0.3s ease; }
+        .modal-close:hover { background:var(--crimson); color:white; }
+        .modal-title { font-family:'Cormorant Garamond',serif; font-size:1.7rem;font-weight:700; color:var(--crimson); margin-bottom:16px; padding-right:40px; }
+
+        .cook-ingredient-list { background:var(--warm-white); border-radius:16px; padding:16px; margin-bottom:18px; }
+        .cook-ingredient-item { display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid rgba(155,34,38,0.06); }
+        .cook-ingredient-item:last-child { border-bottom:none; }
+        .cook-ingredient-name { font-weight:600; color:var(--ink); }
+        .cook-ingredient-qty  { color:var(--crimson); font-weight:700; }
+        .cook-ingredient-stock { font-size:0.78rem; color:var(--ink-muted); }
+        .cook-ingredient-item.insufficient { background:rgba(255,0,0,0.05); border-radius:8px; padding:9px; margin:0 -8px; }
+        .cook-ingredient-item.insufficient .cook-ingredient-name { color:var(--crimson); }
+
+        .qty-input { display:flex; align-items:center; gap:12px; margin-bottom:18px; }
+        .qty-input label { font-weight:700; color:var(--crimson); white-space:nowrap; }
+        .qty-input input { width:80px; text-align:center; padding:10px; font-size:1.1rem;font-weight:700; border:2px solid var(--crimson); border-radius:12px; background:white; }
+        .qty-input input:focus { outline:none; box-shadow:0 0 0 4px var(--crimson-soft); }
+
+        .cook-total { background:linear-gradient(135deg,var(--crimson-soft),var(--gold-soft)); border-radius:16px; padding:16px; margin-bottom:18px; text-align:center; }
+        .cook-total-label { font-size:0.85rem; color:var(--ink-muted); margin-bottom:4px; }
+        .cook-total-value { font-family:'Cormorant Garamond',serif; font-size:2rem;font-weight:700; color:var(--crimson); }
+        .btn-cook { width:100%; padding:16px; font-size:1.05rem; }
+
+        /* EDIT MODAL */
+        .edit-modal-overlay { display:none; position:fixed; top:0;left:0;right:0;bottom:0; background:rgba(61,43,31,0.65); z-index:3000; backdrop-filter:blur(5px); align-items:center;justify-content:center; padding:20px; }
+        .edit-modal-overlay.show { display:flex; }
+        .edit-modal-box { background:#FFFFFF; border-radius:24px; padding:30px; width:100%;max-width:620px; max-height:92vh; overflow-y:auto; box-shadow:0 20px 60px rgba(155,34,38,0.25); animation:slide-up 0.3s ease; position:relative; }
+        .edit-modal-box::before { content:''; position:absolute; top:0;left:0;width:100%;height:5px; background:linear-gradient(90deg,var(--crimson),var(--gold),var(--jade)); border-radius:24px 24px 0 0; }
+        .modal-footer { display:flex; gap:10px; margin-top:22px; flex-wrap:wrap; }
+
+        /* UTILS */
+        .warm-text { color:var(--gold); font-weight:700; }
+        .crimson-text { color:var(--crimson); font-weight:700; }
+        .warm-divider { height:1px; background:linear-gradient(90deg,transparent,rgba(155,34,38,0.15),var(--gold),rgba(155,34,38,0.15),transparent); margin:22px 0; }
+        .footer-note { text-align:center; padding:30px 20px; color:var(--ink-muted); font-size:0.85rem; font-style:italic; }
 
         @media (max-width: 768px) {
-            .logo { font-size: 2rem; }
-            .stats-grid { grid-template-columns: 1fr; gap: 12px; }
-            .form-row { grid-template-columns: 1fr; }
-            .nav-tab { font-size: 0.75rem; padding: 14px 6px; min-width: 80px; }
-            .content { padding: 18px 15px; }
-            .card { padding: 20px; border-radius: 16px; }
-            table { font-size: 0.8rem; }
-            th, td { padding: 12px 8px; }
-            .menu-grid { grid-template-columns: 1fr; }
-            .ingredient-row { grid-template-columns: 1fr; }
+            .logo{font-size:2rem;} .stats-grid{grid-template-columns:1fr;gap:10px;}
+            .form-row{grid-template-columns:1fr;} .form-row-3{grid-template-columns:1fr;}
+            .nav-tab{font-size:0.75rem;padding:14px 6px;min-width:80px;}
+            .content{padding:16px 12px;} .card{padding:18px;border-radius:16px;}
+            .menu-grid{grid-template-columns:1fr;}
+            .ingredient-row{grid-template-columns:1fr 1fr;}
+            table{font-size:0.78rem;} th,td{padding:10px 7px;}
+            .back-btn{left:54px;font-size:0.72rem;padding:5px 10px;}
         }
     </style>
 </head>
 <body>
 
-    <!-- HEADER -->
-    <div class="header">
-        <div class="logo">Ohoi <span>Kyoza</span></div>
-        <div class="subtitle">ระบบเมนูอาหารและสูตร — ร้านเกี๊ยวซ่าไต้หวัน</div>
+<div class="header">
+    <a href="index.html" class="back-btn">← <span data-i18n="btn_back">หน้าหลัก</span></a>
+    <div class="logo">Ohoi <span>Kyoza</span></div>
+    <div class="subtitle" data-i18n="header_subtitle">ระบบเมนูอาหารและสูตร — ร้านเกี๊ยวซ่าไต้หวัน</div>
+    <div class="lang-switcher">
+        <button class="lang-btn active" onclick="changeLanguage('th')" data-lang="th">🇹🇭 ไทย</button>
+        <button class="lang-btn" onclick="changeLanguage('en')" data-lang="en">🇬🇧 EN</button>
+        <button class="lang-btn" onclick="changeLanguage('zh')" data-lang="zh">🇨🇳 中文</button>
+    </div>
+</div>
+
+<div class="nav-tabs">
+    <button class="nav-tab active" onclick="showTab('dashboard',this)" data-i18n="tab_dashboard">📊 แดชบอร์ด</button>
+    <button class="nav-tab" onclick="showTab('menus',this)" data-i18n="tab_menus">🍽️ เมนูอาหาร</button>
+    <button class="nav-tab" onclick="showTab('add-menu',this)" data-i18n="tab_add">➕ เพิ่มเมนู</button>
+    <button class="nav-tab" onclick="showTab('cook',this)" data-i18n="tab_cook">👨‍🍳 ทำอาหาร</button>
+    <button class="nav-tab" onclick="showTab('history',this)" data-i18n="tab_history">📋 ประวัติ</button>
+</div>
+
+<div class="content">
+
+    <div id="dashboard" class="tab-content active">
+        <div class="stats-grid">
+            <div class="stat-card"><h3 id="total-menus">0</h3><p data-i18n="stat_menus">เมนูทั้งหมด</p></div>
+            <div class="stat-card"><h3 id="today-orders">0</h3><p data-i18n="stat_orders">ออเดอร์วันนี้</p></div>
+            <div class="stat-card"><h3 id="low-ingredients">0</h3><p data-i18n="stat_low_ing">วัตถุดิบใกล้หมด</p></div>
+        </div>
+        <div class="card">
+            <div class="card-title" data-i18n="alerts_title">⚠️ แจ้งเตือนวัตถุดิบ</div>
+            <div id="alerts-container"></div>
+        </div>
     </div>
 
-    <!-- NAV -->
-    <div class="nav-tabs">
-        <button class="nav-tab active" onclick="showTab('dashboard')">📊 แดชบอร์ด</button>
-        <button class="nav-tab" onclick="showTab('menus')">🍽️ เมนูอาหาร</button>
-        <button class="nav-tab" onclick="showTab('add-menu')">➕ เพิ่มเมนู</button>
-        <button class="nav-tab" onclick="showTab('cook')">👨‍🍳 ทำอาหาร</button>
-        <button class="nav-tab" onclick="showTab('history')">📋 ประวัติ</button>
+    <div id="menus" class="tab-content">
+        <div class="card">
+            <div class="card-title" data-i18n="tab_menus">🍽️ เมนูอาหารทั้งหมด</div>
+            <div class="search-box">
+                <input type="text" id="menu-search" data-i18n-placeholder="ph_search_menu" placeholder="ค้นหาเมนู..." onkeyup="renderMenus()">
+            </div>
+            <div id="menus-grid-container" class="menu-grid"></div>
+        </div>
     </div>
 
-    <!-- CONTENT -->
-    <div class="content">
-        
-        <!-- DASHBOARD -->
-        <div id="dashboard" class="tab-content active">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <h3 id="total-menus">0</h3>
-                    <p>เมนูทั้งหมด</p>
-                </div>
-                <div class="stat-card">
-                    <h3 id="today-orders">0</h3>
-                    <p>ออเดอร์วันนี้</p>
-                </div>
-                <div class="stat-card">
-                    <h3 id="low-ingredients">0</h3>
-                    <p>วัตถุดิบใกล้หมด</p>
-                </div>
-            </div>
+    <div id="add-menu" class="tab-content">
+        <div class="card">
+            <div class="card-title" data-i18n="title_add_menu">➕ เพิ่มเมนูใหม่</div>
+            <form id="menu-form" onsubmit="addMenu(event)">
 
-            <div class="card">
-                <div class="card-title">⚠️ แจ้งเตือนวัตถุดิบ</div>
-                <div id="alerts-container"></div>
-            </div>
-        </div>
-
-        <!-- MENUS -->
-        <div id="menus" class="tab-content">
-            <div class="card">
-                <div class="card-title">🍽️ เมนูทั้งหมด</div>
-                <div class="search-box">
-                    <input type="text" id="menu-search" placeholder="ค้นหาเมนู..." onkeyup="renderMenus()">
-                </div>
-                <div id="menus-grid-container" class="menu-grid"></div>
-            </div>
-        </div>
-
-        <!-- ADD MENU -->
-        <div id="add-menu" class="tab-content">
-            <div class="card">
-                <div class="card-title">➕ เพิ่มเมนูใหม่</div>
-                <form id="menu-form" onsubmit="addMenu(event)">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>ชื่อเมนู</label>
-                            <input type="text" id="menu-name" placeholder="ข้าวหมูตุ๋น" required>
+                <div class="lang-name-section">
+                    <div class="lang-label" data-i18n="label_name_multilang">ชื่อเมนู (กรอกทุกภาษา)</div>
+                    <div class="form-row-3">
+                        <div class="form-group" style="margin-bottom:0">
+                            <label>🇹🇭 ภาษาไทย *</label>
+                            <input type="text" id="menu-name-th" placeholder="เกี๊ยวซ่าหมู" required>
                         </div>
-                        <div class="form-group">
-                            <label>ราคา (บาท)</label>
-                            <input type="number" id="menu-price" placeholder="89" min="0" step="0.01" required>
+                        <div class="form-group" style="margin-bottom:0">
+                            <label>🇬🇧 English</label>
+                            <input type="text" id="menu-name-en" placeholder="Pork Gyoza">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0">
+                            <label>🇨🇳 中文</label>
+                            <input type="text" id="menu-name-zh" placeholder="猪肉煎饺">
                         </div>
                     </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>หมวดหมู่</label>
-                            <select id="menu-category" required>
-                                <option value="">เลือกหมวดหมู่</option>
-                                <option value="gyoza">🥟 เกี๊ยวซ่า</option>
-                                <option value="rice">🍚 ข้าว</option>
-                                <option value="noodle">🍜 ก๋วยเตี๋ยว</option>
-                                <option value="soup">🍲 ซุป</option>
-                                <option value="drink">🥤 เครื่องดื่ม</option>
-                                <option value="dessert">🍮 ของหวาน</option>
-                                <option value="set">🍱 เซ็ต</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>เวลาทำ (นาที)</label>
-                            <input type="number" id="menu-time" placeholder="15" min="1">
-                        </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label data-i18n="label_price">ราคา (บาท)</label>
+                        <input type="number" id="menu-price" placeholder="89" min="0" step="0.01" required>
                     </div>
                     <div class="form-group">
-                        <label>คำอธิบาย</label>
-                        <textarea id="menu-desc" placeholder="รายละเอียดเมนู..."></textarea>
+                        <label data-i18n="label_category">หมวดหมู่</label>
+                        <select id="menu-category" required></select>
                     </div>
-
-                    <div class="warm-divider"></div>
-
-                    <div class="card-title">🧂 วัตถุดิบในสูตร</div>
-                    <div id="ingredients-container">
-                        <div class="ingredient-row">
-                            <div class="form-group">
-                                <label>เลือกวัตถุดิบ</label>
-                                <select class="ing-product" required>
-                                    <option value="">เลือกวัตถุดิบ</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>จำนวน</label>
-                                <input type="number" class="ing-qty" placeholder="0.5" min="0.01" step="0.01" required>
-                            </div>
-                            <div class="form-group">
-                                <label>หน่วย</label>
-                                <input type="text" class="ing-unit" placeholder="kg" readonly>
-                            </div>
-                            <button type="button" class="remove-ingredient" onclick="removeIngredientRow(this)" style="visibility:hidden">×</button>
-                        </div>
+                    <div class="form-group">
+                        <label data-i18n="label_time">เวลาทำ (นาที)</label>
+                        <input type="number" id="menu-time" placeholder="15" min="1">
                     </div>
-                    <button type="button" class="add-ingredient-btn" onclick="addIngredientRow()">+ เพิ่มวัตถุดิบ</button>
+                </div>
 
-                    <div style="margin-top: 24px;">
-                        <button type="submit" class="btn btn-primary">💾 บันทึกเมนู</button>
+                <div class="lang-name-section">
+                    <div class="lang-label" data-i18n="label_desc_multilang">คำอธิบายเมนู (ถ้ามี)</div>
+                    <div class="form-row-3">
+                        <div class="form-group" style="margin-bottom:0"><label>🇹🇭 ไทย</label><textarea id="menu-desc-th" placeholder="รสชาติกลมกล่อม..." style="min-height:60px"></textarea></div>
+                        <div class="form-group" style="margin-bottom:0"><label>🇬🇧 EN</label><textarea id="menu-desc-en" placeholder="Rich flavor..." style="min-height:60px"></textarea></div>
+                        <div class="form-group" style="margin-bottom:0"><label>🇨🇳 中文</label><textarea id="menu-desc-zh" placeholder="味道鲜美..." style="min-height:60px"></textarea></div>
                     </div>
-                </form>
-            </div>
-        </div>
+                </div>
 
-        <!-- COOK -->
-        <div id="cook" class="tab-content">
-            <div class="card">
-                <div class="card-title">👨‍🍳 ทำอาหาร (ตัดสต๊อกอัตโนมัติ)</div>
-                <div class="search-box">
-                    <input type="text" id="cook-search" placeholder="ค้นหาเมนู..." onkeyup="renderCookMenus()">
-                </div>
-                <div id="cook-menus-container" class="menu-grid"></div>
-            </div>
-        </div>
+                <div class="warm-divider"></div>
+                <div style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:700;color:var(--crimson);margin-bottom:16px;" data-i18n="label_ingredients">🧂 วัตถุดิบในสูตร</div>
 
-        <!-- HISTORY -->
-        <div id="history" class="tab-content">
-            <div class="card">
-                <div class="card-title">📋 ประวัติการทำอาหาร</div>
-                <div class="search-box">
-                    <input type="text" id="history-search" placeholder="ค้นหาประวัติ..." onkeyup="renderHistory()">
+                <div id="ingredients-container">
+                    <div class="ingredient-row">
+                        <div class="form-group"><label data-i18n="label_select_ing">เลือกวัตถุดิบ</label><select class="ing-product" required><option value=""></option></select></div>
+                        <div class="form-group"><label data-i18n="label_qty">จำนวน</label><input type="number" class="ing-qty" placeholder="0.5" min="0.01" step="0.01" required></div>
+                        <div class="form-group"><label data-i18n="label_unit">หน่วย</label><input type="text" class="ing-unit" readonly></div>
+                        <button type="button" class="remove-ingredient" onclick="removeIngredientRow(this)" style="visibility:hidden">×</button>
+                    </div>
                 </div>
-                <div class="table-container">
-                    <div id="history-table-container"></div>
+                <button type="button" class="add-ingredient-btn" id="btn-add-ing" onclick="addIngredientRow()">+ เพิ่มวัตถุดิบ</button>
+
+                <div style="margin-top:24px;">
+                    <button type="submit" class="btn btn-primary" data-i18n="btn_save_menu">💾 บันทึกเมนู</button>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 
-    <!-- COOK MODAL -->
-    <div class="modal-overlay" id="cook-modal">
-        <div class="modal">
-            <button class="modal-close" onclick="closeCookModal()">×</button>
-            <div class="modal-title" id="modal-menu-name">ชื่อเมนู</div>
-            <div id="modal-menu-category" class="menu-card-category" style="display:inline-block;margin-bottom:16px;"></div>
-            
-            <div class="cook-total">
-                <div class="cook-total-label">ราคาต่อจาน</div>
-                <div class="cook-total-value" id="modal-price">0 บาท</div>
+    <div id="cook" class="tab-content">
+        <div class="card">
+            <div class="card-title" data-i18n="title_cook">👨‍🍳 ทำอาหาร (ตัดสต๊อกอัตโนมัติ)</div>
+            <div class="search-box">
+                <input type="text" id="cook-search" data-i18n-placeholder="ph_search_menu" placeholder="ค้นหาเมนู..." onkeyup="renderCookMenus()">
             </div>
-
-            <div class="qty-input">
-                <label>จำนวนจาน:</label>
-                <input type="number" id="cook-qty" value="1" min="1" max="50" onchange="updateCookPreview()">
-            </div>
-
-            <div class="cook-ingredient-list" id="modal-ingredients"></div>
-
-            <div id="modal-warning"></div>
-
-            <button class="btn btn-success btn-cook" id="btn-cook-confirm" onclick="confirmCook()">
-                👨‍🍳 ยืนยันทำอาหารและตัดสต๊อก
-            </button>
+            <div id="cook-menus-container" class="menu-grid"></div>
         </div>
     </div>
 
-    <div class="footer-note">
-        🥟 Ohoi Kyoza — ทุกจานที่ทำ คือความใส่ใจ 🏮
+    <div id="history" class="tab-content">
+        <div class="card">
+            <div class="card-title" data-i18n="title_history">📋 ประวัติการทำอาหาร</div>
+            <div class="search-box">
+                <input type="text" id="history-search" data-i18n-placeholder="ph_search_history" placeholder="ค้นหาประวัติ..." onkeyup="renderHistory()">
+            </div>
+            <div class="table-container"><div id="history-table-container"></div></div>
+        </div>
     </div>
 
-    <script>
-        // ===== STATE =====
-        let products = JSON.parse(localStorage.getItem('ok_products')) || [];
-        let transactions = JSON.parse(localStorage.getItem('ok_transactions')) || [];
-        let menus = JSON.parse(localStorage.getItem('ok_menus')) || [];
-        let cookHistory = JSON.parse(localStorage.getItem('ok_cook_history')) || [];
-        let currentCookMenu = null;
+</div>
 
-        // ===== INIT =====
-        document.addEventListener('DOMContentLoaded', () => {
-            updateProductSelects();
-            updateDashboard();
-            renderMenus();
-            renderCookMenus();
-            renderHistory();
-        });
+<!-- COOK MODAL -->
+<div class="modal-overlay" id="cook-modal">
+    <div class="modal">
+        <button class="modal-close" onclick="closeCookModal()">✕</button>
+        <div class="modal-title" id="modal-menu-name"></div>
+        <div id="modal-menu-category" class="menu-card-category" style="display:inline-block;margin-bottom:14px;"></div>
+        <div class="cook-total">
+            <div class="cook-total-label" data-i18n="label_price_per">ราคาต่อจาน</div>
+            <div class="cook-total-value" id="modal-price">0 ฿</div>
+        </div>
+        <div class="qty-input">
+            <label data-i18n="label_num_serving">จำนวนจาน:</label>
+            <input type="number" id="cook-qty" value="1" min="1" max="50" onchange="updateCookPreview()">
+        </div>
+        <div class="cook-ingredient-list" id="modal-ingredients"></div>
+        <div id="modal-warning"></div>
+        <button class="btn btn-success btn-cook" id="btn-cook-confirm" onclick="confirmCook()" data-i18n="btn_confirm_cook">👨‍🍳 ยืนยันทำอาหารและตัดสต๊อก</button>
+    </div>
+</div>
 
-        // ===== TABS =====
-        function showTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            event.target.classList.add('active');
-            
-            if (tabId === 'dashboard') updateDashboard();
-            if (tabId === 'menus') renderMenus();
-            if (tabId === 'cook') renderCookMenus();
-            if (tabId === 'history') renderHistory();
-            if (tabId === 'add-menu') updateProductSelects();
+<!-- EDIT MODAL -->
+<div class="edit-modal-overlay" id="edit-modal">
+    <div class="edit-modal-box">
+        <button class="modal-close" onclick="closeEditModal()">✕</button>
+        <div class="modal-title" data-i18n="title_edit_menu">✏️ แก้ไขเมนู</div>
+        <input type="hidden" id="edit-menu-id">
+
+        <div class="lang-name-section">
+            <div class="lang-label" data-i18n="label_name_multilang">ชื่อเมนู (ทุกภาษา)</div>
+            <div class="form-row-3">
+                <div class="form-group" style="margin-bottom:0"><label>🇹🇭 ภาษาไทย</label><input type="text" id="edit-name-th"></div>
+                <div class="form-group" style="margin-bottom:0"><label>🇬🇧 English</label><input type="text" id="edit-name-en"></div>
+                <div class="form-group" style="margin-bottom:0"><label>🇨🇳 中文</label><input type="text" id="edit-name-zh"></div>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group"><label data-i18n="label_price">ราคา (บาท)</label><input type="number" id="edit-price" min="0" step="0.01"></div>
+            <div class="form-group"><label data-i18n="label_category">หมวดหมู่</label><select id="edit-category"></select></div>
+            <div class="form-group"><label data-i18n="label_time">เวลาทำ (นาที)</label><input type="number" id="edit-time" min="1"></div>
+        </div>
+
+        <div class="lang-name-section">
+            <div class="lang-label" data-i18n="label_desc_multilang">คำอธิบายเมนู</div>
+            <div class="form-row-3">
+                <div class="form-group" style="margin-bottom:0"><label>🇹🇭 ไทย</label><textarea id="edit-desc-th" style="min-height:55px"></textarea></div>
+                <div class="form-group" style="margin-bottom:0"><label>🇬🇧 EN</label><textarea id="edit-desc-en" style="min-height:55px"></textarea></div>
+                <div class="form-group" style="margin-bottom:0"><label>🇨🇳 中文</label><textarea id="edit-desc-zh" style="min-height:55px"></textarea></div>
+            </div>
+        </div>
+
+        <div class="warm-divider"></div>
+        <div style="font-weight:700;color:var(--crimson);margin-bottom:14px;" data-i18n="label_ingredients">🧂 วัตถุดิบในสูตร</div>
+        <div id="edit-ingredients-container"></div>
+        <button type="button" class="add-ingredient-btn" id="btn-edit-add-ing" onclick="addEditIngredientRow()">+ เพิ่มวัตถุดิบ</button>
+
+        <div class="modal-footer">
+            <button class="btn btn-primary" onclick="saveEditMenu()" data-i18n="btn_save_edit">💾 บันทึกการแก้ไข</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteMenuFromModal()" data-i18n="btn_delete">🗑️ ลบเมนู</button>
+            <button class="btn btn-sm" style="background:var(--cream);color:var(--ink);" onclick="closeEditModal()" data-i18n="btn_cancel">ยกเลิก</button>
+        </div>
+    </div>
+</div>
+
+<div class="footer-note">🥟 Ohoi Kyoza — ทุกจานที่ทำ คือความใส่ใจ 🏮</div>
+
+<script>
+// ===== CATEGORY DATA =====
+const categoryData = {
+    gyoza:{th:'🥟 เกี๊ยวซ่า',en:'🥟 Gyoza',zh:'🥟 煎饺'},
+    rice:{th:'🍚 ข้าว',en:'🍚 Rice',zh:'🍚 米饭'},
+    noodle:{th:'🍜 ก๋วยเตี๋ยว',en:'🍜 Noodle',zh:'🍜 面条'},
+    soup:{th:'🍲 ซุป',en:'🍲 Soup',zh:'🍲 汤'},
+    drink:{th:'🥤 เครื่องดื่ม',en:'🥤 Drink',zh:'🥤 饮料'},
+    dessert:{th:'🍮 ของหวาน',en:'🍮 Dessert',zh:'🍮 甜点'},
+    set:{th:'🍱 เซ็ต',en:'🍱 Set',zh:'🍱 套餐'}
+};
+
+// ===== TRANSLATIONS =====
+const translations = {
+    th:{
+        btn_back:'หน้าหลัก',header_subtitle:'ระบบเมนูอาหารและสูตร — ร้านเกี๊ยวซ่าไต้หวัน',
+        tab_dashboard:'📊 แดชบอร์ด',tab_menus:'🍽️ เมนูอาหาร',tab_add:'➕ เพิ่มเมนู',tab_cook:'👨‍🍳 ทำอาหาร',tab_history:'📋 ประวัติ',
+        stat_menus:'เมนูทั้งหมด',stat_orders:'ออเดอร์วันนี้',stat_low_ing:'วัตถุดิบใกล้หมด',
+        alerts_title:'⚠️ แจ้งเตือนวัตถุดิบ',alert_low:'⚠️ วัตถุดิบใกล้หมด:',alert_cant_cook:'🚨 เมนูที่ทำไม่ได้:',alert_ok:'✅ ทุกอย่างพร้อม! สามารถทำอาหารได้ทุกเมนู',
+        title_add_menu:'➕ เพิ่มเมนูใหม่',title_edit_menu:'✏️ แก้ไขเมนู',title_cook:'👨‍🍳 ทำอาหาร (ตัดสต๊อกอัตโนมัติ)',title_history:'📋 ประวัติการทำอาหาร',
+        label_name_multilang:'ชื่อเมนู (กรอกทุกภาษา)',label_desc_multilang:'คำอธิบายเมนู (ถ้ามี)',
+        label_price:'ราคา (บาท)',label_category:'หมวดหมู่',label_time:'เวลาทำ (นาที)',
+        label_ingredients:'🧂 วัตถุดิบในสูตร',label_select_ing:'เลือกวัตถุดิบ',label_qty:'จำนวน',label_unit:'หน่วย',
+        label_price_per:'ราคาต่อจาน',label_num_serving:'จำนวนจาน:',
+        btn_save_menu:'💾 บันทึกเมนู',btn_save_edit:'💾 บันทึกการแก้ไข',btn_delete:'🗑️ ลบเมนู',btn_cancel:'ยกเลิก',
+        btn_edit:'✏️ แก้ไข',btn_cook_now:'👨‍🍳 ทำอาหาร',btn_confirm_cook:'👨‍🍳 ยืนยันทำอาหารและตัดสต๊อก',btn_add_ing:'+ เพิ่มวัตถุดิบ',
+        card_ing:'วัตถุดิบ:',card_time:'⏱',status_ready:'✅ พร้อมทำ',status_lack:'❌ ขาด:',
+        empty_menu:'ยังไม่มีเมนู — กรุณาเพิ่มเมนูใหม่',empty_cook:'ยังไม่มีเมนูสำหรับทำอาหาร',empty_history:'ยังไม่มีประวัติการทำอาหาร',
+        th_date:'วันที่',th_menu:'เมนู',th_qty:'จำนวน',th_total:'ยอดรวม',th_ing:'วัตถุดิบที่ใช้',
+        unit_serving:'จาน',unit_baht:'บาท',
+        msg_add_ok:'✅ เพิ่มเมนู "{name}" เรียบร้อยแล้ว!',msg_edit_ok:'✅ แก้ไขเมนูเรียบร้อยแล้ว!',
+        msg_del_confirm:'ต้องการลบเมนู "{name}" ใช่หรือไม่?\nไม่สามารถกู้คืนได้',
+        msg_no_ing:'กรุณาเลือกวัตถุดิบอย่างน้อย 1 รายการ',msg_min_ing:'ต้องมีวัตถุดิบอย่างน้อย 1 รายการ',
+        msg_cant_cook:'❌ ไม่สามารถทำอาหารได้ วัตถุดิบไม่พอ',msg_cook_ok:'✅ ทำ "{name}" จำนวน {qty} จาน เรียบร้อย!',
+        modal_stock:'คงเหลือ:',modal_ok:'✅ วัตถุดิบพร้อม! สามารถทำอาหารได้',modal_lack:'❌ วัตถุดิบไม่พอ!',
+        modal_lack_detail:'ต้องการ {need} — มี {have}',
+        ph_search_menu:'ค้นหาเมนู...',ph_search_history:'ค้นหาประวัติ...',select_category:'เลือกหมวดหมู่',select_ing:'เลือกวัตถุดิบ'
+    },
+    en:{
+        btn_back:'Home',header_subtitle:'Menu & Recipe System — Taiwanese Gyoza Restaurant',
+        tab_dashboard:'📊 Dashboard',tab_menus:'🍽️ Menus',tab_add:'➕ Add Menu',tab_cook:'👨‍🍳 Cook',tab_history:'📋 History',
+        stat_menus:'Total Menus',stat_orders:"Today's Orders",stat_low_ing:'Low Ingredients',
+        alerts_title:'⚠️ Ingredient Alerts',alert_low:'⚠️ Low Stock:',alert_cant_cook:'🚨 Cannot Cook:',alert_ok:'✅ All ready! Every menu can be cooked.',
+        title_add_menu:'➕ Add New Menu',title_edit_menu:'✏️ Edit Menu',title_cook:'👨‍🍳 Cook (Auto Stock Deduction)',title_history:'📋 Cook History',
+        label_name_multilang:'Menu Name (fill all languages)',label_desc_multilang:'Description (optional)',
+        label_price:'Price (THB)',label_category:'Category',label_time:'Cook Time (min)',
+        label_ingredients:'🧂 Recipe Ingredients',label_select_ing:'Select Ingredient',label_qty:'Quantity',label_unit:'Unit',
+        label_price_per:'Price per Serving',label_num_serving:'Servings:',
+        btn_save_menu:'💾 Save Menu',btn_save_edit:'💾 Save Changes',btn_delete:'🗑️ Delete Menu',btn_cancel:'Cancel',
+        btn_edit:'✏️ Edit',btn_cook_now:'👨‍🍳 Cook',btn_confirm_cook:'👨‍🍳 Confirm Cook & Deduct Stock',btn_add_ing:'+ Add Ingredient',
+        card_ing:'Ingredients:',card_time:'⏱',status_ready:'✅ Ready',status_lack:'❌ Missing:',
+        empty_menu:'No menus yet — please add a new menu',empty_cook:'No menus available',empty_history:'No cook history yet',
+        th_date:'Date',th_menu:'Menu',th_qty:'Qty',th_total:'Total',th_ing:'Ingredients Used',
+        unit_serving:'servings',unit_baht:'THB',
+        msg_add_ok:'✅ Menu "{name}" added successfully!',msg_edit_ok:'✅ Menu updated successfully!',
+        msg_del_confirm:'Delete menu "{name}"?\nThis cannot be undone.',
+        msg_no_ing:'Please select at least 1 ingredient.',msg_min_ing:'At least 1 ingredient is required.',
+        msg_cant_cook:'❌ Cannot cook — insufficient ingredients.',msg_cook_ok:'✅ Cooked "{name}" x{qty} successfully!',
+        modal_stock:'In stock:',modal_ok:'✅ Ingredients ready! You can cook.',modal_lack:'❌ Insufficient ingredients!',
+        modal_lack_detail:'Need {need} — Have {have}',
+        ph_search_menu:'Search menus...',ph_search_history:'Search history...',select_category:'Select Category',select_ing:'Select Ingredient'
+    },
+    zh:{
+        btn_back:'首页',header_subtitle:'菜单与食谱系统 — 台湾饺子店',
+        tab_dashboard:'📊 仪表板',tab_menus:'🍽️ 菜单',tab_add:'➕ 添加菜单',tab_cook:'👨‍🍳 烹饪',tab_history:'📋 历史记录',
+        stat_menus:'菜单总数',stat_orders:'今日订单',stat_low_ing:'库存不足食材',
+        alerts_title:'⚠️ 食材提醒',alert_low:'⚠️ 库存不足:',alert_cant_cook:'🚨 无法烹饪:',alert_ok:'✅ 一切就绪！所有菜单均可烹饪。',
+        title_add_menu:'➕ 添加新菜单',title_edit_menu:'✏️ 编辑菜单',title_cook:'👨‍🍳 烹饪（自动扣减库存）',title_history:'📋 烹饪历史',
+        label_name_multilang:'菜单名称（请填写所有语言）',label_desc_multilang:'描述（可选）',
+        label_price:'价格（泰铢）',label_category:'分类',label_time:'烹饪时间（分钟）',
+        label_ingredients:'🧂 食谱配料',label_select_ing:'选择食材',label_qty:'数量',label_unit:'单位',
+        label_price_per:'每份价格',label_num_serving:'份数:',
+        btn_save_menu:'💾 保存菜单',btn_save_edit:'💾 保存修改',btn_delete:'🗑️ 删除菜单',btn_cancel:'取消',
+        btn_edit:'✏️ 编辑',btn_cook_now:'👨‍🍳 烹饪',btn_confirm_cook:'👨‍🍳 确认烹饪并扣减库存',btn_add_ing:'+ 添加食材',
+        card_ing:'配料:',card_time:'⏱',status_ready:'✅ 可烹饪',status_lack:'❌ 缺少:',
+        empty_menu:'暂无菜单 — 请添加新菜单',empty_cook:'暂无可烹饪菜单',empty_history:'暂无烹饪历史',
+        th_date:'日期',th_menu:'菜单',th_qty:'数量',th_total:'总计',th_ing:'所用配料',
+        unit_serving:'份',unit_baht:'泰铢',
+        msg_add_ok:'✅ 菜单"{name}"添加成功！',msg_edit_ok:'✅ 菜单修改成功！',
+        msg_del_confirm:'确定删除菜单"{name}"？\n删除后无法恢复。',
+        msg_no_ing:'请至少选择 1 种食材。',msg_min_ing:'至少需要 1 种食材。',
+        msg_cant_cook:'❌ 无法烹饪 — 食材不足。',msg_cook_ok:'✅ 已烹饪"{name}" x{qty}份！',
+        modal_stock:'库存:',modal_ok:'✅ 食材充足！可以烹饪。',modal_lack:'❌ 食材不足！',
+        modal_lack_detail:'需要 {need} — 有 {have}',
+        ph_search_menu:'搜索菜单...',ph_search_history:'搜索记录...',select_category:'选择分类',select_ing:'选择食材'
+    }
+};
+
+// ===== STATE =====
+let currentLang    = localStorage.getItem('ok_lang') || 'th';
+let products       = JSON.parse(localStorage.getItem('ok_products'))     || [];
+let transactions   = JSON.parse(localStorage.getItem('ok_transactions')) || [];
+let menus          = JSON.parse(localStorage.getItem('ok_menus'))        || [];
+let cookHistory    = JSON.parse(localStorage.getItem('ok_cook_history')) || [];
+let currentCookMenu = null;
+let editingMenuId   = null;
+
+// ===== TRANSLATE HELPERS =====
+function t(key, params = {}) {
+    let text = translations[currentLang][key] || key;
+    Object.keys(params).forEach(k => { text = text.replace(`{${k}}`, params[k]); });
+    return text;
+}
+function getMenuName(m) {
+    if (currentLang === 'en' && m.name_en) return m.name_en;
+    if (currentLang === 'zh' && m.name_zh) return m.name_zh;
+    return m.name_th || m.name || '—';
+}
+function getMenuDesc(m) {
+    if (currentLang === 'en' && m.desc_en) return m.desc_en;
+    if (currentLang === 'zh' && m.desc_zh) return m.desc_zh;
+    return m.desc_th || m.description || '';
+}
+function getCatLabel(key) { return categoryData[key]?.[currentLang] || key; }
+function getProductName(p) {
+    if (!p) return '—';
+    if (currentLang === 'en' && p.name_en) return p.name_en;
+    if (currentLang === 'zh' && p.name_zh) return p.name_zh;
+    return p.name_th || p.name || '—';
+}
+function getUnitLabel(key) {
+    const map = { kg:'kg',g:'g',l:'L',ml:'ml', bottle:{th:'ขวด',en:'Bottle',zh:'瓶'}, can:{th:'กระป๋อง',en:'Can',zh:'罐'}, box:{th:'กล่อง',en:'Box',zh:'盒'}, pack:{th:'ซอง',en:'Pack',zh:'包'}, piece:{th:'ชิ้น',en:'Piece',zh:'个'}, bag:{th:'ถุง',en:'Bag',zh:'袋'} };
+    const v = map[key]; if (!v) return key||''; if (typeof v === 'string') return v; return v[currentLang]||key;
+}
+
+// ===== LANGUAGE =====
+function changeLanguage(lang) {
+    currentLang = lang;
+    localStorage.setItem('ok_lang', lang);
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+    document.querySelectorAll('[data-i18n]').forEach(el => { const k = el.dataset.i18n; if (translations[lang][k]) el.textContent = translations[lang][k]; });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { const k = el.dataset.i18nPlaceholder; if (translations[lang][k]) el.placeholder = translations[lang][k]; });
+    renderCategoryDropdowns();
+    updateProductSelects();
+    renderMenus(); renderCookMenus(); renderHistory(); updateDashboard();
+    document.getElementById('btn-add-ing').textContent = t('btn_add_ing');
+    document.getElementById('btn-edit-add-ing').textContent = t('btn_add_ing');
+}
+
+document.addEventListener('DOMContentLoaded', () => { renderCategoryDropdowns(); changeLanguage(currentLang); });
+
+// ===== CATEGORY DROPDOWNS =====
+function renderCategoryDropdowns() {
+    const opts = `<option value="">${t('select_category')}</option>` + Object.entries(categoryData).map(([k,v]) => `<option value="${k}">${v[currentLang]}</option>`).join('');
+    document.getElementById('menu-category').innerHTML = opts;
+    document.getElementById('edit-category').innerHTML = opts;
+}
+
+// ===== TABS =====
+function showTab(tabId, btn) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    if (btn) btn.classList.add('active');
+    if (tabId === 'dashboard') updateDashboard();
+    if (tabId === 'menus')     renderMenus();
+    if (tabId === 'cook')      { products = JSON.parse(localStorage.getItem('ok_products'))||[]; renderCookMenus(); }
+    if (tabId === 'history')   renderHistory();
+    if (tabId === 'add-menu')  updateProductSelects();
+}
+
+// ===== PRODUCT SELECTS =====
+function updateProductSelects() {
+    products = JSON.parse(localStorage.getItem('ok_products')) || [];
+    const makeOpts = () => `<option value="">${t('select_ing')}</option>` +
+        products.map(p => `<option value="${p.id}" data-unit="${p.unit}">${p.code} — ${getProductName(p)} (${p.stock} ${getUnitLabel(p.unit)})</option>`).join('');
+    document.querySelectorAll('#ingredients-container .ing-product').forEach(sel => { const v=sel.value; sel.innerHTML=makeOpts(); sel.value=v; bindIngSelect(sel); });
+    document.querySelectorAll('#edit-ingredients-container .ing-product').forEach(sel => { const v=sel.value; sel.innerHTML=makeOpts(); sel.value=v; bindIngSelect(sel); });
+}
+function bindIngSelect(sel) {
+    sel.onchange = function() { const opt=this.options[this.selectedIndex]; const row=this.closest('.ingredient-row'); if(row) row.querySelector('.ing-unit').value=getUnitLabel(opt.dataset.unit||''); };
+}
+
+// ===== INGREDIENT ROWS (Add) =====
+function addIngredientRow() {
+    const row = document.createElement('div'); row.className = 'ingredient-row';
+    row.innerHTML = `<div class="form-group"><label>${t('label_select_ing')}</label><select class="ing-product" required><option value=""></option></select></div>
+        <div class="form-group"><label>${t('label_qty')}</label><input type="number" class="ing-qty" placeholder="0.5" min="0.01" step="0.01" required></div>
+        <div class="form-group"><label>${t('label_unit')}</label><input type="text" class="ing-unit" readonly></div>
+        <button type="button" class="remove-ingredient" onclick="removeIngredientRow(this)">×</button>`;
+    document.getElementById('ingredients-container').appendChild(row);
+    updateProductSelects();
+}
+function removeIngredientRow(btn) {
+    if (document.querySelectorAll('#ingredients-container .ingredient-row').length > 1) btn.closest('.ingredient-row').remove();
+    else alert(t('msg_min_ing'));
+}
+
+// ===== INGREDIENT ROWS (Edit) =====
+function addEditIngredientRow(ing = null) {
+    products = JSON.parse(localStorage.getItem('ok_products')) || [];
+    const opts = `<option value="">${t('select_ing')}</option>` + products.map(p =>
+        `<option value="${p.id}" data-unit="${p.unit}" ${ing && ing.productId===p.id?'selected':''}>${p.code} — ${getProductName(p)} (${p.stock} ${getUnitLabel(p.unit)})</option>`
+    ).join('');
+    const row = document.createElement('div'); row.className = 'ingredient-row';
+    row.innerHTML = `<div class="form-group"><label>${t('label_select_ing')}</label><select class="ing-product" required>${opts}</select></div>
+        <div class="form-group"><label>${t('label_qty')}</label><input type="number" class="ing-qty" value="${ing?ing.quantity:''}" placeholder="0.5" min="0.01" step="0.01" required></div>
+        <div class="form-group"><label>${t('label_unit')}</label><input type="text" class="ing-unit" value="${ing?getUnitLabel(ing.unit):''}" readonly></div>
+        <button type="button" class="remove-ingredient" onclick="removeEditIngredientRow(this)">×</button>`;
+    document.getElementById('edit-ingredients-container').appendChild(row);
+    bindIngSelect(row.querySelector('.ing-product'));
+}
+function removeEditIngredientRow(btn) {
+    if (document.querySelectorAll('#edit-ingredients-container .ingredient-row').length > 1) btn.closest('.ingredient-row').remove();
+    else alert(t('msg_min_ing'));
+}
+
+// ===== COLLECT INGREDIENTS =====
+function collectIngredients(containerId) {
+    const rows = document.querySelectorAll(`#${containerId} .ingredient-row`);
+    const result = [];
+    rows.forEach(row => {
+        const productId = parseInt(row.querySelector('.ing-product').value);
+        const qty = parseFloat(row.querySelector('.ing-qty').value);
+        const p = products.find(x => x.id === productId);
+        if (p && qty > 0) result.push({ productId, productCode:p.code, productName:p.name_th||p.name, quantity:qty, unit:p.unit });
+    });
+    return result;
+}
+
+// ===== ADD MENU =====
+function addMenu(e) {
+    e.preventDefault();
+    const nameTh = document.getElementById('menu-name-th').value.trim();
+    const nameEn = document.getElementById('menu-name-en').value.trim();
+    const nameZh = document.getElementById('menu-name-zh').value.trim();
+    const ingredients = collectIngredients('ingredients-container');
+    if (!ingredients.length) { alert(t('msg_no_ing')); return; }
+
+    const menu = {
+        id: Date.now(),
+        name_th:nameTh, name_en:nameEn||nameTh, name_zh:nameZh||nameTh, name:nameTh,
+        desc_th:document.getElementById('menu-desc-th').value,
+        desc_en:document.getElementById('menu-desc-en').value,
+        desc_zh:document.getElementById('menu-desc-zh').value,
+        description:document.getElementById('menu-desc-th').value,
+        price:parseFloat(document.getElementById('menu-price').value),
+        category:document.getElementById('menu-category').value,
+        time:parseInt(document.getElementById('menu-time').value)||0,
+        ingredients, createdAt:new Date().toISOString()
+    };
+    menus.push(menu); saveData();
+    document.getElementById('menu-form').reset();
+    resetIngredientContainer();
+    updateDashboard(); renderMenus();
+    alert(t('msg_add_ok', {name:nameTh}));
+}
+
+function resetIngredientContainer() {
+    document.getElementById('ingredients-container').innerHTML = `<div class="ingredient-row">
+        <div class="form-group"><label>${t('label_select_ing')}</label><select class="ing-product" required><option value=""></option></select></div>
+        <div class="form-group"><label>${t('label_qty')}</label><input type="number" class="ing-qty" placeholder="0.5" min="0.01" step="0.01" required></div>
+        <div class="form-group"><label>${t('label_unit')}</label><input type="text" class="ing-unit" readonly></div>
+        <button type="button" class="remove-ingredient" onclick="removeIngredientRow(this)" style="visibility:hidden">×</button>
+    </div>`;
+    updateProductSelects();
+}
+
+// ===== EDIT MODAL =====
+function openEditModal(id) {
+    const m = menus.find(x => x.id === id); if (!m) return;
+    editingMenuId = id;
+    document.getElementById('edit-menu-id').value = id;
+    document.getElementById('edit-name-th').value = m.name_th||m.name||'';
+    document.getElementById('edit-name-en').value = m.name_en||m.name||'';
+    document.getElementById('edit-name-zh').value = m.name_zh||m.name||'';
+    document.getElementById('edit-price').value   = m.price;
+    document.getElementById('edit-time').value    = m.time||'';
+    document.getElementById('edit-desc-th').value = m.desc_th||m.description||'';
+    document.getElementById('edit-desc-en').value = m.desc_en||'';
+    document.getElementById('edit-desc-zh').value = m.desc_zh||'';
+    renderCategoryDropdowns();
+    document.getElementById('edit-category').value = m.category||'';
+    document.getElementById('edit-ingredients-container').innerHTML = '';
+    m.ingredients.forEach(ing => addEditIngredientRow(ing));
+    document.getElementById('edit-modal').classList.add('show');
+}
+function closeEditModal() { document.getElementById('edit-modal').classList.remove('show'); editingMenuId = null; }
+
+function saveEditMenu() {
+    if (!editingMenuId) return;
+    const m = menus.find(x => x.id === editingMenuId); if (!m) return;
+    const nameTh = document.getElementById('edit-name-th').value.trim();
+    const nameEn = document.getElementById('edit-name-en').value.trim();
+    const nameZh = document.getElementById('edit-name-zh').value.trim();
+    const ingredients = collectIngredients('edit-ingredients-container');
+    if (!ingredients.length) { alert(t('msg_no_ing')); return; }
+
+    m.name_th=nameTh; m.name_en=nameEn||nameTh; m.name_zh=nameZh||nameTh; m.name=nameTh;
+    m.desc_th=document.getElementById('edit-desc-th').value;
+    m.desc_en=document.getElementById('edit-desc-en').value;
+    m.desc_zh=document.getElementById('edit-desc-zh').value;
+    m.description=m.desc_th;
+    m.price=parseFloat(document.getElementById('edit-price').value)||0;
+    m.category=document.getElementById('edit-category').value;
+    m.time=parseInt(document.getElementById('edit-time').value)||0;
+    m.ingredients=ingredients;
+    saveData(); closeEditModal(); renderMenus(); renderCookMenus(); updateDashboard();
+    alert(t('msg_edit_ok'));
+}
+function deleteMenuFromModal() {
+    if (!editingMenuId) return;
+    const m = menus.find(x => x.id === editingMenuId); if (!m) return;
+    if (confirm(t('msg_del_confirm', {name:getMenuName(m)}))) {
+        menus = menus.filter(x => x.id !== editingMenuId);
+        saveData(); closeEditModal(); renderMenus(); renderCookMenus(); updateDashboard();
+    }
+}
+document.getElementById('edit-modal').addEventListener('click', function(e) { if (e.target===this) closeEditModal(); });
+
+// ===== DELETE MENU =====
+function deleteMenu(id) {
+    const m = menus.find(x => x.id === id); if (!m) return;
+    if (confirm(t('msg_del_confirm', {name:getMenuName(m)}))) {
+        menus = menus.filter(x => x.id !== id);
+        saveData(); renderMenus(); renderCookMenus(); updateDashboard();
+    }
+}
+
+// ===== RENDER MENUS =====
+function renderMenus() {
+    const search = (document.getElementById('menu-search')?.value||'').toLowerCase();
+    const filtered = menus.filter(m =>
+        (m.name_th||'').toLowerCase().includes(search)||(m.name_en||'').toLowerCase().includes(search)||(m.name_zh||'').toLowerCase().includes(search)||(m.category||'').toLowerCase().includes(search)
+    );
+    const container = document.getElementById('menus-grid-container');
+    if (!filtered.length) { container.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">🍽️</div><p>${t('empty_menu')}</p></div>`; return; }
+
+    container.innerHTML = filtered.map(m => {
+        const ingList = m.ingredients.map(ing => { const p=products.find(x=>x.id===ing.productId); return `${p?getProductName(p):ing.productName} ${ing.quantity} ${getUnitLabel(ing.unit)}`; }).join(', ');
+        const nameAlt = [m.name_en && currentLang!=='en'?'🇬🇧 '+m.name_en:'', m.name_zh && currentLang!=='zh'?'🇨🇳 '+m.name_zh:''].filter(Boolean).join(' ');
+        const desc = getMenuDesc(m);
+        return `<div class="menu-card">
+            <div class="menu-card-header"><div class="menu-card-title">${getMenuName(m)}</div><div class="menu-card-price">${m.price} ฿</div></div>
+            ${nameAlt?`<div class="menu-card-names">${nameAlt}</div>`:''}
+            <span class="menu-card-category">${getCatLabel(m.category)}</span>
+            ${m.time?`<div class="menu-card-time">${t('card_time')} ${m.time} min</div>`:''}
+            ${desc?`<div class="menu-card-desc">${desc}</div>`:''}
+            <div class="menu-card-ingredients"><strong>${t('card_ing')}</strong> ${ingList}</div>
+            <div class="menu-card-actions">
+                <button class="btn btn-success btn-sm" onclick="openCookModal(${m.id})">${t('btn_cook_now')}</button>
+                <button class="btn btn-warning btn-sm" onclick="openEditModal(${m.id})">${t('btn_edit')}</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteMenu(${m.id})">${t('btn_delete')}</button>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+// ===== RENDER COOK MENUS =====
+function renderCookMenus() {
+    const search = (document.getElementById('cook-search')?.value||'').toLowerCase();
+    const filtered = menus.filter(m =>
+        (m.name_th||'').toLowerCase().includes(search)||(m.name_en||'').toLowerCase().includes(search)||(m.name_zh||'').toLowerCase().includes(search)
+    );
+    const container = document.getElementById('cook-menus-container');
+    if (!filtered.length) { container.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">👨‍🍳</div><p>${t('empty_cook')}</p></div>`; return; }
+
+    container.innerHTML = filtered.map(m => {
+        const check = checkMenuStock(m);
+        const statusHtml = check.canCook
+            ? `<span style="color:var(--jade)">${t('status_ready')}</span>`
+            : `<span style="color:var(--crimson)">${t('status_lack')} ${check.insufficient.map(i=>i.name).join(', ')}</span>`;
+        return `<div class="menu-card" style="${!check.canCook?'opacity:0.65;':''}">
+            <div class="menu-card-header"><div class="menu-card-title">${getMenuName(m)}</div><div class="menu-card-price">${m.price} ฿</div></div>
+            <span class="menu-card-category">${getCatLabel(m.category)}</span>
+            <div class="menu-card-ingredients" style="margin-bottom:12px;">${statusHtml}</div>
+            <div class="menu-card-actions">
+                <button class="btn btn-success btn-sm" onclick="openCookModal(${m.id})" ${!check.canCook?'disabled':''}>${t('btn_cook_now')}</button>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+// ===== CHECK STOCK =====
+function checkMenuStock(menu, servings = 1) {
+    const prods = JSON.parse(localStorage.getItem('ok_products'))||[];
+    const insufficient = []; let canCook = true;
+    menu.ingredients.forEach(ing => {
+        const p = prods.find(x => x.id === ing.productId);
+        const need = ing.quantity * servings; const have = p ? p.stock : 0;
+        if (!p || p.stock < need) { canCook=false; insufficient.push({name:p?getProductName(p):ing.productName,need,have}); }
+    });
+    return { canCook, insufficient };
+}
+
+// ===== COOK MODAL =====
+function openCookModal(menuId) {
+    products = JSON.parse(localStorage.getItem('ok_products'))||[];
+    const m = menus.find(x => x.id === menuId); if (!m) return;
+    currentCookMenu = m;
+    document.getElementById('modal-menu-name').textContent = getMenuName(m);
+    document.getElementById('modal-menu-category').textContent = getCatLabel(m.category);
+    document.getElementById('modal-price').textContent = m.price + ' ฿';
+    document.getElementById('cook-qty').value = 1;
+    updateCookPreview();
+    document.getElementById('cook-modal').classList.add('active');
+}
+function closeCookModal() { document.getElementById('cook-modal').classList.remove('active'); currentCookMenu=null; }
+
+function updateCookPreview() {
+    if (!currentCookMenu) return;
+    const servings = parseInt(document.getElementById('cook-qty').value)||1;
+    const check = checkMenuStock(currentCookMenu, servings);
+    document.getElementById('modal-ingredients').innerHTML = currentCookMenu.ingredients.map(ing => {
+        const p=products.find(x=>x.id===ing.productId); const need=ing.quantity*servings; const have=p?p.stock:0;
+        return `<div class="cook-ingredient-item ${have<need?'insufficient':''}">
+            <div><div class="cook-ingredient-name">${p?getProductName(p):ing.productName}</div>
+            <div class="cook-ingredient-stock">${t('modal_stock')} ${have} ${getUnitLabel(ing.unit)}</div></div>
+            <div class="cook-ingredient-qty">${need} ${getUnitLabel(ing.unit)}</div></div>`;
+    }).join('');
+    const warn = document.getElementById('modal-warning');
+    if (!check.canCook) {
+        warn.innerHTML = `<div class="alert alert-danger" style="margin-bottom:14px;"><strong>${t('modal_lack')}</strong><ul style="margin-top:8px;padding-left:20px;">${check.insufficient.map(i=>`<li>${i.name}: ${t('modal_lack_detail',{need:i.need.toFixed(2),have:i.have.toFixed(2)})}</li>`).join('')}</ul></div>`;
+        document.getElementById('btn-cook-confirm').disabled = true;
+    } else {
+        warn.innerHTML = `<div class="alert alert-success" style="margin-bottom:14px;"><strong>${t('modal_ok')}</strong></div>`;
+        document.getElementById('btn-cook-confirm').disabled = false;
+    }
+}
+
+// ===== CONFIRM COOK =====
+function confirmCook() {
+    if (!currentCookMenu) return;
+    const servings = parseInt(document.getElementById('cook-qty').value)||1;
+    const check = checkMenuStock(currentCookMenu, servings);
+    if (!check.canCook) { alert(t('msg_cant_cook')); return; }
+
+    products    = JSON.parse(localStorage.getItem('ok_products'))    ||[];
+    transactions = JSON.parse(localStorage.getItem('ok_transactions'))||[];
+
+    currentCookMenu.ingredients.forEach(ing => {
+        const p = products.find(x=>x.id===ing.productId);
+        if (p) {
+            const deduct = ing.quantity*servings; p.stock -= deduct;
+            transactions.push({ id:Date.now()+Math.random(), type:'out', productId:p.id, productName:p.name_th||p.name, productCode:p.code, quantity:deduct, outType:'cooking', reason:getMenuName(currentCookMenu)+' x'+servings, note:'Auto from Menu-Recipe', date:new Date().toISOString() });
         }
+    });
 
-        // ===== PRODUCT SELECTS =====
-        function updateProductSelects() {
-            products = JSON.parse(localStorage.getItem('ok_products')) || [];
-            const selects = document.querySelectorAll('.ing-product');
-            const opts = products.map(p => 
-                `<option value="${p.id}" data-unit="${p.unit}" data-stock="${p.stock}">${p.code} - ${p.name} (คงเหลือ ${p.stock} ${p.unit})</option>`
-            ).join('');
-            
-            selects.forEach(sel => {
-                const currentVal = sel.value;
-                sel.innerHTML = '<option value="">เลือกวัตถุดิบ</option>' + opts;
-                sel.value = currentVal;
-                
-                // Auto-fill unit when product selected
-                sel.onchange = function() {
-                    const option = this.options[this.selectedIndex];
-                    const unit = option.dataset.unit || '';
-                    const row = this.closest('.ingredient-row');
-                    row.querySelector('.ing-unit').value = unit;
-                };
-            });
-        }
+    cookHistory.push({ id:Date.now(), menuId:currentCookMenu.id, menuName:getMenuName(currentCookMenu), servings, totalPrice:currentCookMenu.price*servings,
+        ingredients:currentCookMenu.ingredients.map(ing=>{ const p=products.find(x=>x.id===ing.productId); return {productName:p?getProductName(p):ing.productName,quantity:ing.quantity*servings,unit:ing.unit}; }),
+        date:new Date().toISOString() });
 
-        // ===== INGREDIENT ROWS =====
-        function addIngredientRow() {
-            const container = document.getElementById('ingredients-container');
-            const row = document.createElement('div');
-            row.className = 'ingredient-row';
-            row.innerHTML = `
-                <div class="form-group">
-                    <label>เลือกวัตถุดิบ</label>
-                    <select class="ing-product" required>
-                        <option value="">เลือกวัตถุดิบ</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>จำนวน</label>
-                    <input type="number" class="ing-qty" placeholder="0.5" min="0.01" step="0.01" required>
-                </div>
-                <div class="form-group">
-                    <label>หน่วย</label>
-                    <input type="text" class="ing-unit" placeholder="kg" readonly>
-                </div>
-                <button type="button" class="remove-ingredient" onclick="removeIngredientRow(this)">×</button>
-            `;
-            container.appendChild(row);
-            updateProductSelects();
-        }
+    saveData(); closeCookModal(); updateDashboard(); renderMenus(); renderCookMenus(); renderHistory();
+    alert(t('msg_cook_ok', {name:getMenuName(currentCookMenu), qty:servings}));
+}
+document.getElementById('cook-modal').addEventListener('click', function(e){if(e.target===this) closeCookModal();});
 
-        function removeIngredientRow(btn) {
-            const rows = document.querySelectorAll('.ingredient-row');
-            if (rows.length > 1) {
-                btn.closest('.ingredient-row').remove();
-            } else {
-                alert('ต้องมีวัตถุดิบอย่างน้อย 1 รายการ');
-            }
-        }
+// ===== DASHBOARD =====
+function updateDashboard() {
+    products    = JSON.parse(localStorage.getItem('ok_products'))    ||[];
+    menus       = JSON.parse(localStorage.getItem('ok_menus'))       ||[];
+    cookHistory = JSON.parse(localStorage.getItem('ok_cook_history'))||[];
+    document.getElementById('total-menus').textContent = menus.length;
+    const today = new Date().toDateString();
+    const todayOrders = cookHistory.filter(h=>new Date(h.date).toDateString()===today);
+    document.getElementById('today-orders').textContent = todayOrders.reduce((s,h)=>s+h.servings,0);
+    const lowStock = products.filter(p=>p.stock<=p.minStock);
+    document.getElementById('low-ingredients').textContent = lowStock.length;
 
-        // ===== ADD MENU =====
-        function addMenu(e) {
-            e.preventDefault();
-            
-            const rows = document.querySelectorAll('.ingredient-row');
-            const ingredients = [];
-            
-            rows.forEach(row => {
-                const productId = parseInt(row.querySelector('.ing-product').value);
-                const qty = parseFloat(row.querySelector('.ing-qty').value);
-                const product = products.find(p => p.id === productId);
-                if (product && qty > 0) {
-                    ingredients.push({
-                        productId: productId,
-                        productCode: product.code,
-                        productName: product.name,
-                        quantity: qty,
-                        unit: product.unit
-                    });
-                }
-            });
+    let html='';
+    if (lowStock.length) { html+=`<div class="alert alert-warning"><strong>${t('alert_low')}</strong><ul style="margin-top:8px;padding-left:20px;">${lowStock.map(p=>`<li>${getProductName(p)} (${p.stock}/${p.minStock} ${getUnitLabel(p.unit)})</li>`).join('')}</ul></div>`; }
+    const cantCook = menus.filter(m=>!checkMenuStock(m).canCook);
+    if (cantCook.length) { html+=`<div class="alert alert-danger"><strong>${t('alert_cant_cook')}</strong><ul style="margin-top:8px;padding-left:20px;">${cantCook.map(m=>{const ch=checkMenuStock(m);return `<li>${getMenuName(m)} — ${t('status_lack')} ${ch.insufficient.map(i=>i.name).join(', ')}</li>`;}).join('')}</ul></div>`; }
+    if (!html) html=`<div class="alert alert-success"><strong>${t('alert_ok')}</strong></div>`;
+    document.getElementById('alerts-container').innerHTML = html;
+}
 
-            if (ingredients.length === 0) {
-                alert('กรุณาเลือกวัตถุดิบอย่างน้อย 1 รายการ');
-                return;
-            }
+// ===== HISTORY =====
+function renderHistory() {
+    cookHistory = JSON.parse(localStorage.getItem('ok_cook_history'))||[];
+    menus       = JSON.parse(localStorage.getItem('ok_menus'))       ||[];
+    const search = (document.getElementById('history-search')?.value||'').toLowerCase();
+    const filtered = cookHistory.filter(h=>(h.menuName||'').toLowerCase().includes(search)).sort((a,b)=>new Date(b.date)-new Date(a.date));
+    let html=`<table><thead><tr><th>${t('th_date')}</th><th>${t('th_menu')}</th><th>${t('th_qty')}</th><th>${t('th_total')}</th><th>${t('th_ing')}</th></tr></thead><tbody>`;
+    if (!filtered.length) { html+=`<tr><td colspan="5" class="empty-state"><div class="empty-state-icon">📋</div><p>${t('empty_history')}</p></td></tr>`; }
+    else { filtered.forEach(h => {
+        const menuObj=menus.find(m=>m.id===h.menuId); const mName=menuObj?getMenuName(menuObj):h.menuName;
+        const ingStr=h.ingredients.map(i=>`${i.productName} ${i.quantity.toFixed(2)} ${getUnitLabel(i.unit)}`).join(', ');
+        const locale=currentLang==='zh'?'zh-CN':currentLang==='en'?'en-US':'th-TH';
+        const dateStr=new Date(h.date).toLocaleString(locale,{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+        html+=`<tr><td style="white-space:nowrap">${dateStr}</td><td><strong class="crimson-text">${mName}</strong></td><td><span class="warm-text">${h.servings}</span> ${t('unit_serving')}</td><td><span class="warm-text">${h.totalPrice}</span> ${t('unit_baht')}</td><td style="font-size:0.8rem;">${ingStr}</td></tr>`;
+    }); }
+    html+='</tbody></table>';
+    document.getElementById('history-table-container').innerHTML = html;
+}
 
-            const menu = {
-                id: Date.now(),
-                name: document.getElementById('menu-name').value,
-                price: parseFloat(document.getElementById('menu-price').value),
-                category: document.getElementById('menu-category').value,
-                time: parseInt(document.getElementById('menu-time').value) || 0,
-                description: document.getElementById('menu-desc').value,
-                ingredients: ingredients,
-                createdAt: new Date().toISOString()
-            };
-
-            menus.push(menu);
-            saveData();
-            document.getElementById('menu-form').reset();
-            
-            // Reset ingredient rows
-            document.getElementById('ingredients-container').innerHTML = `
-                <div class="ingredient-row">
-                    <div class="form-group">
-                        <label>เลือกวัตถุดิบ</label>
-                        <select class="ing-product" required>
-                            <option value="">เลือกวัตถุดิบ</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>จำนวน</label>
-                        <input type="number" class="ing-qty" placeholder="0.5" min="0.01" step="0.01" required>
-                    </div>
-                    <div class="form-group">
-                        <label>หน่วย</label>
-                        <input type="text" class="ing-unit" placeholder="kg" readonly>
-                    </div>
-                    <button type="button" class="remove-ingredient" onclick="removeIngredientRow(this)" style="visibility:hidden">×</button>
-                </div>
-            `;
-            updateProductSelects();
-            updateDashboard();
-            renderMenus();
-            alert('✅ เพิ่มเมนู "' + menu.name + '" เรียบร้อยแล้ว!');
-        }
-
-        // ===== RENDER MENUS =====
-        function renderMenus() {
-            const search = document.getElementById('menu-search')?.value.toLowerCase() || '';
-            const filtered = menus.filter(m => 
-                m.name.toLowerCase().includes(search) ||
-                m.category.toLowerCase().includes(search)
-            );
-
-            const container = document.getElementById('menus-grid-container');
-            
-            if (filtered.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state" style="grid-column: 1/-1;">
-                        <div class="empty-state-icon">🍽️</div>
-                        <p>ยังไม่มีเมนู กรุณาเพิ่มเมนูใหม่</p>
-                    </div>
-                `;
-                return;
-            }
-
-            const categoryLabels = {
-                gyoza: '🥟 เกี๊ยวซ่า', rice: '🍚 ข้าว', noodle: '🍜 ก๋วยเตี๋ยว',
-                soup: '🍲 ซุป', drink: '🥤 เครื่องดื่ม', dessert: '🍮 ของหวาน', set: '🍱 เซ็ต'
-            };
-
-            container.innerHTML = filtered.map(menu => {
-                const ingList = menu.ingredients.map(ing => 
-                    `${ing.productName} ${ing.quantity} ${ing.unit}`
-                ).join(', ');
-                
-                return `
-                    <div class="menu-card" onclick="openCookModal(${menu.id})">
-                        <div class="menu-card-header">
-                            <div class="menu-card-title">${menu.name}</div>
-                            <div class="menu-card-price">${menu.price} บาท</div>
-                        </div>
-                        <span class="menu-card-category">${categoryLabels[menu.category] || menu.category}</span>
-                        <div class="menu-card-ingredients">
-                            <strong>วัตถุดิบ:</strong> ${ingList}
-                        </div>
-                        <div class="menu-card-actions">
-                            <button class="btn btn-success btn-sm" onclick="event.stopPropagation(); openCookModal(${menu.id})">
-                                👨‍🍳 ทำอาหาร
-                            </button>
-                            <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); deleteMenu(${menu.id})">
-                                🗑️ ลบ
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // ===== RENDER COOK MENUS =====
-        function renderCookMenus() {
-            const search = document.getElementById('cook-search')?.value.toLowerCase() || '';
-            const filtered = menus.filter(m => 
-                m.name.toLowerCase().includes(search)
-            );
-
-            const container = document.getElementById('cook-menus-container');
-            
-            if (filtered.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state" style="grid-column: 1/-1;">
-                        <div class="empty-state-icon">👨‍🍳</div>
-                        <p>ยังไม่มีเมนูสำหรับทำอาหาร</p>
-                    </div>
-                `;
-                return;
-            }
-
-            const categoryLabels = {
-                gyoza: '🥟 เกี๊ยวซ่า', rice: '🍚 ข้าว', noodle: '🍜 ก๋วยเตี๋ยว',
-                soup: '🍲 ซุป', drink: '🥤 เครื่องดื่ม', dessert: '🍮 ของหวาน', set: '🍱 เซ็ต'
-            };
-
-            container.innerHTML = filtered.map(menu => {
-                // Check stock availability
-                const stockCheck = checkMenuStock(menu);
-                const canCook = stockCheck.canCook;
-                
-                return `
-                    <div class="menu-card" style="${!canCook ? 'opacity:0.6;' : ''}">
-                        <div class="menu-card-header">
-                            <div class="menu-card-title">${menu.name}</div>
-                            <div class="menu-card-price">${menu.price} บาท</div>
-                        </div>
-                        <span class="menu-card-category">${categoryLabels[menu.category] || menu.category}</span>
-                        <div class="menu-card-ingredients">
-                            ${stockCheck.insufficient.length > 0 
-                                ? `<span style="color:var(--crimson)">❌ ขาด: ${stockCheck.insufficient.map(i => i.name).join(', ')}</span>`
-                                : `<span style="color:var(--jade)">✅ พร้อมทำ</span>`
-                            }
-                        </div>
-                        <div class="menu-card-actions">
-                            <button class="btn btn-success btn-sm" onclick="openCookModal(${menu.id})" ${!canCook ? 'disabled style="opacity:0.5"' : ''}>
-                                👨‍🍳 ทำอาหาร
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // ===== CHECK MENU STOCK =====
-        function checkMenuStock(menu, servings = 1) {
-            products = JSON.parse(localStorage.getItem('ok_products')) || [];
-            const insufficient = [];
-            let canCook = true;
-
-            menu.ingredients.forEach(ing => {
-                const product = products.find(p => p.id === ing.productId);
-                if (!product) {
-                    canCook = false;
-                    insufficient.push({ name: ing.productName, need: ing.quantity * servings, have: 0 });
-                } else {
-                    const need = ing.quantity * servings;
-                    if (product.stock < need) {
-                        canCook = false;
-                        insufficient.push({ name: product.name, need: need, have: product.stock });
-                    }
-                }
-            });
-
-            return { canCook, insufficient };
-        }
-
-        // ===== COOK MODAL =====
-        function openCookModal(menuId) {
-            products = JSON.parse(localStorage.getItem('ok_products')) || [];
-            const menu = menus.find(m => m.id === menuId);
-            if (!menu) return;
-            
-            currentCookMenu = menu;
-            document.getElementById('modal-menu-name').textContent = menu.name;
-            
-            const categoryLabels = {
-                gyoza: '🥟 เกี๊ยวซ่า', rice: '🍚 ข้าว', noodle: '🍜 ก๋วยเตี๋ยว',
-                soup: '🍲 ซุป', drink: '🥤 เครื่องดื่ม', dessert: '🍮 ของหวาน', set: '🍱 เซ็ต'
-            };
-            document.getElementById('modal-menu-category').textContent = categoryLabels[menu.category] || menu.category;
-            document.getElementById('modal-price').textContent = menu.price + ' บาท';
-            document.getElementById('cook-qty').value = 1;
-            
-            updateCookPreview();
-            document.getElementById('cook-modal').classList.add('active');
-        }
-
-        function closeCookModal() {
-            document.getElementById('cook-modal').classList.remove('active');
-            currentCookMenu = null;
-        }
-
-        function updateCookPreview() {
-            if (!currentCookMenu) return;
-            
-            const servings = parseInt(document.getElementById('cook-qty').value) || 1;
-            const stockCheck = checkMenuStock(currentCookMenu, servings);
-            
-            // Update ingredients list
-            const container = document.getElementById('modal-ingredients');
-            container.innerHTML = currentCookMenu.ingredients.map(ing => {
-                const product = products.find(p => p.id === ing.productId);
-                const need = ing.quantity * servings;
-                const have = product ? product.stock : 0;
-                const isEnough = have >= need;
-                
-                return `
-                    <div class="cook-ingredient-item ${!isEnough ? 'insufficient' : ''}">
-                        <div>
-                            <div class="cook-ingredient-name">${ing.productName}</div>
-                            <div class="cook-ingredient-stock">คงเหลือ: ${have} ${ing.unit}</div>
-                        </div>
-                        <div class="cook-ingredient-qty">${need} ${ing.unit}</div>
-                    </div>
-                `;
-            }).join('');
-
-            // Update warning
-            const warningDiv = document.getElementById('modal-warning');
-            if (stockCheck.insufficient.length > 0) {
-                warningDiv.innerHTML = `
-                    <div class="alert alert-danger" style="margin-bottom:16px;">
-                        <strong>❌ วัตถุดิบไม่พอ!</strong>
-                        <ul style="margin-top:8px; padding-left:20px;">
-                            ${stockCheck.insufficient.map(i => 
-                                `<li>${i.name}: ต้องการ ${i.need.toFixed(2)}, มี ${i.have.toFixed(2)}</li>`
-                            ).join('')}
-                        </ul>
-                    </div>
-                `;
-                document.getElementById('btn-cook-confirm').disabled = true;
-            } else {
-                warningDiv.innerHTML = `
-                    <div class="alert alert-success" style="margin-bottom:16px;">
-                        <strong>✅ วัตถุดิบพร้อม!</strong> สามารถทำอาหารได้
-                    </div>
-                `;
-                document.getElementById('btn-cook-confirm').disabled = false;
-            }
-        }
-
-        // ===== CONFIRM COOK =====
-        function confirmCook() {
-            if (!currentCookMenu) return;
-            
-            const servings = parseInt(document.getElementById('cook-qty').value) || 1;
-            const stockCheck = checkMenuStock(currentCookMenu, servings);
-            
-            if (!stockCheck.canCook) {
-                alert('❌ ไม่สามารถทำอาหารได้ วัตถุดิบไม่พอ');
-                return;
-            }
-
-            // Deduct stock
-            products = JSON.parse(localStorage.getItem('ok_products')) || [];
-            transactions = JSON.parse(localStorage.getItem('ok_transactions')) || [];
-            
-            currentCookMenu.ingredients.forEach(ing => {
-                const product = products.find(p => p.id === ing.productId);
-                if (product) {
-                    const deductQty = ing.quantity * servings;
-                    product.stock -= deductQty;
-                    
-                    // Add to transactions
-                    transactions.push({
-                        id: Date.now() + Math.random(),
-                        type: 'out',
-                        productId: product.id,
-                        productName: product.name,
-                        productCode: product.code,
-                        quantity: deductQty,
-                        outType: 'cooking',
-                        reason: currentCookMenu.name + ' x' + servings,
-                        note: 'ตัดสต๊อกอัตโนมัติจากการทำอาหาร',
-                        date: new Date().toISOString()
-                    });
-                }
-            });
-
-            // Save cook history
-            cookHistory.push({
-                id: Date.now(),
-                menuId: currentCookMenu.id,
-                menuName: currentCookMenu.name,
-                servings: servings,
-                totalPrice: currentCookMenu.price * servings,
-                ingredients: currentCookMenu.ingredients.map(ing => ({
-                    productName: ing.productName,
-                    quantity: ing.quantity * servings,
-                    unit: ing.unit
-                })),
-                date: new Date().toISOString()
-            });
-
-            saveData();
-            closeCookModal();
-            updateDashboard();
-            renderCookMenus();
-            renderHistory();
-            
-            alert(`✅ ทำ "${currentCookMenu.name}" ${servings} จาน เรียบร้อย!\\n\\n📤 ตัดสต๊อกอัตโนมัติ:\\n${currentCookMenu.ingredients.map(ing => 
-                `• ${ing.productName}: -${(ing.quantity * servings).toFixed(2)} ${ing.unit}`
-            ).join('\\n')}`);
-        }
-
-        // ===== DELETE MENU =====
-        function deleteMenu(id) {
-            if (confirm('ต้องการลบเมนูนี้ใช่หรือไม่?')) {
-                menus = menus.filter(m => m.id !== id);
-                saveData();
-                renderMenus();
-                renderCookMenus();
-                updateDashboard();
-            }
-        }
-
-        // ===== UPDATE DASHBOARD =====
-        function updateDashboard() {
-            products = JSON.parse(localStorage.getItem('ok_products')) || [];
-            
-            document.getElementById('total-menus').textContent = menus.length;
-            
-            const today = new Date().toDateString();
-            const todayOrders = cookHistory.filter(h => new Date(h.date).toDateString() === today);
-            document.getElementById('today-orders').textContent = todayOrders.reduce((sum, h) => sum + h.servings, 0);
-            
-            const lowStock = products.filter(p => p.stock <= p.minStock);
-            document.getElementById('low-ingredients').textContent = lowStock.length;
-
-            // Alerts
-            let html = '';
-            if (lowStock.length > 0) {
-                html += `<div class="alert alert-danger"><strong>⚠️ วัตถุดิบใกล้หมด:</strong><ul style="margin-top:10px; padding-left:20px;">`;
-                lowStock.forEach(p => html += `<li>${p.name} (${p.stock}/${p.minStock} ${p.unit})</li>`);
-                html += '</ul></div>';
-            }
-            
-            // Check menus that can't be cooked
-            const cantCookMenus = menus.filter(menu => {
-                const check = checkMenuStock(menu);
-                return !check.canCook;
-            });
-            
-            if (cantCookMenus.length > 0) {
-                html += `<div class="alert alert-danger"><strong>🚨 เมนูที่ทำไม่ได้ (ขาดวัตถุดิบ):</strong><ul style="margin-top:10px; padding-left:20px;">`;
-                cantCookMenus.forEach(m => {
-                    const check = checkMenuStock(m);
-                    html += `<li>${m.name} — ขาด: ${check.insufficient.map(i => i.name).join(', ')}</li>`;
-                });
-                html += '</ul></div>';
-            }
-            
-            if (html === '') {
-                html = `<div class="alert alert-success"><strong>✅ ทุกอย่างพร้อม! สามารถทำอาหารทุกเมนูได้</strong></div>`;
-            }
-            
-            document.getElementById('alerts-container').innerHTML = html;
-        }
-
-        // ===== RENDER HISTORY =====
-        function renderHistory() {
-            const search = document.getElementById('history-search')?.value.toLowerCase() || '';
-            const filtered = cookHistory.filter(h => 
-                h.menuName.toLowerCase().includes(search)
-            ).sort((a, b) => new Date(b.date) - new Date(a.date));
-
-            let html = `<table><thead><tr>
-                <th>วันที่</th><th>เมนู</th><th>จำนวน</th><th>ราคารวม</th><th>วัตถุดิบที่ใช้</th>
-            </tr></thead><tbody>`;
-            
-            if (filtered.length === 0) {
-                html += `<tr><td colspan="5" class="empty-state">
-                    <div class="empty-state-icon">📋</div><p>ยังไม่มีประวัติการทำอาหาร</p></td></tr>`;
-            } else {
-                filtered.forEach(h => {
-                    const ingList = h.ingredients.map(ing => 
-                        `${ing.productName} ${ing.quantity.toFixed(2)} ${ing.unit}`
-                    ).join(', ');
-                    
-                    html += `<tr>
-                        <td>${formatDateTime(h.date)}</td>
-                        <td><strong class="crimson-text">${h.menuName}</strong></td>
-                        <td><span class="warm-text">${h.servings}</span> จาน</td>
-                        <td><span class="warm-text">${h.totalPrice}</span> บาท</td>
-                        <td style="font-size:0.8rem;">${ingList}</td>
-                    </tr>`;
-                });
-            }
-            html += '</tbody></table>';
-            document.getElementById('history-table-container').innerHTML = html;
-        }
-
-        // ===== UTILS =====
-        function formatDateTime(dateStr) {
-            const d = new Date(dateStr);
-            return d.toLocaleString('th-TH', {
-                month: 'short', day: 'numeric', 
-                hour: '2-digit', minute: '2-digit'
-            });
-        }
-
-        function saveData() {
-            localStorage.setItem('ok_products', JSON.stringify(products));
-            localStorage.setItem('ok_transactions', JSON.stringify(transactions));
-            localStorage.setItem('ok_menus', JSON.stringify(menus));
-            localStorage.setItem('ok_cook_history', JSON.stringify(cookHistory));
-        }
-
-        // Close modal on overlay click
-        document.getElementById('cook-modal').addEventListener('click', function(e) {
-            if (e.target === this) closeCookModal();
-        });
-    </script>
+// ===== SAVE =====
+function saveData() {
+    localStorage.setItem('ok_products',     JSON.stringify(products));
+    localStorage.setItem('ok_transactions', JSON.stringify(transactions));
+    localStorage.setItem('ok_menus',        JSON.stringify(menus));
+    localStorage.setItem('ok_cook_history', JSON.stringify(cookHistory));
+}
+</script>
 </body>
 </html>
