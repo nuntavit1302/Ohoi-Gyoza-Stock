@@ -1,1601 +1,1278 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ohoi Kyoza - ระบบจัดการสต๊อก</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;600;700&family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        :root {
-            --crimson: #9B2226;
-            --crimson-light: #AE2012;
-            --crimson-soft: rgba(155, 34, 38, 0.08);
-            --gold: #D4A373;
-            --gold-light: #E9C496;
-            --gold-soft: rgba(212, 163, 115, 0.15);
-            --jade: #588157;
-            --jade-soft: rgba(88, 129, 87, 0.12);
-            --warm-white: #FDF6EC;
-            --cream: #F5EBDC;
-            --paper: #FAF3E8;
-            --ink: #3D2B1F;
-            --ink-light: #6B5B4F;
-            --ink-muted: #9B8B7F;
-            --shadow-warm: rgba(155, 34, 38, 0.08);
-        }
-
-        body {
-            font-family: 'Noto Sans Thai', sans-serif;
-            background: var(--warm-white);
-            color: var(--ink);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-            pointer-events: none;
-            z-index: 1000;
-            opacity: 0.6;
-        }
-
-        @keyframes lantern-glow {
-            0%, 100% { box-shadow: 0 4px 20px rgba(155, 34, 38, 0.15), 0 0 60px rgba(212, 163, 115, 0.1); }
-            50% { box-shadow: 0 4px 30px rgba(155, 34, 38, 0.2), 0 0 80px rgba(212, 163, 115, 0.15); }
-        }
-
-        @keyframes warm-pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-        }
-
-        @keyframes slide-up {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        /* ===== HEADER ===== */
-        .header {
-            background: linear-gradient(160deg, var(--crimson) 0%, #7B181C 60%, #5A1216 100%);
-            padding: 35px 20px 40px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .header::before {
-            content: '🏮';
-            position: absolute;
-            top: 15px; left: 20px;
-            font-size: 2rem;
-            opacity: 0.4;
-            animation: warm-pulse 4s ease-in-out infinite;
-        }
-
-        .header::after {
-            content: '🏮';
-            position: absolute;
-            top: 15px; right: 20px;
-            font-size: 2rem;
-            opacity: 0.4;
-            animation: warm-pulse 4s ease-in-out infinite 2s;
-        }
-
-        /* ===== BACK BUTTON ===== */
-        .back-btn {
-            position: absolute;
-            top: 15px;
-            left: 60px;
-            background: rgba(255,255,255,0.15);
-            border: 1.5px solid rgba(255,255,255,0.3);
-            color: rgba(255,248,240,0.9);
-            padding: 7px 14px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            font-weight: 600;
-            font-family: 'Noto Sans Thai', sans-serif;
-            transition: all 0.3s ease;
-            z-index: 2;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .back-btn:hover {
-            background: rgba(255,255,255,0.25);
-            border-color: rgba(255,255,255,0.5);
-            transform: translateX(-2px);
-        }
-
-        .logo {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 2.6rem;
-            font-weight: 700;
-            color: var(--gold-light);
-            letter-spacing: 3px;
-            position: relative;
-            z-index: 1;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
-
-        .logo span {
-            color: #FFF8F0;
-            font-weight: 400;
-            font-style: italic;
-        }
-
-        .subtitle {
-            color: rgba(255, 248, 240, 0.7);
-            font-size: 0.95rem;
-            margin-top: 8px;
-            font-weight: 300;
-            letter-spacing: 1px;
-        }
-
-        .lang-switcher {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 18px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .lang-btn {
-            padding: 6px 14px;
-            border: 1.5px solid rgba(212, 163, 115, 0.4);
-            background: rgba(255, 255, 255, 0.08);
-            color: rgba(255, 248, 240, 0.8);
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.8rem;
-            transition: all 0.4s ease;
-            backdrop-filter: blur(5px);
-            font-family: 'Noto Sans Thai', sans-serif;
-        }
-
-        .lang-btn:hover {
-            background: rgba(212, 163, 115, 0.2);
-            border-color: var(--gold);
-            transform: translateY(-1px);
-        }
-
-        .lang-btn.active {
-            background: rgba(212, 163, 115, 0.25);
-            border-color: var(--gold-light);
-            color: var(--gold-light);
-            box-shadow: 0 2px 15px rgba(212, 163, 115, 0.2);
-        }
-
-        /* ===== NAV TABS ===== */
-        .nav-tabs {
-            display: flex;
-            background: var(--cream);
-            border-bottom: 1px solid rgba(155, 34, 38, 0.1);
-            overflow-x: auto;
-            scrollbar-width: none;
-            padding: 0 10px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            backdrop-filter: blur(10px);
-        }
-
-        .nav-tabs::-webkit-scrollbar { display: none; }
-
-        .nav-tab {
-            flex: 1;
-            min-width: 90px;
-            padding: 16px 10px;
-            border: none;
-            background: none;
-            color: var(--ink-muted);
-            font-family: 'Noto Sans Thai', sans-serif;
-            font-weight: 600;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            position: relative;
-            white-space: nowrap;
-            border-radius: 12px 12px 0 0;
-            margin: 0 2px;
-        }
-
-        .nav-tab:hover {
-            color: var(--crimson);
-            background: rgba(155, 34, 38, 0.05);
-        }
-
-        .nav-tab.active {
-            color: var(--crimson);
-            background: var(--paper);
-            font-weight: 700;
-        }
-
-        .nav-tab.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 20%;
-            width: 60%;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, var(--crimson), var(--gold), var(--crimson), transparent);
-            border-radius: 3px;
-        }
-
-        /* ===== CONTENT ===== */
-        .content {
-            padding: 25px 20px;
-            max-width: 900px;
-            margin: 0 auto;
-            background: var(--paper);
-            min-height: calc(100vh - 200px);
-        }
-
-        .tab-content { display: none; animation: slide-up 0.4s ease; }
-        .tab-content.active { display: block; }
-
-        /* ===== CARD ===== */
-        .card {
-            background: #FFFFFF;
-            border-radius: 20px;
-            padding: 28px;
-            margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.4s ease;
-            border: 1px solid rgba(155, 34, 38, 0.06);
-            box-shadow: 0 2px 8px var(--shadow-warm), 0 8px 32px rgba(155, 34, 38, 0.04);
-        }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 4px;
-            background: linear-gradient(90deg, var(--crimson), var(--gold), var(--jade), var(--gold), var(--crimson));
-            opacity: 0.6;
-        }
-
-        .card:hover {
-            box-shadow: 0 4px 16px var(--shadow-warm), 0 12px 40px rgba(155, 34, 38, 0.08);
-            transform: translateY(-2px);
-        }
-
-        .card-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: var(--crimson);
-            margin-bottom: 22px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid rgba(155, 34, 38, 0.1);
-        }
-
-        /* ===== STATS ===== */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .stat-card {
-            background: linear-gradient(145deg, #FFFFFF 0%, var(--warm-white) 100%);
-            border: 1px solid rgba(155, 34, 38, 0.1);
-            border-radius: 20px;
-            padding: 22px 15px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.4s ease;
-            animation: lantern-glow 4s ease-in-out infinite;
-        }
-
-        .stat-card:nth-child(1) { border-top: 3px solid var(--crimson); }
-        .stat-card:nth-child(2) { border-top: 3px solid var(--gold); animation-delay: 1.3s; }
-        .stat-card:nth-child(3) { border-top: 3px solid var(--jade); animation-delay: 2.6s; }
-
-        .stat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(155, 34, 38, 0.12); }
-
-        .stat-card h3 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 2.4rem;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-
-        .stat-card:nth-child(1) h3 { color: var(--crimson); }
-        .stat-card:nth-child(2) h3 { color: var(--gold); }
-        .stat-card:nth-child(3) h3 { color: var(--jade); }
-        .stat-card p { color: var(--ink-muted); font-size: 0.85rem; font-weight: 600; }
-
-        /* ===== FORM ===== */
-        .form-group { margin-bottom: 18px; }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--crimson);
-            font-size: 0.9rem;
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 14px 18px;
-            background: var(--warm-white);
-            border: 1.5px solid rgba(155, 34, 38, 0.15);
-            border-radius: 14px;
-            color: var(--ink);
-            font-family: 'Noto Sans Thai', sans-serif;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: var(--crimson);
-            box-shadow: 0 0 0 4px var(--crimson-soft);
-            background: #FFFFFF;
-        }
-
-        .form-group input::placeholder { color: var(--ink-muted); opacity: 0.6; }
-
-        /* ชื่อ 3 ภาษา section */
-        .lang-name-section {
-            background: var(--warm-white);
-            border: 1.5px solid rgba(155,34,38,0.1);
-            border-radius: 14px;
-            padding: 16px;
-            margin-bottom: 18px;
-        }
-
-        .lang-name-section .lang-label {
-            font-size: 0.78rem;
-            font-weight: 700;
-            color: var(--ink-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 10px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-        }
-
-        .form-row-3 {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-        }
-
-        /* ===== BUTTONS ===== */
-        .btn {
-            padding: 14px 32px;
-            border: none;
-            border-radius: 14px;
-            font-family: 'Noto Sans Thai', sans-serif;
-            font-weight: 700;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            letter-spacing: 0.5px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--crimson), var(--crimson-light));
-            color: #FFF8F0;
-            box-shadow: 0 4px 15px rgba(155, 34, 38, 0.25);
-        }
-
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(155, 34, 38, 0.35); }
-
-        .btn-success {
-            background: linear-gradient(135deg, var(--jade), #6B9B6A);
-            color: #FFF8F0;
-            box-shadow: 0 4px 15px rgba(88, 129, 87, 0.25);
-        }
-
-        .btn-success:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(88, 129, 87, 0.35); }
-
-        .btn-warning {
-            background: linear-gradient(135deg, #B8860B, #D4A373);
-            color: #FFF8F0;
-            box-shadow: 0 4px 15px rgba(184, 134, 11, 0.25);
-        }
-
-        .btn-warning:hover { transform: translateY(-2px); }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #C0392B, #E74C3C);
-            color: #FFF8F0;
-            box-shadow: 0 4px 15px rgba(192, 57, 43, 0.25);
-        }
-
-        .btn-danger:hover { transform: translateY(-2px); }
-
-        .btn-sm {
-            padding: 7px 14px;
-            font-size: 0.78rem;
-            border-radius: 10px;
-            letter-spacing: 0;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 8px;
-        }
-
-        /* ===== TABLE ===== */
-        .table-container {
-            overflow-x: auto;
-            border-radius: 16px;
-            border: 1px solid rgba(155, 34, 38, 0.08);
-            background: #FFFFFF;
-        }
-
-        table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.88rem; }
-
-        th {
-            background: linear-gradient(180deg, var(--cream) 0%, var(--warm-white) 100%);
-            color: var(--crimson);
-            padding: 14px 10px;
-            font-weight: 700;
-            font-size: 0.78rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 2px solid rgba(155, 34, 38, 0.1);
-            white-space: nowrap;
-        }
-
-        td {
-            padding: 13px 10px;
-            border-bottom: 1px solid rgba(155, 34, 38, 0.05);
-            color: var(--ink-light);
-            vertical-align: middle;
-        }
-
-        tr:hover td { background: var(--crimson-soft); color: var(--ink); }
-        tr:last-child td { border-bottom: none; }
-
-        /* ===== BADGES ===== */
-        .badge {
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            display: inline-block;
-            white-space: nowrap;
-        }
-
-        .badge-success { background: var(--jade-soft); color: var(--jade); border: 1px solid rgba(88,129,87,0.3); }
-        .badge-warning { background: var(--gold-soft); color: #B8860B; border: 1px solid rgba(212,163,115,0.4); }
-        .badge-danger { background: rgba(155,34,38,0.08); color: var(--crimson); border: 1px solid rgba(155,34,38,0.3); }
-
-        /* ===== ALERTS ===== */
-        .alert {
-            padding: 18px 22px;
-            border-radius: 16px;
-            margin-bottom: 15px;
-            border: 1px solid;
-            position: relative;
-            background: #FFFFFF;
-        }
-
-        .alert-danger { border-color: rgba(155,34,38,0.2); background: linear-gradient(135deg, #FFF5F5, #FFFFFF); color: var(--crimson); }
-        .alert-danger::before { content:''; position:absolute; left:0; top:0; bottom:0; width:4px; background:linear-gradient(180deg,var(--crimson),var(--crimson-light)); border-radius:16px 0 0 16px; }
-
-        .alert-warning { border-color: rgba(212,163,115,0.3); background: linear-gradient(135deg, #FFFBF5, #FFFFFF); color: #8B6914; }
-        .alert-warning::before { content:''; position:absolute; left:0; top:0; bottom:0; width:4px; background:linear-gradient(180deg,var(--gold),var(--gold-light)); border-radius:16px 0 0 16px; }
-
-        .alert-success { border-color: rgba(88,129,87,0.2); background: linear-gradient(135deg, #F5FBF5, #FFFFFF); color: var(--jade); }
-        .alert-success::before { content:''; position:absolute; left:0; top:0; bottom:0; width:4px; background:linear-gradient(180deg,var(--jade),#6B9B6A); border-radius:16px 0 0 16px; }
-
-        /* ===== SEARCH ===== */
-        .search-box { margin-bottom: 20px; position: relative; }
-
-        .search-box input {
-            width: 100%;
-            padding: 14px 20px 14px 48px;
-            background: var(--warm-white);
-            border: 1.5px solid rgba(155,34,38,0.12);
-            border-radius: 14px;
-            color: var(--ink);
-            font-family: 'Noto Sans Thai', sans-serif;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .search-box input:focus {
-            outline: none;
-            border-color: var(--crimson);
-            box-shadow: 0 0 0 4px var(--crimson-soft);
-            background: #FFFFFF;
-        }
-
-        .search-box::before {
-            content: '🔍';
-            position: absolute;
-            left: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 1rem;
-            opacity: 0.5;
-        }
-
-        /* ===== EMPTY STATE ===== */
-        .empty-state { text-align: center; padding: 50px 20px; color: var(--ink-muted); }
-        .empty-state-icon { font-size: 3.5rem; margin-bottom: 15px; opacity: 0.6; }
-
-        /* ===== EDIT MODAL ===== */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(61, 43, 31, 0.6);
-            z-index: 9000;
-            backdrop-filter: blur(4px);
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .modal-overlay.show { display: flex; }
-
-        .modal-box {
-            background: #FFFFFF;
-            border-radius: 24px;
-            padding: 32px;
-            width: 100%;
-            max-width: 520px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(155, 34, 38, 0.25);
-            animation: slide-up 0.3s ease;
-            position: relative;
-        }
-
-        .modal-box::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 5px;
-            background: linear-gradient(90deg, var(--crimson), var(--gold), var(--jade));
-            border-radius: 24px 24px 0 0;
-        }
-
-        .modal-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--crimson);
-            margin-bottom: 22px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid rgba(155,34,38,0.1);
-        }
-
-        .modal-footer {
-            display: flex;
-            gap: 10px;
-            margin-top: 24px;
-            flex-wrap: wrap;
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 16px; right: 16px;
-            background: rgba(155,34,38,0.1);
-            border: none;
-            color: var(--crimson);
-            width: 36px; height: 36px;
-            border-radius: 50%;
-            font-size: 1.1rem;
-            cursor: pointer;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .modal-close:hover { background: var(--crimson); color: white; }
-
-        /* ===== UTILS ===== */
-        .warm-text { color: var(--gold); font-weight: 700; }
-        .crimson-text { color: var(--crimson); font-weight: 700; }
-
-        .warm-divider {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(155,34,38,0.15), var(--gold), rgba(155,34,38,0.15), transparent);
-            margin: 25px 0;
-        }
-
-        .footer-note {
-            text-align: center;
-            padding: 30px 20px;
-            color: var(--ink-muted);
-            font-size: 0.85rem;
-            font-style: italic;
-        }
-
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 768px) {
-            .logo { font-size: 2rem; }
-            .stats-grid { grid-template-columns: 1fr; gap: 12px; }
-            .form-row { grid-template-columns: 1fr; }
-            .form-row-3 { grid-template-columns: 1fr; }
-            .nav-tab { font-size: 0.75rem; padding: 14px 6px; min-width: 80px; }
-            .content { padding: 18px 15px; }
-            .card { padding: 20px; border-radius: 16px; }
-            table { font-size: 0.78rem; }
-            th, td { padding: 10px 7px; }
-            .btn-sm { padding: 6px 10px; font-size: 0.72rem; }
-            .back-btn { left: 54px; font-size: 0.72rem; padding: 5px 10px; }
-            .modal-box { padding: 24px 18px; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ohoi Kyoza - ระบบจัดการสต๊อก</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;600;700&family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
+<!-- SheetJS for Excel export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --crimson:#9B2226;--crimson-light:#AE2012;--crimson-soft:rgba(155,34,38,0.08);
+  --gold:#D4A373;--gold-light:#E9C496;--gold-soft:rgba(212,163,115,0.15);
+  --jade:#588157;--jade-soft:rgba(88,129,87,0.12);
+  --warm-white:#FDF6EC;--cream:#F5EBDC;--paper:#FAF3E8;
+  --ink:#3D2B1F;--ink-light:#6B5B4F;--ink-muted:#9B8B7F;
+  --shadow-warm:rgba(155,34,38,0.08);
+}
+body{font-family:'Noto Sans Thai',sans-serif;background:var(--warm-white);color:var(--ink);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background-image:url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:1000;opacity:0.6;}
+@keyframes lantern-glow{0%,100%{box-shadow:0 4px 20px rgba(155,34,38,0.15);}50%{box-shadow:0 4px 30px rgba(155,34,38,0.22);}}
+@keyframes warm-pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.02);}}
+@keyframes slide-up{from{transform:translateY(20px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+
+/* HEADER */
+.header{background:linear-gradient(160deg,var(--crimson) 0%,#7B181C 60%,#5A1216 100%);padding:35px 20px 40px;text-align:center;position:relative;overflow:hidden;}
+.header::before{content:'🏮';position:absolute;top:15px;left:20px;font-size:2rem;opacity:0.4;animation:warm-pulse 4s ease-in-out infinite;}
+.header::after{content:'🏮';position:absolute;top:15px;right:20px;font-size:2rem;opacity:0.4;animation:warm-pulse 4s ease-in-out infinite 2s;}
+.back-btn{position:absolute;top:15px;left:60px;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.3);color:rgba(255,248,240,0.9);padding:7px 14px;border-radius:20px;cursor:pointer;font-size:0.8rem;font-weight:600;font-family:'Noto Sans Thai',sans-serif;transition:all 0.3s ease;z-index:2;text-decoration:none;display:inline-flex;align-items:center;gap:5px;}
+.back-btn:hover{background:rgba(255,255,255,0.25);transform:translateX(-2px);}
+.logo{font-family:'Cormorant Garamond',serif;font-size:2.6rem;font-weight:700;color:var(--gold-light);letter-spacing:3px;position:relative;z-index:1;text-shadow:0 2px 10px rgba(0,0,0,0.3);}
+.logo span{color:#FFF8F0;font-weight:400;font-style:italic;}
+.subtitle{color:rgba(255,248,240,0.7);font-size:0.95rem;margin-top:8px;font-weight:300;letter-spacing:1px;}
+.lang-switcher{display:flex;justify-content:center;gap:8px;margin-top:18px;position:relative;z-index:1;}
+.lang-btn{padding:6px 14px;border:1.5px solid rgba(212,163,115,0.4);background:rgba(255,255,255,0.08);color:rgba(255,248,240,0.8);border-radius:20px;cursor:pointer;font-weight:600;font-size:0.8rem;transition:all 0.4s ease;font-family:'Noto Sans Thai',sans-serif;}
+.lang-btn:hover{background:rgba(212,163,115,0.2);border-color:var(--gold);transform:translateY(-1px);}
+.lang-btn.active{background:rgba(212,163,115,0.25);border-color:var(--gold-light);color:var(--gold-light);}
+
+/* NAV */
+.nav-tabs{display:flex;background:var(--cream);border-bottom:1px solid rgba(155,34,38,0.1);overflow-x:auto;scrollbar-width:none;padding:0 10px;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px);}
+.nav-tabs::-webkit-scrollbar{display:none;}
+.nav-tab{flex:1;min-width:80px;padding:14px 8px;border:none;background:none;color:var(--ink-muted);font-family:'Noto Sans Thai',sans-serif;font-weight:600;font-size:0.82rem;cursor:pointer;transition:all 0.4s ease;position:relative;white-space:nowrap;border-radius:12px 12px 0 0;margin:0 2px;}
+.nav-tab:hover{color:var(--crimson);background:rgba(155,34,38,0.05);}
+.nav-tab.active{color:var(--crimson);background:var(--paper);font-weight:700;}
+.nav-tab.active::after{content:'';position:absolute;bottom:0;left:20%;width:60%;height:3px;background:linear-gradient(90deg,transparent,var(--crimson),var(--gold),var(--crimson),transparent);border-radius:3px;}
+
+/* CONTENT */
+.content{padding:22px 18px;max-width:960px;margin:0 auto;background:var(--paper);min-height:calc(100vh - 200px);}
+.tab-content{display:none;animation:slide-up 0.4s ease;}
+.tab-content.active{display:block;}
+
+/* CARD */
+.card{background:#FFFFFF;border-radius:20px;padding:26px;margin-bottom:20px;position:relative;overflow:hidden;transition:all 0.4s ease;border:1px solid rgba(155,34,38,0.06);box-shadow:0 2px 8px var(--shadow-warm),0 8px 32px rgba(155,34,38,0.04);}
+.card::before{content:'';position:absolute;top:0;left:0;width:100%;height:4px;background:linear-gradient(90deg,var(--crimson),var(--gold),var(--jade),var(--gold),var(--crimson));opacity:0.6;}
+.card:hover{box-shadow:0 4px 16px var(--shadow-warm),0 12px 40px rgba(155,34,38,0.08);transform:translateY(-2px);}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:var(--crimson);margin-bottom:20px;display:flex;align-items:center;gap:10px;padding-bottom:12px;border-bottom:1px solid rgba(155,34,38,0.1);}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px;}
+.stat-card{background:linear-gradient(145deg,#FFFFFF,var(--warm-white));border:1px solid rgba(155,34,38,0.1);border-radius:20px;padding:20px 15px;text-align:center;animation:lantern-glow 4s ease-in-out infinite;transition:all 0.4s ease;}
+.stat-card:nth-child(1){border-top:3px solid var(--crimson);}.stat-card:nth-child(2){border-top:3px solid var(--gold);animation-delay:1.3s;}.stat-card:nth-child(3){border-top:3px solid var(--jade);animation-delay:2.6s;}
+.stat-card:hover{transform:translateY(-4px);box-shadow:0 8px 30px rgba(155,34,38,0.12);}
+.stat-card h3{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;margin-bottom:6px;}
+.stat-card:nth-child(1) h3{color:var(--crimson);}.stat-card:nth-child(2) h3{color:var(--gold);}.stat-card:nth-child(3) h3{color:var(--jade);}
+.stat-card p{color:var(--ink-muted);font-size:0.82rem;font-weight:600;}
+
+/* FORM */
+.form-group{margin-bottom:16px;}
+.form-group label{display:block;margin-bottom:7px;font-weight:600;color:var(--crimson);font-size:0.88rem;}
+.form-group input,.form-group select{width:100%;padding:13px 16px;background:var(--warm-white);border:1.5px solid rgba(155,34,38,0.15);border-radius:14px;color:var(--ink);font-family:'Noto Sans Thai',sans-serif;font-size:0.95rem;transition:all 0.3s ease;}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--crimson);box-shadow:0 0 0 4px var(--crimson-soft);background:#FFFFFF;}
+.form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;}
+.form-row-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.lang-name-section{background:var(--warm-white);border:1.5px solid rgba(155,34,38,0.1);border-radius:14px;padding:15px;margin-bottom:16px;}
+.lang-name-section .lang-label{font-size:0.76rem;font-weight:700;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;}
+
+/* CATEGORY FILTER (for product list) */
+.cat-filter-bar{display:flex;gap:7px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none;padding-bottom:3px;flex-wrap:wrap;}
+.cat-filter-bar::-webkit-scrollbar{display:none;}
+.cat-f-btn{padding:7px 14px;border:1.5px solid rgba(155,34,38,0.15);background:#FFFFFF;color:var(--ink-muted);border-radius:20px;cursor:pointer;font-weight:600;font-size:0.78rem;transition:all 0.3s ease;white-space:nowrap;font-family:'Noto Sans Thai',sans-serif;}
+.cat-f-btn:hover{border-color:var(--crimson);color:var(--crimson);}
+.cat-f-btn.active{background:linear-gradient(135deg,var(--crimson),var(--crimson-light));color:white;border-color:var(--crimson);box-shadow:0 3px 12px rgba(155,34,38,0.25);}
+
+/* AUTOCOMPLETE */
+.autocomplete-wrap{position:relative;}
+.autocomplete-list{position:absolute;top:100%;left:0;right:0;background:#FFFFFF;border:1.5px solid var(--crimson);border-top:none;border-radius:0 0 14px 14px;max-height:220px;overflow-y:auto;z-index:500;box-shadow:0 8px 24px rgba(155,34,38,0.15);display:none;}
+.autocomplete-list.show{display:block;}
+.autocomplete-item{padding:11px 16px;cursor:pointer;font-size:0.9rem;color:var(--ink);border-bottom:1px solid rgba(155,34,38,0.06);transition:background 0.2s;}
+.autocomplete-item:hover{background:var(--crimson-soft);color:var(--crimson);}
+.autocomplete-item:last-child{border-bottom:none;}
+.autocomplete-item .code{font-weight:700;color:var(--crimson);margin-right:6px;}
+.autocomplete-item .stock{font-size:0.78rem;color:var(--ink-muted);float:right;}
+
+/* BUTTONS */
+.btn{padding:13px 26px;border:none;border-radius:14px;font-family:'Noto Sans Thai',sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;transition:all 0.4s ease;}
+.btn-primary{background:linear-gradient(135deg,var(--crimson),var(--crimson-light));color:#FFF8F0;box-shadow:0 4px 15px rgba(155,34,38,0.25);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 25px rgba(155,34,38,0.35);}
+.btn-success{background:linear-gradient(135deg,var(--jade),#6B9B6A);color:#FFF8F0;box-shadow:0 4px 15px rgba(88,129,87,0.25);}
+.btn-success:hover{transform:translateY(-2px);}
+.btn-warning{background:linear-gradient(135deg,#B8860B,#D4A373);color:#FFF8F0;}
+.btn-warning:hover{transform:translateY(-2px);}
+.btn-danger{background:linear-gradient(135deg,#C0392B,#E74C3C);color:#FFF8F0;box-shadow:0 4px 15px rgba(192,57,43,0.25);}
+.btn-danger:hover{transform:translateY(-2px);}
+.btn-info{background:linear-gradient(135deg,#2980B9,#3498DB);color:#FFF8F0;box-shadow:0 4px 15px rgba(41,128,185,0.25);}
+.btn-info:hover{transform:translateY(-2px);}
+.btn-sm{padding:7px 12px;font-size:0.76rem;border-radius:10px;}
+.btn-group{display:flex;gap:7px;flex-wrap:wrap;}
+
+/* ALERT */
+.alert{padding:16px 20px;border-radius:14px;margin-bottom:12px;border:1px solid;position:relative;background:#FFFFFF;}
+.alert-danger{border-color:rgba(155,34,38,0.2);background:linear-gradient(135deg,#FFF5F5,#FFFFFF);color:var(--crimson);}
+.alert-danger::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--crimson),var(--crimson-light));border-radius:14px 0 0 14px;}
+.alert-warning{border-color:rgba(212,163,115,0.3);background:linear-gradient(135deg,#FFFBF5,#FFFFFF);color:#8B6914;}
+.alert-warning::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--gold),var(--gold-light));border-radius:14px 0 0 14px;}
+.alert-success{border-color:rgba(88,129,87,0.2);background:linear-gradient(135deg,#F5FBF5,#FFFFFF);color:var(--jade);}
+.alert-success::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--jade),#6B9B6A);border-radius:14px 0 0 14px;}
+
+/* SEARCH */
+.search-box{margin-bottom:16px;position:relative;}
+.search-box input{width:100%;padding:13px 20px 13px 46px;background:var(--warm-white);border:1.5px solid rgba(155,34,38,0.12);border-radius:14px;color:var(--ink);font-family:'Noto Sans Thai',sans-serif;font-size:0.95rem;transition:all 0.3s ease;}
+.search-box input:focus{outline:none;border-color:var(--crimson);box-shadow:0 0 0 4px var(--crimson-soft);background:#FFFFFF;}
+.search-box::before{content:'🔍';position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:1rem;opacity:0.5;}
+
+/* TABLE */
+.table-container{overflow-x:auto;border-radius:16px;border:1px solid rgba(155,34,38,0.08);background:#FFFFFF;}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:0.86rem;}
+th{background:linear-gradient(180deg,var(--cream),var(--warm-white));color:var(--crimson);padding:13px 9px;font-weight:700;font-size:0.76rem;text-transform:uppercase;letter-spacing:0.5px;border-bottom:2px solid rgba(155,34,38,0.1);white-space:nowrap;}
+td{padding:12px 9px;border-bottom:1px solid rgba(155,34,38,0.05);color:var(--ink-light);vertical-align:middle;}
+tr:hover td{background:var(--crimson-soft);color:var(--ink);}
+tr:last-child td{border-bottom:none;}
+
+/* BADGES */
+.badge{padding:4px 10px;border-radius:20px;font-size:0.73rem;font-weight:600;display:inline-block;}
+.badge-success{background:var(--jade-soft);color:var(--jade);border:1px solid rgba(88,129,87,0.3);}
+.badge-warning{background:var(--gold-soft);color:#B8860B;border:1px solid rgba(212,163,115,0.4);}
+.badge-danger{background:rgba(155,34,38,0.08);color:var(--crimson);border:1px solid rgba(155,34,38,0.3);}
+
+/* EMPTY */
+.empty-state{text-align:center;padding:44px 20px;color:var(--ink-muted);}
+.empty-state-icon{font-size:3.2rem;margin-bottom:14px;opacity:0.6;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:9000;backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:18px;}
+.modal-overlay.show{display:flex;}
+.modal-box{background:#FFFFFF;border-radius:24px;padding:30px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(155,34,38,0.25);animation:slide-up 0.3s ease;position:relative;}
+.modal-box::before{content:'';position:absolute;top:0;left:0;width:100%;height:5px;background:linear-gradient(90deg,var(--crimson),var(--gold),var(--jade));border-radius:24px 24px 0 0;}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:1.45rem;font-weight:700;color:var(--crimson);margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid rgba(155,34,38,0.1);}
+.modal-footer{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap;}
+.modal-close{position:absolute;top:14px;right:14px;background:rgba(155,34,38,0.1);border:none;color:var(--crimson);width:34px;height:34px;border-radius:50%;font-size:1rem;cursor:pointer;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all 0.3s ease;}
+.modal-close:hover{background:var(--crimson);color:white;}
+
+/* HISTORY EDIT MODAL */
+.hist-modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.65);z-index:9500;backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:18px;}
+.hist-modal-overlay.show{display:flex;}
+
+/* EXPORT BAR */
+.export-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
+.export-bar .export-label{font-weight:700;color:var(--crimson);font-size:0.88rem;margin-right:4px;}
+
+/* DIVIDER */
+.warm-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(155,34,38,0.15),var(--gold),rgba(155,34,38,0.15),transparent);margin:20px 0;}
+
+/* UTILS */
+.warm-text{color:var(--gold);font-weight:700;}
+.crimson-text{color:var(--crimson);font-weight:700;}
+.footer-note{text-align:center;padding:28px 20px;color:var(--ink-muted);font-size:0.85rem;font-style:italic;}
+
+/* SUMMARY TABLE */
+.summary-section{margin-top:20px;}
+.month-picker{display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap;}
+.month-picker input[type=month]{padding:10px 14px;border:1.5px solid rgba(155,34,38,0.15);border-radius:12px;font-family:'Noto Sans Thai',sans-serif;font-size:0.9rem;background:var(--warm-white);color:var(--ink);}
+
+@media(max-width:768px){
+  .logo{font-size:2rem;}.stats-grid{grid-template-columns:1fr;gap:10px;}
+  .form-row{grid-template-columns:1fr;}.form-row-3{grid-template-columns:1fr;}
+  .nav-tab{font-size:0.72rem;padding:12px 5px;min-width:68px;}
+  .content{padding:14px 12px;}.card{padding:18px;border-radius:16px;}
+  table{font-size:0.76rem;}th,td{padding:9px 6px;}
+  .btn-sm{padding:6px 9px;font-size:0.7rem;}
+  .back-btn{left:52px;font-size:0.7rem;padding:5px 9px;}
+}
+</style>
 </head>
 <body>
 
-    <!-- HEADER -->
-    <div class="header">
-        <a href="index.html" class="back-btn" id="back-btn">← <span data-i18n="btn_back">หน้าหลัก</span></a>
-        <div class="logo">Ohoi <span>Kyoza</span></div>
-        <div class="subtitle" data-i18n="header_subtitle">ระบบจัดการสต๊อก — ร้านเกี๊ยวซ่าไต้หวัน</div>
-        <div class="lang-switcher">
-            <button class="lang-btn active" onclick="changeLanguage('th')" data-lang="th">🇹🇭 ไทย</button>
-            <button class="lang-btn" onclick="changeLanguage('en')" data-lang="en">🇬🇧 EN</button>
-            <button class="lang-btn" onclick="changeLanguage('zh')" data-lang="zh">🇨🇳 中文</button>
+<div class="header">
+  <a href="index.html" class="back-btn">← <span data-i18n="btn_back">หน้าหลัก</span></a>
+  <div class="logo">Ohoi <span>Kyoza</span></div>
+  <div class="subtitle" data-i18n="header_subtitle">ระบบจัดการสต๊อก — ร้านเกี๊ยวซ่าไต้หวัน</div>
+  <div class="lang-switcher">
+    <button class="lang-btn active" onclick="changeLanguage('th')" data-lang="th">🇹🇭 ไทย</button>
+    <button class="lang-btn" onclick="changeLanguage('en')" data-lang="en">🇬🇧 EN</button>
+    <button class="lang-btn" onclick="changeLanguage('zh')" data-lang="zh">🇨🇳 中文</button>
+  </div>
+</div>
+
+<div class="nav-tabs">
+  <button class="nav-tab active" onclick="showTab('dashboard',this)" data-i18n="tab_dashboard">📊 แดชบอร์ด</button>
+  <button class="nav-tab" onclick="showTab('products',this)" data-i18n="tab_products">📦 สินค้า</button>
+  <button class="nav-tab" onclick="showTab('stock-in',this)" data-i18n="tab_stock_in">📥 รับเข้า</button>
+  <button class="nav-tab" onclick="showTab('stock-out',this)" data-i18n="tab_stock_out">📤 จ่ายออก</button>
+  <button class="nav-tab" onclick="showTab('history',this)" data-i18n="tab_history">📋 ประวัติ</button>
+  <button class="nav-tab" onclick="showTab('report',this)" data-i18n="tab_report">📈 รายงาน</button>
+</div>
+
+<div class="content">
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="tab-content active">
+  <div class="stats-grid">
+    <div class="stat-card"><h3 id="total-products">0</h3><p data-i18n="stat_total">รายการสินค้า</p></div>
+    <div class="stat-card"><h3 id="low-stock-count">0</h3><p data-i18n="stat_low">สินค้าใกล้หมด</p></div>
+    <div class="stat-card"><h3 id="expiring-count">0</h3><p data-i18n="stat_expiring">ใกล้หมดอายุ</p></div>
+  </div>
+  <div class="card">
+    <div class="card-title" data-i18n="alerts_title">⚠️ แจ้งเตือน</div>
+    <div id="alerts-container"></div>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<div id="products" class="tab-content">
+  <div class="card">
+    <div class="card-title" data-i18n="add_product_title">➕ เพิ่มสินค้าใหม่</div>
+    <form id="product-form" onsubmit="addProduct(event)">
+      <div class="form-row">
+        <div class="form-group"><label data-i18n="label_code">รหัสสินค้า</label><input type="text" id="prod-code" placeholder="RAW-001" required></div>
+        <div class="form-group"><label data-i18n="label_category">หมวดหมู่</label><select id="prod-category" required></select></div>
+        <div class="form-group"><label data-i18n="label_unit">หน่วยนับ</label><select id="prod-unit" required></select></div>
+      </div>
+      <div class="lang-name-section">
+        <div class="lang-label" data-i18n="label_name_multilang">ชื่อสินค้า (กรอกทุกภาษา)</div>
+        <div class="form-row-3">
+          <div class="form-group" style="margin-bottom:0"><label>🇹🇭 ภาษาไทย *</label><input type="text" id="prod-name-th" placeholder="เนื้อหมูสับ" required></div>
+          <div class="form-group" style="margin-bottom:0"><label>🇬🇧 English</label><input type="text" id="prod-name-en" placeholder="Minced Pork"></div>
+          <div class="form-group" style="margin-bottom:0"><label>🇨🇳 中文</label><input type="text" id="prod-name-zh" placeholder="猪肉末"></div>
         </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label data-i18n="label_min">สต๊อกขั้นต่ำ</label><input type="number" id="prod-min" placeholder="5" min="0" step="0.01" required></div>
+        <div class="form-group"><label data-i18n="label_stock">สต๊อกเริ่มต้น</label><input type="number" id="prod-stock" placeholder="10" min="0" step="0.01" required></div>
+        <div class="form-group"><label data-i18n="label_expiry">วันหมดอายุ</label><input type="date" id="prod-expiry"></div>
+      </div>
+      <div class="form-group"><label data-i18n="label_location">ที่จัดเก็บ</label><input type="text" id="prod-location" placeholder="ตู้เย็น 1, ชั้น A"></div>
+      <button type="submit" class="btn btn-primary" data-i18n="btn_save_product">💾 บันทึกสินค้า</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="card-title" data-i18n="product_list_title">📋 รายการสินค้าทั้งหมด</div>
+    <!-- [1] Category Filter Bar -->
+    <div class="cat-filter-bar" id="product-cat-filter"></div>
+    <div class="search-box">
+      <input type="text" id="product-search" data-i18n-placeholder="placeholder_search_product" placeholder="ค้นหาสินค้า..." onkeyup="renderProducts()">
     </div>
+    <div class="table-container"><div id="products-table-container"></div></div>
+  </div>
+</div>
 
-    <!-- NAV TABS -->
-    <div class="nav-tabs">
-        <button class="nav-tab active" onclick="showTab('dashboard', this)" data-i18n="tab_dashboard">📊 แดชบอร์ด</button>
-        <button class="nav-tab" onclick="showTab('products', this)" data-i18n="tab_products">📦 สินค้า</button>
-        <button class="nav-tab" onclick="showTab('stock-in', this)" data-i18n="tab_stock_in">📥 รับเข้า</button>
-        <button class="nav-tab" onclick="showTab('stock-out', this)" data-i18n="tab_stock_out">📤 จ่ายออก</button>
-        <button class="nav-tab" onclick="showTab('history', this)" data-i18n="tab_history">📋 ประวัติ</button>
+<!-- STOCK IN -->
+<div id="stock-in" class="tab-content">
+  <div class="card">
+    <div class="card-title" data-i18n="stock_in_title">📥 บันทึกรับสินค้าเข้า</div>
+    <form id="stock-in-form" onsubmit="addStockIn(event)">
+      <div class="form-row">
+        <!-- [3] Autocomplete product selector -->
+        <div class="form-group">
+          <label data-i18n="label_select_product">เลือกสินค้า</label>
+          <div class="autocomplete-wrap">
+            <input type="text" id="in-product-search" data-i18n-placeholder="placeholder_search_product" placeholder="พิมพ์รหัส/ชื่อ หรือกด ▼" autocomplete="off" oninput="acSearch('in')" onfocus="acSearch('in')">
+            <input type="hidden" id="in-product">
+            <div class="autocomplete-list" id="in-ac-list"></div>
+          </div>
+        </div>
+        <div class="form-group"><label data-i18n="label_quantity_in">จำนวนที่รับเข้า</label><input type="number" id="in-quantity" min="0.01" step="0.01" required></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label data-i18n="label_price">ราคาต้นทุน/หน่วย (บาท)</label><input type="number" id="in-price" min="0" step="0.01" placeholder="45.50"></div>
+        <div class="form-group"><label data-i18n="label_expiry_new">วันหมดอายุใหม่ (ถ้ามี)</label><input type="date" id="in-expiry"></div>
+      </div>
+      <div class="form-group"><label data-i18n="label_note">หมายเหตุ</label><input type="text" id="in-note" placeholder="ซื้อจากตลาดสด"></div>
+      <button type="submit" class="btn btn-success" data-i18n="btn_stock_in">✅ บันทึกรับเข้า</button>
+    </form>
+  </div>
+</div>
+
+<!-- STOCK OUT -->
+<div id="stock-out" class="tab-content">
+  <div class="card">
+    <div class="card-title" data-i18n="stock_out_title">📤 บันทึกจ่ายสินค้าออก</div>
+    <form id="stock-out-form" onsubmit="addStockOut(event)">
+      <div class="form-row">
+        <!-- [3] Autocomplete product selector -->
+        <div class="form-group">
+          <label data-i18n="label_select_product">เลือกสินค้า</label>
+          <div class="autocomplete-wrap">
+            <input type="text" id="out-product-search" data-i18n-placeholder="placeholder_search_product" placeholder="พิมพ์รหัส/ชื่อ หรือกด ▼" autocomplete="off" oninput="acSearch('out')" onfocus="acSearch('out')">
+            <input type="hidden" id="out-product">
+            <div class="autocomplete-list" id="out-ac-list"></div>
+          </div>
+        </div>
+        <div class="form-group"><label data-i18n="label_quantity_out">จำนวนที่จ่ายออก</label><input type="number" id="out-quantity" min="0.01" step="0.01" required></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label data-i18n="label_out_type">ประเภทการจ่ายออก</label><select id="out-type" required></select></div>
+        <div class="form-group"><label data-i18n="label_reason">เมนู/เหตุผล</label><input type="text" id="out-reason" placeholder="ข้าวหมูตุ๋น"></div>
+      </div>
+      <div class="form-group"><label data-i18n="label_note_extra">หมายเหตุเพิ่มเติม</label><input type="text" id="out-note" placeholder="รายละเอียดเพิ่มเติม"></div>
+      <button type="submit" class="btn btn-danger" data-i18n="btn_stock_out">📤 บันทึกจ่ายออก</button>
+    </form>
+  </div>
+</div>
+
+<!-- HISTORY -->
+<div id="history" class="tab-content">
+  <div class="card">
+    <div class="card-title" data-i18n="history_title">📋 ประวัติการเคลื่อนไหว</div>
+    <div class="search-box">
+      <input type="text" id="history-search" data-i18n-placeholder="placeholder_search_history" placeholder="ค้นหาประวัติ..." onkeyup="renderHistory()">
     </div>
+    <div class="table-container"><div id="history-table-container"></div></div>
+  </div>
+</div>
 
-    <div class="content">
-
-        <!-- DASHBOARD TAB -->
-        <div id="dashboard" class="tab-content active">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <h3 id="total-products">0</h3>
-                    <p data-i18n="stat_total">รายการสินค้า</p>
-                </div>
-                <div class="stat-card">
-                    <h3 id="low-stock-count">0</h3>
-                    <p data-i18n="stat_low">สินค้าใกล้หมด</p>
-                </div>
-                <div class="stat-card">
-                    <h3 id="expiring-count">0</h3>
-                    <p data-i18n="stat_expiring">ใกล้หมดอายุ</p>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-title" data-i18n="alerts_title">⚠️ แจ้งเตือน</div>
-                <div id="alerts-container"></div>
-            </div>
-        </div>
-
-        <!-- PRODUCTS TAB -->
-        <div id="products" class="tab-content">
-            <div class="card">
-                <div class="card-title" data-i18n="add_product_title">➕ เพิ่มสินค้าใหม่</div>
-                <form id="product-form" onsubmit="addProduct(event)">
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label data-i18n="label_code">รหัสสินค้า</label>
-                            <input type="text" id="prod-code" placeholder="RAW-001" required>
-                        </div>
-                        <div class="form-group">
-                            <label data-i18n="label_category">หมวดหมู่</label>
-                            <select id="prod-category" required></select>
-                        </div>
-                        <div class="form-group">
-                            <label data-i18n="label_unit">หน่วยนับ</label>
-                            <select id="prod-unit" required></select>
-                        </div>
-                    </div>
-
-                    <!-- ชื่อสินค้า 3 ภาษา -->
-                    <div class="lang-name-section">
-                        <div class="lang-label" data-i18n="label_name_multilang">ชื่อสินค้า (กรอกทุกภาษา)</div>
-                        <div class="form-row-3">
-                            <div class="form-group" style="margin-bottom:0">
-                                <label>🇹🇭 ภาษาไทย *</label>
-                                <input type="text" id="prod-name-th" placeholder="เนื้อหมูสับ" required>
-                            </div>
-                            <div class="form-group" style="margin-bottom:0">
-                                <label>🇬🇧 English</label>
-                                <input type="text" id="prod-name-en" placeholder="Minced Pork">
-                            </div>
-                            <div class="form-group" style="margin-bottom:0">
-                                <label>🇨🇳 中文</label>
-                                <input type="text" id="prod-name-zh" placeholder="猪肉末">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label data-i18n="label_min">สต๊อกขั้นต่ำ</label>
-                            <input type="number" id="prod-min" placeholder="5" min="0" step="0.01" required>
-                        </div>
-                        <div class="form-group">
-                            <label data-i18n="label_stock">สต๊อกเริ่มต้น</label>
-                            <input type="number" id="prod-stock" placeholder="10" min="0" step="0.01" required>
-                        </div>
-                        <div class="form-group">
-                            <label data-i18n="label_expiry">วันหมดอายุ</label>
-                            <input type="date" id="prod-expiry">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label data-i18n="label_location">ที่จัดเก็บ</label>
-                        <input type="text" id="prod-location" placeholder="ตู้เย็น 1, ชั้น A">
-                    </div>
-                    <button type="submit" class="btn btn-primary" data-i18n="btn_save_product">💾 บันทึกสินค้า</button>
-                </form>
-            </div>
-
-            <div class="card">
-                <div class="card-title" data-i18n="product_list_title">📋 รายการสินค้าทั้งหมด</div>
-                <div class="search-box">
-                    <input type="text" id="product-search" data-i18n-placeholder="placeholder_search_product" placeholder="ค้นหาสินค้า..." onkeyup="renderProducts()">
-                </div>
-                <div class="table-container">
-                    <div id="products-table-container"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- STOCK IN TAB -->
-        <div id="stock-in" class="tab-content">
-            <div class="card">
-                <div class="card-title" data-i18n="stock_in_title">📥 บันทึกรับสินค้าเข้า</div>
-                <form id="stock-in-form" onsubmit="addStockIn(event)">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label data-i18n="label_select_product">เลือกสินค้า</label>
-                            <select id="in-product" required></select>
-                        </div>
-                        <div class="form-group">
-                            <label data-i18n="label_quantity_in">จำนวนที่รับเข้า</label>
-                            <input type="number" id="in-quantity" min="0.01" step="0.01" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label data-i18n="label_price">ราคาต้นทุน/หน่วย (บาท)</label>
-                            <input type="number" id="in-price" min="0" step="0.01" placeholder="45.50">
-                        </div>
-                        <div class="form-group">
-                            <label data-i18n="label_expiry_new">วันหมดอายุใหม่ (ถ้ามี)</label>
-                            <input type="date" id="in-expiry">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label data-i18n="label_note">หมายเหตุ</label>
-                        <input type="text" id="in-note" placeholder="ซื้อจากตลาดสด">
-                    </div>
-                    <button type="submit" class="btn btn-success" data-i18n="btn_stock_in">✅ บันทึกรับเข้า</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- STOCK OUT TAB -->
-        <div id="stock-out" class="tab-content">
-            <div class="card">
-                <div class="card-title" data-i18n="stock_out_title">📤 บันทึกจ่ายสินค้าออก</div>
-                <form id="stock-out-form" onsubmit="addStockOut(event)">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label data-i18n="label_select_product">เลือกสินค้า</label>
-                            <select id="out-product" required></select>
-                        </div>
-                        <div class="form-group">
-                            <label data-i18n="label_quantity_out">จำนวนที่จ่ายออก</label>
-                            <input type="number" id="out-quantity" min="0.01" step="0.01" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label data-i18n="label_out_type">ประเภทการจ่ายออก</label>
-                            <select id="out-type" required></select>
-                        </div>
-                        <div class="form-group">
-                            <label data-i18n="label_reason">เมนู/เหตุผล</label>
-                            <input type="text" id="out-reason" placeholder="ข้าวหมูตุ๋น">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label data-i18n="label_note_extra">หมายเหตุเพิ่มเติม</label>
-                        <input type="text" id="out-note" placeholder="รายละเอียดเพิ่มเติม">
-                    </div>
-                    <button type="submit" class="btn btn-danger" data-i18n="btn_stock_out">📤 บันทึกจ่ายออก</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- HISTORY TAB -->
-        <div id="history" class="tab-content">
-            <div class="card">
-                <div class="card-title" data-i18n="history_title">📋 ประวัติการเคลื่อนไหว</div>
-                <div class="search-box">
-                    <input type="text" id="history-search" data-i18n-placeholder="placeholder_search_history" placeholder="ค้นหาประวัติ..." onkeyup="renderHistory()">
-                </div>
-                <div class="table-container">
-                    <div id="history-table-container"></div>
-                </div>
-            </div>
-        </div>
-
-    </div><!-- /content -->
-
-    <!-- ===== EDIT MODAL ===== -->
-    <div class="modal-overlay" id="edit-modal">
-        <div class="modal-box">
-            <button class="modal-close" onclick="closeEditModal()">✕</button>
-            <div class="modal-title" data-i18n="modal_edit_title">✏️ แก้ไขสินค้า</div>
-
-            <input type="hidden" id="edit-id">
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label data-i18n="label_code">รหัสสินค้า</label>
-                    <input type="text" id="edit-code">
-                </div>
-                <div class="form-group">
-                    <label data-i18n="label_category">หมวดหมู่</label>
-                    <select id="edit-category"></select>
-                </div>
-                <div class="form-group">
-                    <label data-i18n="label_unit">หน่วยนับ</label>
-                    <select id="edit-unit"></select>
-                </div>
-            </div>
-
-            <!-- ชื่อ 3 ภาษา -->
-            <div class="lang-name-section">
-                <div class="lang-label" data-i18n="label_name_multilang">ชื่อสินค้า (ทุกภาษา)</div>
-                <div class="form-row-3">
-                    <div class="form-group" style="margin-bottom:0">
-                        <label>🇹🇭 ภาษาไทย</label>
-                        <input type="text" id="edit-name-th">
-                    </div>
-                    <div class="form-group" style="margin-bottom:0">
-                        <label>🇬🇧 English</label>
-                        <input type="text" id="edit-name-en">
-                    </div>
-                    <div class="form-group" style="margin-bottom:0">
-                        <label>🇨🇳 中文</label>
-                        <input type="text" id="edit-name-zh">
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label data-i18n="label_stock">สต๊อกปัจจุบัน</label>
-                    <input type="number" id="edit-stock" min="0" step="0.01">
-                </div>
-                <div class="form-group">
-                    <label data-i18n="label_min">สต๊อกขั้นต่ำ</label>
-                    <input type="number" id="edit-min" min="0" step="0.01">
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label data-i18n="label_expiry">วันหมดอายุ</label>
-                    <input type="date" id="edit-expiry">
-                </div>
-                <div class="form-group">
-                    <label data-i18n="label_location">ที่จัดเก็บ</label>
-                    <input type="text" id="edit-location">
-                </div>
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn btn-primary" onclick="saveEdit()" data-i18n="btn_save_edit">💾 บันทึกการแก้ไข</button>
-                <button class="btn btn-danger btn-sm" onclick="deleteProductFromModal()" data-i18n="btn_delete">🗑️ ลบสินค้า</button>
-                <button class="btn btn-sm" style="background:var(--cream);color:var(--ink);" onclick="closeEditModal()" data-i18n="btn_cancel">ยกเลิก</button>
-            </div>
-        </div>
+<!-- REPORT [6] -->
+<div id="report" class="tab-content">
+  <div class="card">
+    <div class="card-title" data-i18n="report_daily_title">📊 ยอดคงเหลือรายวัน</div>
+    <div class="export-bar">
+      <span class="export-label" data-i18n="label_export">ส่งออก:</span>
+      <button class="btn btn-success btn-sm" onclick="exportDailyExcel()" data-i18n="btn_export_excel">📊 Excel</button>
+      <button class="btn btn-danger btn-sm" onclick="exportDailyPDF()" data-i18n="btn_export_pdf">📄 PDF</button>
     </div>
+    <div class="table-container"><div id="daily-report-container"></div></div>
+  </div>
 
-    <div class="footer-note">
-        🏮 Ohoi Kyoza — บ้านหลังที่สองของคุณ 🥟
+  <div class="card summary-section">
+    <div class="card-title" data-i18n="report_monthly_title">📅 สรุปยอดรายเดือน</div>
+    <div class="month-picker">
+      <input type="month" id="month-picker" onchange="renderMonthlyReport()">
+      <div class="export-bar" style="margin-bottom:0">
+        <span class="export-label" data-i18n="label_export">ส่งออก:</span>
+        <button class="btn btn-success btn-sm" onclick="exportMonthlyExcel()" data-i18n="btn_export_excel">📊 Excel</button>
+        <button class="btn btn-danger btn-sm" onclick="exportMonthlyPDF()" data-i18n="btn_export_pdf">📄 PDF</button>
+      </div>
     </div>
+    <div class="table-container"><div id="monthly-report-container"></div></div>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<!-- PRODUCT EDIT MODAL -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeEditModal()">✕</button>
+    <div class="modal-title" data-i18n="modal_edit_title">✏️ แก้ไขสินค้า</div>
+    <input type="hidden" id="edit-id">
+    <div class="form-row">
+      <div class="form-group"><label data-i18n="label_code">รหัสสินค้า</label><input type="text" id="edit-code"></div>
+      <div class="form-group"><label data-i18n="label_category">หมวดหมู่</label><select id="edit-category"></select></div>
+      <div class="form-group"><label data-i18n="label_unit">หน่วยนับ</label><select id="edit-unit"></select></div>
+    </div>
+    <div class="lang-name-section">
+      <div class="lang-label" data-i18n="label_name_multilang">ชื่อสินค้า (ทุกภาษา)</div>
+      <div class="form-row-3">
+        <div class="form-group" style="margin-bottom:0"><label>🇹🇭 ภาษาไทย</label><input type="text" id="edit-name-th"></div>
+        <div class="form-group" style="margin-bottom:0"><label>🇬🇧 English</label><input type="text" id="edit-name-en"></div>
+        <div class="form-group" style="margin-bottom:0"><label>🇨🇳 中文</label><input type="text" id="edit-name-zh"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label data-i18n="label_stock">สต๊อกปัจจุบัน</label><input type="number" id="edit-stock" min="0" step="0.01"></div>
+      <div class="form-group"><label data-i18n="label_min">สต๊อกขั้นต่ำ</label><input type="number" id="edit-min" min="0" step="0.01"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label data-i18n="label_expiry">วันหมดอายุ</label><input type="date" id="edit-expiry"></div>
+      <div class="form-group"><label data-i18n="label_location">ที่จัดเก็บ</label><input type="text" id="edit-location"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="saveEdit()" data-i18n="btn_save_edit">💾 บันทึกการแก้ไข</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteProductFromModal()" data-i18n="btn_delete">🗑️ ลบสินค้า</button>
+      <button class="btn btn-sm" style="background:var(--cream);color:var(--ink);" onclick="closeEditModal()" data-i18n="btn_cancel">ยกเลิก</button>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY EDIT MODAL [5] -->
+<div class="hist-modal-overlay" id="hist-edit-modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeHistModal()">✕</button>
+    <div class="modal-title" data-i18n="modal_hist_title">✏️ แก้ไขรายการประวัติ</div>
+    <input type="hidden" id="hist-edit-id">
+    <div class="form-group"><label data-i18n="label_quantity_hist">จำนวน</label><input type="number" id="hist-edit-qty" min="0.01" step="0.01"></div>
+    <div class="form-group"><label data-i18n="label_note">หมายเหตุ / เหตุผล</label><input type="text" id="hist-edit-note"></div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="saveHistEdit()" data-i18n="btn_save_edit">💾 บันทึก</button>
+      <button class="btn btn-sm" style="background:var(--cream);color:var(--ink);" onclick="closeHistModal()" data-i18n="btn_cancel">ยกเลิก</button>
+    </div>
+  </div>
+</div>
+
+<div class="footer-note">🏮 Ohoi Kyoza — บ้านหลังที่สองของคุณ 🥟</div>
 
 <script>
-    // ===== DROPDOWN DATA (3 ภาษา) =====
-    const dropdownData = {
-        categories: {
-            fresh:     { th: '🥩 วัตถุดิบสด',    en: '🥩 Fresh',       zh: '🥩 新鲜食材' },
-            dry:       { th: '🧂 เครื่องปรุง',    en: '🧂 Seasonings',  zh: '🧂 调味料' },
-            frozen:    { th: '🧊 แช่แข็ง',       en: '🧊 Frozen',      zh: '🧊 冷冻' },
-            drink:     { th: '🥤 เครื่องดื่ม',   en: '🥤 Drinks',      zh: '🥤 饮料' },
-            packaging: { th: '📦 บรรจุภัณฑ์',   en: '📦 Packaging',   zh: '📦 包装材料' },
-            other:     { th: '🔧 อื่นๆ',         en: '🔧 Others',      zh: '🔧 其他' }
-        },
-        units: {
-            kg:     { th: 'กิโลกรัม (kg)', en: 'Kilogram (kg)',     zh: '公斤 (kg)' },
-            g:      { th: 'กรัม (g)',      en: 'Gram (g)',           zh: '克 (g)' },
-            l:      { th: 'ลิตร (L)',      en: 'Liter (L)',          zh: '升 (L)' },
-            ml:     { th: 'มิลลิลิตร (ml)', en: 'Milliliter (ml)', zh: '毫升 (ml)' },
-            bottle: { th: 'ขวด',           en: 'Bottle',            zh: '瓶' },
-            can:    { th: 'กระป๋อง',       en: 'Can',               zh: '罐' },
-            box:    { th: 'กล่อง',         en: 'Box',               zh: '盒' },
-            pack:   { th: 'ซอง',           en: 'Pack',              zh: '包' },
-            piece:  { th: 'ชิ้น',          en: 'Piece',             zh: '个' },
-            bag:    { th: 'ถุง',           en: 'Bag',               zh: '袋' }
-        },
-        outTypes: {
-            cooking: { th: '👨‍🍳 ใช้ทำอาหาร', en: '👨‍🍳 Cooking', zh: '👨‍🍳 烹饪用' },
-            damaged: { th: '💔 เสียหาย',    en: '💔 Damaged',  zh: '💔 损坏' },
-            expired: { th: '⏰ หมดอายุ',    en: '⏰ Expired',  zh: '⏰ 过期' },
-            return:  { th: '↩️ ส่งคืน',    en: '↩️ Return',   zh: '↩️ 退货' },
-            other:   { th: '📝 อื่นๆ',      en: '📝 Others',   zh: '📝 其他' }
-        }
-    };
+// ============================================================
+//  DROPDOWN DATA  (หมวดหมู่ใหม่ครบ 3 ภาษา)
+// ============================================================
+const dropdownData = {
+  categories: {
+    // เดิม
+    fresh:     {th:'🥩 วัตถุดิบสด',    en:'🥩 Fresh',        zh:'🥩 新鲜食材'},
+    dry:       {th:'🧂 เครื่องปรุง',   en:'🧂 Seasonings',   zh:'🧂 调味料'},
+    frozen:    {th:'🧊 แช่แข็ง',      en:'🧊 Frozen',       zh:'🧊 冷冻'},
+    drink:     {th:'🥤 เครื่องดื่ม',  en:'🥤 Drinks',       zh:'🥤 饮料'},
+    packaging: {th:'📦 บรรจุภัณฑ์',  en:'📦 Packaging',    zh:'📦 包装材料'},
+    // [2] ใหม่
+    meat:      {th:'🥩 หมวดเนื้อ',    en:'🥩 Meat',         zh:'🥩 肉类'},
+    soup:      {th:'🍲 หมวดซุป',      en:'🍲 Soup Base',    zh:'🍲 汤底'},
+    sidedish:  {th:'🥬 หมวดเครื่องเคียง',en:'🥬 Side Dish',zh:'🥬 配菜'},
+    noodle:    {th:'🍜 หมวดเส้น',     en:'🍜 Noodle',       zh:'🍜 面条类'},
+    flour:     {th:'🌾 หมวดแป้ง',     en:'🌾 Flour',        zh:'🌾 面粉类'},
+    gyoza:     {th:'🥟 หมวดเกี๊ยว',   en:'🥟 Gyoza',        zh:'🥟 饺子皮'},
+    mantou:    {th:'🍞 หมวดหมั่นโถว', en:'🍞 Mantou',       zh:'🍞 馒头类'},
+    other:     {th:'🔧 อื่นๆ',        en:'🔧 Others',       zh:'🔧 其他'}
+  },
+  units: {
+    kg:     {th:'กิโลกรัม (kg)',en:'Kilogram (kg)',   zh:'公斤 (kg)'},
+    g:      {th:'กรัม (g)',    en:'Gram (g)',          zh:'克 (g)'},
+    l:      {th:'ลิตร (L)',    en:'Liter (L)',          zh:'升 (L)'},
+    ml:     {th:'มิลลิลิตร (ml)',en:'Milliliter (ml)',zh:'毫升 (ml)'},
+    bottle: {th:'ขวด',        en:'Bottle',             zh:'瓶'},
+    can:    {th:'กระป๋อง',    en:'Can',                zh:'罐'},
+    box:    {th:'กล่อง',      en:'Box',                zh:'盒'},
+    pack:   {th:'ซอง',        en:'Pack',               zh:'包'},
+    piece:  {th:'ชิ้น',       en:'Piece',              zh:'个'},
+    bag:    {th:'ถุง',        en:'Bag',                zh:'袋'},
+    sheet:  {th:'แผ่น',       en:'Sheet',              zh:'张'}
+  },
+  outTypes: {
+    cooking:  {th:'👨‍🍳 ใช้ทำอาหาร',   en:'👨‍🍳 Cooking',       zh:'👨‍🍳 烹饪用'},
+    damaged:  {th:'💔 เสียหาย',       en:'💔 Damaged',         zh:'💔 损坏'},
+    expired:  {th:'⏰ หมดอายุ',       en:'⏰ Expired',         zh:'⏰ 过期'},
+    return:   {th:'↩️ ส่งคืน',       en:'↩️ Return',          zh:'↩️ 退货'},
+    branch2:  {th:'🏪 ส่งไปสาขา 2',  en:'🏪 Transfer Branch 2',zh:'🏪 转仓2号店'}, // [4]
+    other:    {th:'📝 อื่นๆ',         en:'📝 Others',          zh:'📝 其他'}
+  }
+};
 
-    // ===== TRANSLATIONS =====
-    const translations = {
-        th: {
-            btn_back: "หน้าหลัก",
-            header_subtitle: "ระบบจัดการสต๊อก — ร้านเกี๊ยวซ่าไต้หวัน",
-            tab_dashboard: "📊 แดชบอร์ด", tab_products: "📦 สินค้า",
-            tab_stock_in: "📥 รับเข้า", tab_stock_out: "📤 จ่ายออก", tab_history: "📋 ประวัติ",
-            stat_total: "รายการสินค้า", stat_low: "สินค้าใกล้หมด", stat_expiring: "ใกล้หมดอายุ",
-            alerts_title: "⚠️ แจ้งเตือน",
-            alert_no_issue: "✅ ไม่มีปัญหา! สต๊อกปกติทุกรายการ",
-            alert_low_stock: "⚠️ สินค้าใกล้หมดสต๊อก:",
-            alert_expired: "🚨 สินค้าหมดอายุแล้ว:",
-            alert_expiring: "⏰ สินค้าใกล้หมดอายุ (7 วัน):",
-            add_product_title: "➕ เพิ่มสินค้าใหม่",
-            label_name_multilang: "ชื่อสินค้า (กรอกทุกภาษา)",
-            label_code: "รหัสสินค้า", label_category: "หมวดหมู่", label_unit: "หน่วยนับ",
-            label_min: "สต๊อกขั้นต่ำ", label_stock: "สต๊อกเริ่มต้น",
-            label_expiry: "วันหมดอายุ (ถ้ามี)", label_location: "ที่จัดเก็บ",
-            label_select_product: "เลือกสินค้า", label_quantity_in: "จำนวนที่รับเข้า",
-            label_price: "ราคาต้นทุน/หน่วย (บาท)", label_expiry_new: "วันหมดอายุใหม่ (ถ้ามี)",
-            label_note: "หมายเหตุ", label_quantity_out: "จำนวนที่จ่ายออก",
-            label_out_type: "ประเภทการจ่ายออก", label_reason: "เมนู/เหตุผล",
-            label_note_extra: "หมายเหตุเพิ่มเติม",
-            btn_save_product: "💾 บันทึกสินค้า", btn_stock_in: "✅ บันทึกรับเข้า",
-            btn_stock_out: "📤 บันทึกจ่ายออก",
-            modal_edit_title: "✏️ แก้ไขสินค้า",
-            btn_save_edit: "💾 บันทึกการแก้ไข",
-            btn_delete: "🗑️ ลบสินค้า",
-            btn_cancel: "ยกเลิก",
-            btn_edit: "✏️ แก้ไข",
-            product_list_title: "📋 รายการสินค้าทั้งหมด",
-            stock_in_title: "📥 บันทึกรับสินค้าเข้า",
-            stock_out_title: "📤 บันทึกจ่ายสินค้าออก",
-            history_title: "📋 ประวัติการเคลื่อนไหว",
-            table_code: "รหัส", table_name: "ชื่อสินค้า", table_category: "หมวดหมู่",
-            table_stock: "คงเหลือ", table_min: "ขั้นต่ำ", table_status: "สถานะ",
-            table_expiry: "วันหมดอายุ", table_action: "จัดการ",
-            table_date: "วันที่", table_type: "ประเภท", table_quantity: "จำนวน", table_detail: "รายละเอียด",
-            status_normal: "ปกติ", status_low: "ใกล้หมด", status_out: "หมด!",
-            empty_products: "ยังไม่มีรายการสินค้า", empty_history: "ยังไม่มีประวัติการเคลื่อนไหว",
-            msg_add_success: "✅ เพิ่มสินค้าเรียบร้อยแล้ว!",
-            msg_edit_success: "✅ แก้ไขสินค้าเรียบร้อยแล้ว!",
-            msg_stock_in_success: "✅ รับเข้า {name} จำนวน {qty} {unit} เรียบร้อยแล้ว!",
-            msg_stock_out_success: "✅ จ่ายออก {name} จำนวน {qty} {unit} เรียบร้อยแล้ว!",
-            msg_stock_low: "❌ สต๊อกไม่พอ! คงเหลือ {stock} {unit}",
-            msg_delete_confirm: "ต้องการลบสินค้า '{name}' ใช่หรือไม่?\nการลบจะไม่สามารถกู้คืนได้",
-            days_left: "อีก {days} วัน",
-            in_type: "📥 รับเข้า", out_type: "📤 จ่ายออก",
-            select_category: "เลือกหมวดหมู่", select_unit: "เลือกหน่วย", select_type: "เลือกประเภท",
-            placeholder_search_product: "ค้นหาสินค้า...", placeholder_search_history: "ค้นหาประวัติ..."
-        },
-        en: {
-            btn_back: "Home",
-            header_subtitle: "Stock System — Taiwanese Gyoza Restaurant",
-            tab_dashboard: "📊 Dashboard", tab_products: "📦 Products",
-            tab_stock_in: "📥 Stock In", tab_stock_out: "📤 Stock Out", tab_history: "📋 History",
-            stat_total: "Total Items", stat_low: "Low Stock", stat_expiring: "Expiring Soon",
-            alerts_title: "⚠️ Alerts",
-            alert_no_issue: "✅ All good! Stock levels are normal",
-            alert_low_stock: "⚠️ Low Stock Items:",
-            alert_expired: "🚨 Expired Items:",
-            alert_expiring: "⏰ Expiring Soon (7 days):",
-            add_product_title: "➕ Add New Product",
-            label_name_multilang: "Product Name (fill all languages)",
-            label_code: "Product Code", label_category: "Category", label_unit: "Unit",
-            label_min: "Min Stock", label_stock: "Initial Stock",
-            label_expiry: "Expiry Date (if any)", label_location: "Storage Location",
-            label_select_product: "Select Product", label_quantity_in: "Quantity In",
-            label_price: "Cost per Unit (THB)", label_expiry_new: "New Expiry Date (if any)",
-            label_note: "Note", label_quantity_out: "Quantity Out",
-            label_out_type: "Out Type", label_reason: "Menu/Reason",
-            label_note_extra: "Additional Note",
-            btn_save_product: "💾 Save Product", btn_stock_in: "✅ Save Stock In",
-            btn_stock_out: "📤 Save Stock Out",
-            modal_edit_title: "✏️ Edit Product",
-            btn_save_edit: "💾 Save Changes",
-            btn_delete: "🗑️ Delete",
-            btn_cancel: "Cancel",
-            btn_edit: "✏️ Edit",
-            product_list_title: "📋 All Products",
-            stock_in_title: "📥 Record Stock In",
-            stock_out_title: "📤 Record Stock Out",
-            history_title: "📋 Transaction History",
-            table_code: "Code", table_name: "Product", table_category: "Category",
-            table_stock: "Stock", table_min: "Min", table_status: "Status",
-            table_expiry: "Expiry", table_action: "Action",
-            table_date: "Date", table_type: "Type", table_quantity: "Qty", table_detail: "Details",
-            status_normal: "Normal", status_low: "Low", status_out: "Out!",
-            empty_products: "No products yet", empty_history: "No transactions yet",
-            msg_add_success: "✅ Product added successfully!",
-            msg_edit_success: "✅ Product updated successfully!",
-            msg_stock_in_success: "✅ Stock in {name} qty {qty} {unit} saved!",
-            msg_stock_out_success: "✅ Stock out {name} qty {qty} {unit} saved!",
-            msg_stock_low: "❌ Not enough stock! Remaining: {stock} {unit}",
-            msg_delete_confirm: "Delete product '{name}'?\nThis cannot be undone.",
-            days_left: "{days} days left",
-            in_type: "📥 Stock In", out_type: "📤 Stock Out",
-            select_category: "Select Category", select_unit: "Select Unit", select_type: "Select Type",
-            placeholder_search_product: "Search products...", placeholder_search_history: "Search history..."
-        },
-        zh: {
-            btn_back: "首页",
-            header_subtitle: "库存系统 — 台湾饺子店",
-            tab_dashboard: "📊 仪表板", tab_products: "📦 商品",
-            tab_stock_in: "📥 入库", tab_stock_out: "📤 出库", tab_history: "📋 历史记录",
-            stat_total: "商品总数", stat_low: "库存不足", stat_expiring: "即将过期",
-            alerts_title: "⚠️ 提醒",
-            alert_no_issue: "✅ 一切正常！库存水平正常",
-            alert_low_stock: "⚠️ 库存不足商品：",
-            alert_expired: "🚨 已过期商品：",
-            alert_expiring: "⏰ 即将过期（7天内）：",
-            add_product_title: "➕ 添加新商品",
-            label_name_multilang: "商品名称（请填写所有语言）",
-            label_code: "商品编码", label_category: "分类", label_unit: "单位",
-            label_min: "最低库存", label_stock: "初始库存",
-            label_expiry: "保质期（如有）", label_location: "存放位置",
-            label_select_product: "选择商品", label_quantity_in: "入库数量",
-            label_price: "单价（泰铢）", label_expiry_new: "新保质期（如有）",
-            label_note: "备注", label_quantity_out: "出库数量",
-            label_out_type: "出库类型", label_reason: "菜单/原因",
-            label_note_extra: "补充备注",
-            btn_save_product: "💾 保存商品", btn_stock_in: "✅ 保存入库",
-            btn_stock_out: "📤 保存出库",
-            modal_edit_title: "✏️ 编辑商品",
-            btn_save_edit: "💾 保存修改",
-            btn_delete: "🗑️ 删除商品",
-            btn_cancel: "取消",
-            btn_edit: "✏️ 编辑",
-            product_list_title: "📋 所有商品",
-            stock_in_title: "📥 记录入库",
-            stock_out_title: "📤 记录出库",
-            history_title: "📋 交易历史",
-            table_code: "编码", table_name: "商品", table_category: "分类",
-            table_stock: "库存", table_min: "最低", table_status: "状态",
-            table_expiry: "保质期", table_action: "操作",
-            table_date: "日期", table_type: "类型", table_quantity: "数量", table_detail: "详情",
-            status_normal: "正常", status_low: "不足", status_out: "缺货!",
-            empty_products: "暂无商品", empty_history: "暂无交易记录",
-            msg_add_success: "✅ 商品添加成功！",
-            msg_edit_success: "✅ 商品修改成功！",
-            msg_stock_in_success: "✅ 入库 {name} 数量 {qty} {unit} 已保存！",
-            msg_stock_out_success: "✅ 出库 {name} 数量 {qty} {unit} 已保存！",
-            msg_stock_low: "❌ 库存不足！剩余 {stock} {unit}",
-            msg_delete_confirm: "确定删除商品 '{name}'？\n删除后无法恢复。",
-            days_left: "还剩 {days} 天",
-            in_type: "📥 入库", out_type: "📤 出库",
-            select_category: "选择分类", select_unit: "选择单位", select_type: "选择类型",
-            placeholder_search_product: "搜索商品...", placeholder_search_history: "搜索记录..."
-        }
-    };
+// ============================================================
+//  TRANSLATIONS
+// ============================================================
+const translations = {
+  th:{
+    btn_back:'หน้าหลัก', header_subtitle:'ระบบจัดการสต๊อก — ร้านเกี๊ยวซ่าไต้หวัน',
+    tab_dashboard:'📊 แดชบอร์ด', tab_products:'📦 สินค้า',
+    tab_stock_in:'📥 รับเข้า', tab_stock_out:'📤 จ่ายออก',
+    tab_history:'📋 ประวัติ', tab_report:'📈 รายงาน',
+    stat_total:'รายการสินค้า', stat_low:'สินค้าใกล้หมด', stat_expiring:'ใกล้หมดอายุ',
+    alerts_title:'⚠️ แจ้งเตือน',
+    alert_no_issue:'✅ ไม่มีปัญหา! สต๊อกปกติทุกรายการ',
+    alert_low_stock:'⚠️ สินค้าใกล้หมดสต๊อก:', alert_expired:'🚨 สินค้าหมดอายุแล้ว:',
+    alert_expiring:'⏰ สินค้าใกล้หมดอายุ (7 วัน):',
+    add_product_title:'➕ เพิ่มสินค้าใหม่', label_name_multilang:'ชื่อสินค้า (กรอกทุกภาษา)',
+    label_code:'รหัสสินค้า', label_category:'หมวดหมู่', label_unit:'หน่วยนับ',
+    label_min:'สต๊อกขั้นต่ำ', label_stock:'สต๊อกเริ่มต้น / ปัจจุบัน',
+    label_expiry:'วันหมดอายุ', label_location:'ที่จัดเก็บ',
+    label_select_product:'เลือกสินค้า', label_quantity_in:'จำนวนที่รับเข้า',
+    label_quantity_out:'จำนวนที่จ่ายออก', label_quantity_hist:'จำนวน',
+    label_price:'ราคาต้นทุน/หน่วย (บาท)', label_expiry_new:'วันหมดอายุใหม่ (ถ้ามี)',
+    label_note:'หมายเหตุ', label_note_extra:'หมายเหตุเพิ่มเติม',
+    label_out_type:'ประเภทการจ่ายออก', label_reason:'เมนู/เหตุผล',
+    label_export:'ส่งออก:',
+    btn_save_product:'💾 บันทึกสินค้า', btn_stock_in:'✅ บันทึกรับเข้า',
+    btn_stock_out:'📤 บันทึกจ่ายออก', btn_save_edit:'💾 บันทึกการแก้ไข',
+    btn_delete:'🗑️ ลบ', btn_cancel:'ยกเลิก', btn_edit:'✏️ แก้ไข',
+    btn_export_excel:'📊 Excel', btn_export_pdf:'📄 PDF',
+    product_list_title:'📋 รายการสินค้าทั้งหมด',
+    stock_in_title:'📥 บันทึกรับสินค้าเข้า', stock_out_title:'📤 บันทึกจ่ายสินค้าออก',
+    history_title:'📋 ประวัติการเคลื่อนไหว',
+    report_daily_title:'📊 ยอดคงเหลือรายวัน', report_monthly_title:'📅 สรุปยอดรายเดือน',
+    modal_edit_title:'✏️ แก้ไขสินค้า', modal_hist_title:'✏️ แก้ไขรายการประวัติ',
+    table_code:'รหัส', table_name:'ชื่อสินค้า', table_category:'หมวดหมู่',
+    table_stock:'คงเหลือ', table_min:'ขั้นต่ำ', table_status:'สถานะ',
+    table_expiry:'หมดอายุ', table_action:'จัดการ',
+    table_date:'วันที่', table_type:'ประเภท', table_quantity:'จำนวน', table_detail:'รายละเอียด',
+    status_normal:'ปกติ', status_low:'ใกล้หมด', status_out:'หมด!',
+    empty_products:'ยังไม่มีรายการสินค้า', empty_history:'ยังไม่มีประวัติการเคลื่อนไหว',
+    empty_report:'ไม่มีข้อมูล',
+    msg_add_success:'✅ เพิ่มสินค้าเรียบร้อยแล้ว!',
+    msg_edit_success:'✅ แก้ไขสินค้าเรียบร้อยแล้ว!',
+    msg_hist_edit_success:'✅ แก้ไขรายการประวัติเรียบร้อยแล้ว!',
+    msg_stock_in_success:'✅ รับเข้า {name} จำนวน {qty} {unit} เรียบร้อย!',
+    msg_stock_out_success:'✅ จ่ายออก {name} จำนวน {qty} {unit} เรียบร้อย!',
+    msg_stock_low:'❌ สต๊อกไม่พอ! คงเหลือ {stock} {unit}',
+    msg_delete_confirm:'ต้องการลบ "{name}" ใช่หรือไม่?\nไม่สามารถกู้คืนได้',
+    msg_hist_delete_confirm:'ต้องการลบรายการนี้ใช่หรือไม่?',
+    msg_no_product_selected:'กรุณาเลือกสินค้า',
+    days_left:'อีก {days} วัน',
+    in_type:'📥 รับเข้า', out_type:'📤 จ่ายออก',
+    cat_all:'🗂️ ทั้งหมด',
+    select_category:'เลือกหมวดหมู่', select_unit:'เลือกหน่วย', select_type:'เลือกประเภท',
+    placeholder_search_product:'ค้นหาสินค้า...', placeholder_search_history:'ค้นหาประวัติ...',
+    col_daily_code:'รหัส', col_daily_name:'สินค้า', col_daily_cat:'หมวด',
+    col_daily_in:'รับเข้าวันนี้', col_daily_out:'จ่ายออกวันนี้', col_daily_stock:'คงเหลือ', col_daily_unit:'หน่วย',
+    col_monthly_date:'วันที่', col_monthly_in:'รับเข้า', col_monthly_out:'จ่ายออก',
+    col_monthly_cost:'ต้นทุนรับเข้า (บาท)'
+  },
+  en:{
+    btn_back:'Home', header_subtitle:'Stock System — Taiwanese Gyoza Restaurant',
+    tab_dashboard:'📊 Dashboard', tab_products:'📦 Products',
+    tab_stock_in:'📥 Stock In', tab_stock_out:'📤 Stock Out',
+    tab_history:'📋 History', tab_report:'📈 Reports',
+    stat_total:'Total Items', stat_low:'Low Stock', stat_expiring:'Expiring Soon',
+    alerts_title:'⚠️ Alerts',
+    alert_no_issue:'✅ All good! Stock levels are normal.',
+    alert_low_stock:'⚠️ Low Stock Items:', alert_expired:'🚨 Expired Items:',
+    alert_expiring:'⏰ Expiring Soon (7 days):',
+    add_product_title:'➕ Add New Product', label_name_multilang:'Product Name (all languages)',
+    label_code:'Product Code', label_category:'Category', label_unit:'Unit',
+    label_min:'Min Stock', label_stock:'Initial / Current Stock',
+    label_expiry:'Expiry Date', label_location:'Storage Location',
+    label_select_product:'Select Product', label_quantity_in:'Quantity In',
+    label_quantity_out:'Quantity Out', label_quantity_hist:'Quantity',
+    label_price:'Cost per Unit (THB)', label_expiry_new:'New Expiry Date (if any)',
+    label_note:'Note', label_note_extra:'Additional Note',
+    label_out_type:'Out Type', label_reason:'Menu / Reason',
+    label_export:'Export:',
+    btn_save_product:'💾 Save Product', btn_stock_in:'✅ Save Stock In',
+    btn_stock_out:'📤 Save Stock Out', btn_save_edit:'💾 Save Changes',
+    btn_delete:'🗑️ Delete', btn_cancel:'Cancel', btn_edit:'✏️ Edit',
+    btn_export_excel:'📊 Excel', btn_export_pdf:'📄 PDF',
+    product_list_title:'📋 All Products',
+    stock_in_title:'📥 Record Stock In', stock_out_title:'📤 Record Stock Out',
+    history_title:'📋 Transaction History',
+    report_daily_title:'📊 Daily Stock Balance', report_monthly_title:'📅 Monthly Summary',
+    modal_edit_title:'✏️ Edit Product', modal_hist_title:'✏️ Edit Transaction',
+    table_code:'Code', table_name:'Product', table_category:'Category',
+    table_stock:'Stock', table_min:'Min', table_status:'Status',
+    table_expiry:'Expiry', table_action:'Action',
+    table_date:'Date', table_type:'Type', table_quantity:'Qty', table_detail:'Details',
+    status_normal:'Normal', status_low:'Low', status_out:'Out!',
+    empty_products:'No products yet', empty_history:'No transactions yet',
+    empty_report:'No data',
+    msg_add_success:'✅ Product added successfully!',
+    msg_edit_success:'✅ Product updated successfully!',
+    msg_hist_edit_success:'✅ Transaction updated!',
+    msg_stock_in_success:'✅ Stock in {name} qty {qty} {unit} saved!',
+    msg_stock_out_success:'✅ Stock out {name} qty {qty} {unit} saved!',
+    msg_stock_low:'❌ Not enough stock! Remaining: {stock} {unit}',
+    msg_delete_confirm:'Delete "{name}"?\nThis cannot be undone.',
+    msg_hist_delete_confirm:'Delete this transaction?',
+    msg_no_product_selected:'Please select a product.',
+    days_left:'{days} days left',
+    in_type:'📥 Stock In', out_type:'📤 Stock Out',
+    cat_all:'🗂️ All',
+    select_category:'Select Category', select_unit:'Select Unit', select_type:'Select Type',
+    placeholder_search_product:'Search products...', placeholder_search_history:'Search history...',
+    col_daily_code:'Code', col_daily_name:'Product', col_daily_cat:'Category',
+    col_daily_in:"Today's In", col_daily_out:"Today's Out", col_daily_stock:'Balance', col_daily_unit:'Unit',
+    col_monthly_date:'Date', col_monthly_in:'Stock In', col_monthly_out:'Stock Out',
+    col_monthly_cost:'Cost (THB)'
+  },
+  zh:{
+    btn_back:'首页', header_subtitle:'库存系统 — 台湾饺子店',
+    tab_dashboard:'📊 仪表板', tab_products:'📦 商品',
+    tab_stock_in:'📥 入库', tab_stock_out:'📤 出库',
+    tab_history:'📋 历史', tab_report:'📈 报表',
+    stat_total:'商品总数', stat_low:'库存不足', stat_expiring:'即将过期',
+    alerts_title:'⚠️ 提醒',
+    alert_no_issue:'✅ 一切正常！库存水平正常。',
+    alert_low_stock:'⚠️ 库存不足商品:', alert_expired:'🚨 已过期商品:',
+    alert_expiring:'⏰ 即将过期（7天内）:',
+    add_product_title:'➕ 添加新商品', label_name_multilang:'商品名称（请填写所有语言）',
+    label_code:'商品编码', label_category:'分类', label_unit:'单位',
+    label_min:'最低库存', label_stock:'初始 / 当前库存',
+    label_expiry:'保质期', label_location:'存放位置',
+    label_select_product:'选择商品', label_quantity_in:'入库数量',
+    label_quantity_out:'出库数量', label_quantity_hist:'数量',
+    label_price:'单价（泰铢）', label_expiry_new:'新保质期（如有）',
+    label_note:'备注', label_note_extra:'补充备注',
+    label_out_type:'出库类型', label_reason:'菜单/原因',
+    label_export:'导出:',
+    btn_save_product:'💾 保存商品', btn_stock_in:'✅ 保存入库',
+    btn_stock_out:'📤 保存出库', btn_save_edit:'💾 保存修改',
+    btn_delete:'🗑️ 删除', btn_cancel:'取消', btn_edit:'✏️ 编辑',
+    btn_export_excel:'📊 Excel', btn_export_pdf:'📄 PDF',
+    product_list_title:'📋 所有商品',
+    stock_in_title:'📥 记录入库', stock_out_title:'📤 记录出库',
+    history_title:'📋 交易历史',
+    report_daily_title:'📊 今日库存余额', report_monthly_title:'📅 月度汇总',
+    modal_edit_title:'✏️ 编辑商品', modal_hist_title:'✏️ 编辑交易记录',
+    table_code:'编码', table_name:'商品', table_category:'分类',
+    table_stock:'库存', table_min:'最低', table_status:'状态',
+    table_expiry:'保质期', table_action:'操作',
+    table_date:'日期', table_type:'类型', table_quantity:'数量', table_detail:'详情',
+    status_normal:'正常', status_low:'不足', status_out:'缺货!',
+    empty_products:'暂无商品', empty_history:'暂无交易记录',
+    empty_report:'暂无数据',
+    msg_add_success:'✅ 商品添加成功！',
+    msg_edit_success:'✅ 商品修改成功！',
+    msg_hist_edit_success:'✅ 记录修改成功！',
+    msg_stock_in_success:'✅ 入库 {name} 数量 {qty} {unit} 已保存！',
+    msg_stock_out_success:'✅ 出库 {name} 数量 {qty} {unit} 已保存！',
+    msg_stock_low:'❌ 库存不足！剩余 {stock} {unit}',
+    msg_delete_confirm:'确定删除"{name}"？\n删除后无法恢复。',
+    msg_hist_delete_confirm:'确定删除此条记录？',
+    msg_no_product_selected:'请选择商品',
+    days_left:'还剩 {days} 天',
+    in_type:'📥 入库', out_type:'📤 出库',
+    cat_all:'🗂️ 全部',
+    select_category:'选择分类', select_unit:'选择单位', select_type:'选择类型',
+    placeholder_search_product:'搜索商品...', placeholder_search_history:'搜索记录...',
+    col_daily_code:'编码', col_daily_name:'商品', col_daily_cat:'分类',
+    col_daily_in:'今日入库', col_daily_out:'今日出库', col_daily_stock:'余额', col_daily_unit:'单位',
+    col_monthly_date:'日期', col_monthly_in:'入库', col_monthly_out:'出库',
+    col_monthly_cost:'入库成本（泰铢）'
+  }
+};
 
-    // ===== STATE =====
-    let currentLang = localStorage.getItem('ok_lang') || 'th';
-    let products = JSON.parse(localStorage.getItem('ok_products')) || [];
-    let transactions = JSON.parse(localStorage.getItem('ok_transactions')) || [];
-    let editingId = null;
+// ============================================================
+//  STATE
+// ============================================================
+let currentLang      = localStorage.getItem('ok_lang') || 'th';
+let products         = JSON.parse(localStorage.getItem('ok_products'))     || [];
+let transactions     = JSON.parse(localStorage.getItem('ok_transactions')) || [];
+let editingId        = null;
+let editingHistId    = null;
+let currentProductCat = 'all'; // [1]
 
-    // ===== TRANSLATION =====
-    function t(key, params = {}) {
-        let text = translations[currentLang][key] || key;
-        Object.keys(params).forEach(k => { text = text.replace(`{${k}}`, params[k]); });
-        return text;
-    }
+// ============================================================
+//  TRANSLATE
+// ============================================================
+function t(key, params={}) {
+  let text = translations[currentLang][key] || key;
+  Object.keys(params).forEach(k => { text = text.replace(`{${k}}`, params[k]); });
+  return text;
+}
+function getProductName(p) {
+  if (!p) return '—';
+  if (currentLang==='en' && p.name_en) return p.name_en;
+  if (currentLang==='zh' && p.name_zh) return p.name_zh;
+  return p.name_th || p.name || '—';
+}
+function getCategoryDisplay(key) { return dropdownData.categories[key]?.[currentLang] || key; }
+function getUnitDisplay(key)     { return dropdownData.units[key]?.[currentLang]       || key; }
+function getOutTypeDisplay(key)  { return dropdownData.outTypes[key]?.[currentLang]    || key; }
 
-    // ===== GET PRODUCT NAME (by current lang) =====
-    function getProductName(p) {
-        if (currentLang === 'en' && p.name_en) return p.name_en;
-        if (currentLang === 'zh' && p.name_zh) return p.name_zh;
-        return p.name_th || p.name || '—';
-    }
+// ============================================================
+//  LANGUAGE
+// ============================================================
+function changeLanguage(lang) {
+  currentLang = lang;
+  localStorage.setItem('ok_lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang===lang));
+  document.querySelectorAll('[data-i18n]').forEach(el => { const k=el.dataset.i18n; if(translations[lang][k]) el.textContent=translations[lang][k]; });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { const k=el.dataset.i18nPlaceholder; if(translations[lang][k]) el.placeholder=translations[lang][k]; });
+  renderDropdowns();
+  buildProductCatFilter(); // [1]
+  renderProducts();
+  renderHistory();
+  updateDashboard();
+}
 
-    // ===== DISPLAY HELPERS =====
-    function getCategoryDisplay(key) { return dropdownData.categories[key]?.[currentLang] || key; }
-    function getUnitDisplay(key) { return dropdownData.units[key]?.[currentLang] || key; }
-    function getOutTypeDisplay(key) { return dropdownData.outTypes[key]?.[currentLang] || key; }
+document.addEventListener('DOMContentLoaded', () => {
+  renderDropdowns();
+  changeLanguage(currentLang);
+  // Set default month picker to current month
+  const now = new Date();
+  document.getElementById('month-picker').value = now.toISOString().slice(0,7);
+});
 
-    // ===== RENDER DROPDOWNS =====
-    function renderDropdowns() {
-        const catOpts = `<option value="">${t('select_category')}</option>` +
-            Object.entries(dropdownData.categories).map(([k, v]) =>
-                `<option value="${k}">${v[currentLang]}</option>`
-            ).join('');
+// ============================================================
+//  DROPDOWNS
+// ============================================================
+function renderDropdowns() {
+  const catOpts = `<option value="">${t('select_category')}</option>` +
+    Object.entries(dropdownData.categories).map(([k,v]) => `<option value="${k}">${v[currentLang]}</option>`).join('');
+  const unitOpts = `<option value="">${t('select_unit')}</option>` +
+    Object.entries(dropdownData.units).map(([k,v]) => `<option value="${k}">${v[currentLang]}</option>`).join('');
+  const outOpts  = `<option value="">${t('select_type')}</option>` +
+    Object.entries(dropdownData.outTypes).map(([k,v]) => `<option value="${k}">${v[currentLang]}</option>`).join('');
+  ['prod-category','edit-category'].forEach(id => { document.getElementById(id).innerHTML = catOpts; });
+  ['prod-unit','edit-unit'].forEach(id => { document.getElementById(id).innerHTML = unitOpts; });
+  document.getElementById('out-type').innerHTML = outOpts;
+}
 
-        const unitOpts = `<option value="">${t('select_unit')}</option>` +
-            Object.entries(dropdownData.units).map(([k, v]) =>
-                `<option value="${k}">${v[currentLang]}</option>`
-            ).join('');
+// ============================================================
+//  [1] CATEGORY FILTER BAR FOR PRODUCTS
+// ============================================================
+function buildProductCatFilter() {
+  const bar = document.getElementById('product-cat-filter');
+  const cats = [['all', t('cat_all')], ...Object.entries(dropdownData.categories).map(([k,v]) => [k, v[currentLang]])];
+  bar.innerHTML = cats.map(([k,label]) =>
+    `<button class="cat-f-btn ${currentProductCat===k?'active':''}" onclick="setProductCat('${k}')">${label}</button>`
+  ).join('');
+}
 
-        const outTypeOpts = `<option value="">${t('select_type')}</option>` +
-            Object.entries(dropdownData.outTypes).map(([k, v]) =>
-                `<option value="${k}">${v[currentLang]}</option>`
-            ).join('');
+function setProductCat(cat) {
+  currentProductCat = cat;
+  buildProductCatFilter();
+  renderProducts();
+}
 
-        document.getElementById('prod-category').innerHTML = catOpts;
-        document.getElementById('prod-unit').innerHTML = unitOpts;
-        document.getElementById('out-type').innerHTML = outTypeOpts;
-        // Edit modal dropdowns
-        document.getElementById('edit-category').innerHTML = catOpts;
-        document.getElementById('edit-unit').innerHTML = unitOpts;
-    }
+// ============================================================
+//  TABS
+// ============================================================
+function showTab(tabId, btn) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (tabId==='dashboard') updateDashboard();
+  if (tabId==='products')  { buildProductCatFilter(); renderProducts(); }
+  if (tabId==='history')   renderHistory();
+  if (tabId==='report')    { renderDailyReport(); renderMonthlyReport(); }
+}
 
-    // ===== LANGUAGE =====
-    function changeLanguage(lang) {
-        currentLang = lang;
-        localStorage.setItem('ok_lang', lang);
+// ============================================================
+//  [3] AUTOCOMPLETE
+// ============================================================
+function acSearch(prefix) {
+  const inputEl = document.getElementById(`${prefix}-product-search`);
+  const listEl  = document.getElementById(`${prefix}-ac-list`);
+  const q       = inputEl.value.toLowerCase();
 
-        document.querySelectorAll('.lang-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.lang === lang);
-        });
+  const matched = products.filter(p =>
+    (p.code||'').toLowerCase().includes(q) ||
+    (p.name_th||'').toLowerCase().includes(q) ||
+    (p.name_en||'').toLowerCase().includes(q) ||
+    (p.name_zh||'').toLowerCase().includes(q) ||
+    (p.name||'').toLowerCase().includes(q)
+  ).slice(0, 20);
 
-        // Update data-i18n elements
-        document.querySelectorAll('[data-i18n]').forEach(el => {
-            const key = el.dataset.i18n;
-            if (translations[lang][key]) el.textContent = translations[lang][key];
-        });
+  if (!matched.length) { listEl.classList.remove('show'); return; }
 
-        // Update placeholder
-        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-            const key = el.dataset.i18nPlaceholder;
-            if (translations[lang][key]) el.placeholder = translations[lang][key];
-        });
+  listEl.innerHTML = matched.map(p => `
+    <div class="autocomplete-item" onclick="acSelect('${prefix}', ${p.id})">
+      <span class="code">${p.code}</span>${getProductName(p)}
+      <span class="stock">${p.stock} ${getUnitDisplay(p.unit)}</span>
+    </div>`).join('');
+  listEl.classList.add('show');
+}
 
-        renderDropdowns();
-        updateProductSelects();
-        renderProducts();
-        renderHistory();
-        updateDashboard();
-    }
+function acSelect(prefix, id) {
+  const p = products.find(x => x.id===id);
+  if (!p) return;
+  document.getElementById(`${prefix}-product`).value = id;
+  document.getElementById(`${prefix}-product-search`).value = `${p.code} — ${getProductName(p)}`;
+  document.getElementById(`${prefix}-ac-list`).classList.remove('show');
+}
 
-    // ===== INIT =====
-    document.addEventListener('DOMContentLoaded', () => {
-        renderDropdowns();
-        changeLanguage(currentLang);
+// Close autocomplete on outside click
+document.addEventListener('click', e => {
+  if (!e.target.closest('.autocomplete-wrap')) {
+    document.querySelectorAll('.autocomplete-list').forEach(el => el.classList.remove('show'));
+  }
+});
+
+// ============================================================
+//  ADD PRODUCT
+// ============================================================
+function addProduct(e) {
+  e.preventDefault();
+  const nameTh = document.getElementById('prod-name-th').value.trim();
+  const nameEn = document.getElementById('prod-name-en').value.trim();
+  const nameZh = document.getElementById('prod-name-zh').value.trim();
+  const product = {
+    id: Date.now(),
+    code: document.getElementById('prod-code').value.trim(),
+    name_th: nameTh, name_en: nameEn||nameTh, name_zh: nameZh||nameTh, name: nameTh,
+    category: document.getElementById('prod-category').value,
+    unit: document.getElementById('prod-unit').value,
+    minStock: parseFloat(document.getElementById('prod-min').value),
+    stock: parseFloat(document.getElementById('prod-stock').value),
+    expiry: document.getElementById('prod-expiry').value,
+    location: document.getElementById('prod-location').value,
+    createdAt: new Date().toISOString()
+  };
+  products.push(product);
+  saveData();
+  document.getElementById('product-form').reset();
+  buildProductCatFilter(); renderProducts(); updateDashboard();
+  alert(t('msg_add_success'));
+}
+
+// ============================================================
+//  EDIT PRODUCT MODAL
+// ============================================================
+function openEditModal(id) {
+  const p = products.find(pr => pr.id===id); if (!p) return;
+  editingId = id;
+  document.getElementById('edit-id').value       = id;
+  document.getElementById('edit-code').value     = p.code||'';
+  document.getElementById('edit-name-th').value  = p.name_th||p.name||'';
+  document.getElementById('edit-name-en').value  = p.name_en||p.name||'';
+  document.getElementById('edit-name-zh').value  = p.name_zh||p.name||'';
+  document.getElementById('edit-stock').value    = p.stock;
+  document.getElementById('edit-min').value      = p.minStock;
+  document.getElementById('edit-expiry').value   = p.expiry||'';
+  document.getElementById('edit-location').value = p.location||'';
+  renderDropdowns();
+  document.getElementById('edit-category').value = p.category||'';
+  document.getElementById('edit-unit').value     = p.unit||'';
+  document.getElementById('edit-modal').classList.add('show');
+}
+function closeEditModal() { document.getElementById('edit-modal').classList.remove('show'); editingId=null; }
+
+function saveEdit() {
+  if (!editingId) return;
+  const p = products.find(pr => pr.id===editingId); if (!p) return;
+  const nameTh = document.getElementById('edit-name-th').value.trim();
+  const nameEn = document.getElementById('edit-name-en').value.trim();
+  const nameZh = document.getElementById('edit-name-zh').value.trim();
+  p.code=document.getElementById('edit-code').value.trim();
+  p.name_th=nameTh; p.name_en=nameEn||nameTh; p.name_zh=nameZh||nameTh; p.name=nameTh;
+  p.category=document.getElementById('edit-category').value;
+  p.unit=document.getElementById('edit-unit').value;
+  p.stock=parseFloat(document.getElementById('edit-stock').value)||0;
+  p.minStock=parseFloat(document.getElementById('edit-min').value)||0;
+  p.expiry=document.getElementById('edit-expiry').value;
+  p.location=document.getElementById('edit-location').value;
+  saveData(); closeEditModal(); buildProductCatFilter(); renderProducts(); updateDashboard();
+  alert(t('msg_edit_success'));
+}
+
+function deleteProduct(id) {
+  const p = products.find(pr => pr.id===id); if (!p) return;
+  if (confirm(t('msg_delete_confirm',{name:getProductName(p)}))) {
+    products = products.filter(pr => pr.id!==id);
+    saveData(); buildProductCatFilter(); renderProducts(); updateDashboard();
+  }
+}
+function deleteProductFromModal() {
+  if (!editingId) return;
+  const p = products.find(pr => pr.id===editingId); if (!p) return;
+  if (confirm(t('msg_delete_confirm',{name:getProductName(p)}))) {
+    products = products.filter(pr => pr.id!==editingId);
+    saveData(); closeEditModal(); buildProductCatFilter(); renderProducts(); updateDashboard();
+  }
+}
+document.getElementById('edit-modal').addEventListener('click', function(e){ if(e.target===this) closeEditModal(); });
+
+// ============================================================
+//  STOCK IN
+// ============================================================
+function addStockIn(e) {
+  e.preventDefault();
+  const productId = parseInt(document.getElementById('in-product').value);
+  if (!productId) { alert(t('msg_no_product_selected')); return; }
+  const quantity = parseFloat(document.getElementById('in-quantity').value);
+  const price    = parseFloat(document.getElementById('in-price').value)||0;
+  const expiry   = document.getElementById('in-expiry').value;
+  const note     = document.getElementById('in-note').value;
+  const product  = products.find(p => p.id===productId); if (!product) return;
+  product.stock += quantity;
+  if (expiry) product.expiry = expiry;
+  transactions.push({ id:Date.now(), type:'in', productId, productName:product.name_th||product.name, productCode:product.code, quantity, price, total:price*quantity, unit:product.unit, note, date:new Date().toISOString() });
+  saveData();
+  document.getElementById('stock-in-form').reset();
+  document.getElementById('in-product').value='';
+  document.getElementById('in-product-search').value='';
+  renderProducts(); updateDashboard();
+  alert(t('msg_stock_in_success',{name:getProductName(product),qty:quantity,unit:getUnitDisplay(product.unit)}));
+}
+
+// ============================================================
+//  STOCK OUT
+// ============================================================
+function addStockOut(e) {
+  e.preventDefault();
+  const productId = parseInt(document.getElementById('out-product').value);
+  if (!productId) { alert(t('msg_no_product_selected')); return; }
+  const quantity = parseFloat(document.getElementById('out-quantity').value);
+  const type     = document.getElementById('out-type').value;
+  const reason   = document.getElementById('out-reason').value;
+  const note     = document.getElementById('out-note').value;
+  const product  = products.find(p => p.id===productId); if (!product) return;
+  if (product.stock < quantity) { alert(t('msg_stock_low',{stock:product.stock,unit:getUnitDisplay(product.unit)})); return; }
+  product.stock -= quantity;
+  transactions.push({ id:Date.now(), type:'out', productId, productName:product.name_th||product.name, productCode:product.code, quantity, outType:type, unit:product.unit, reason, note, date:new Date().toISOString() });
+  saveData();
+  document.getElementById('stock-out-form').reset();
+  document.getElementById('out-product').value='';
+  document.getElementById('out-product-search').value='';
+  renderProducts(); updateDashboard();
+  alert(t('msg_stock_out_success',{name:getProductName(product),qty:quantity,unit:getUnitDisplay(product.unit)}));
+}
+
+// ============================================================
+//  RENDER PRODUCTS  ([1] with category filter)
+// ============================================================
+function renderProducts() {
+  const search = (document.getElementById('product-search')?.value||'').toLowerCase();
+  const filtered = products.filter(p => {
+    const catMatch = currentProductCat==='all' || p.category===currentProductCat;
+    const nameMatch = (p.name_th||'').toLowerCase().includes(search) ||
+                      (p.name_en||'').toLowerCase().includes(search) ||
+                      (p.name_zh||'').toLowerCase().includes(search) ||
+                      (p.code||'').toLowerCase().includes(search);
+    return catMatch && nameMatch;
+  });
+
+  let html = `<table><thead><tr>
+    <th>${t('table_code')}</th><th>${t('table_name')}</th><th>${t('table_category')}</th>
+    <th>${t('table_stock')}</th><th>${t('table_min')}</th><th>${t('table_status')}</th>
+    <th>${t('table_expiry')}</th><th>${t('table_action')}</th>
+  </tr></thead><tbody>`;
+
+  if (!filtered.length) {
+    html += `<tr><td colspan="8" class="empty-state"><div class="empty-state-icon">📦</div><p>${t('empty_products')}</p></td></tr>`;
+  } else {
+    filtered.forEach(p => {
+      const status  = getStockStatus(p);
+      const expWarn = getExpiryWarning(p.expiry);
+      const expText = p.expiry ? formatDate(p.expiry)+' '+expWarn : '—';
+      const nameDisplay = `<strong class="crimson-text">${getProductName(p)}</strong>
+        <div style="font-size:0.7rem;color:var(--ink-muted);margin-top:2px;">
+          ${p.name_th&&currentLang!=='th'?'🇹🇭 '+p.name_th+' ':''}
+          ${p.name_en&&currentLang!=='en'?'🇬🇧 '+p.name_en+' ':''}
+          ${p.name_zh&&currentLang!=='zh'?'🇨🇳 '+p.name_zh:''}
+        </div>`;
+      html += `<tr>
+        <td><strong class="crimson-text">${p.code}</strong></td>
+        <td>${nameDisplay}</td>
+        <td>${getCategoryDisplay(p.category)}</td>
+        <td><span class="warm-text">${p.stock}</span> ${getUnitDisplay(p.unit)}</td>
+        <td>${p.minStock} ${getUnitDisplay(p.unit)}</td>
+        <td><span class="badge ${status.class}">${status.text}</span></td>
+        <td style="font-size:0.8rem;">${expText}</td>
+        <td><button class="btn btn-warning btn-sm" onclick="openEditModal(${p.id})">${t('btn_edit')}</button></td>
+      </tr>`;
     });
+  }
+  html += '</tbody></table>';
+  document.getElementById('products-table-container').innerHTML = html;
+}
 
-    // ===== TABS =====
-    function showTab(tabId, btn) {
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
-        document.getElementById(tabId).classList.add('active');
-        if (btn) btn.classList.add('active');
-        if (tabId === 'dashboard') updateDashboard();
-        if (tabId === 'products') renderProducts();
-        if (tabId === 'history') renderHistory();
-    }
+// ============================================================
+//  RENDER HISTORY  ([5] with edit/delete buttons)
+// ============================================================
+function renderHistory() {
+  const search = (document.getElementById('history-search')?.value||'').toLowerCase();
+  const filtered = transactions.filter(tx =>
+    (tx.productName||'').toLowerCase().includes(search) ||
+    (tx.productCode||'').toLowerCase().includes(search)
+  ).sort((a,b) => new Date(b.date)-new Date(a.date));
 
-    // ===== ADD PRODUCT =====
-    function addProduct(e) {
-        e.preventDefault();
-        const nameTh = document.getElementById('prod-name-th').value.trim();
-        const nameEn = document.getElementById('prod-name-en').value.trim();
-        const nameZh = document.getElementById('prod-name-zh').value.trim();
+  let html = `<table><thead><tr>
+    <th>${t('table_date')}</th><th>${t('table_type')}</th>
+    <th>${t('table_code')}</th><th>${t('table_name')}</th>
+    <th>${t('table_quantity')}</th><th>${t('table_detail')}</th>
+    <th>${t('table_action')}</th>
+  </tr></thead><tbody>`;
 
-        const product = {
-            id: Date.now(),
-            code: document.getElementById('prod-code').value.trim(),
-            // เก็บชื่อทั้ง 3 ภาษา
-            name_th: nameTh,
-            name_en: nameEn || nameTh,
-            name_zh: nameZh || nameTh,
-            // compat: name สำหรับระบบอื่น
-            name: nameTh,
-            category: document.getElementById('prod-category').value,
-            unit: document.getElementById('prod-unit').value,
-            minStock: parseFloat(document.getElementById('prod-min').value),
-            stock: parseFloat(document.getElementById('prod-stock').value),
-            expiry: document.getElementById('prod-expiry').value,
-            location: document.getElementById('prod-location').value,
-            createdAt: new Date().toISOString()
-        };
-
-        products.push(product);
-        saveData();
-        document.getElementById('product-form').reset();
-        renderProducts();
-        updateProductSelects();
-        updateDashboard();
-        alert(t('msg_add_success'));
-    }
-
-    // ===== EDIT MODAL =====
-    function openEditModal(id) {
-        const p = products.find(pr => pr.id === id);
-        if (!p) return;
-        editingId = id;
-
-        document.getElementById('edit-id').value = id;
-        document.getElementById('edit-code').value = p.code || '';
-        document.getElementById('edit-name-th').value = p.name_th || p.name || '';
-        document.getElementById('edit-name-en').value = p.name_en || p.name || '';
-        document.getElementById('edit-name-zh').value = p.name_zh || p.name || '';
-        document.getElementById('edit-stock').value = p.stock;
-        document.getElementById('edit-min').value = p.minStock;
-        document.getElementById('edit-expiry').value = p.expiry || '';
-        document.getElementById('edit-location').value = p.location || '';
-
-        // Set select values after renderDropdowns already ran
-        document.getElementById('edit-category').value = p.category || '';
-        document.getElementById('edit-unit').value = p.unit || '';
-
-        document.getElementById('edit-modal').classList.add('show');
-    }
-
-    function closeEditModal() {
-        document.getElementById('edit-modal').classList.remove('show');
-        editingId = null;
-    }
-
-    function saveEdit() {
-        if (!editingId) return;
-        const p = products.find(pr => pr.id === editingId);
-        if (!p) return;
-
-        const nameTh = document.getElementById('edit-name-th').value.trim();
-        const nameEn = document.getElementById('edit-name-en').value.trim();
-        const nameZh = document.getElementById('edit-name-zh').value.trim();
-
-        p.code     = document.getElementById('edit-code').value.trim();
-        p.name_th  = nameTh;
-        p.name_en  = nameEn || nameTh;
-        p.name_zh  = nameZh || nameTh;
-        p.name     = nameTh; // compat
-        p.category = document.getElementById('edit-category').value;
-        p.unit     = document.getElementById('edit-unit').value;
-        p.stock    = parseFloat(document.getElementById('edit-stock').value) || 0;
-        p.minStock = parseFloat(document.getElementById('edit-min').value) || 0;
-        p.expiry   = document.getElementById('edit-expiry').value;
-        p.location = document.getElementById('edit-location').value;
-
-        saveData();
-        closeEditModal();
-        renderProducts();
-        updateProductSelects();
-        updateDashboard();
-        alert(t('msg_edit_success'));
-    }
-
-    // ===== DELETE =====
-    function deleteProduct(id) {
-        const p = products.find(pr => pr.id === id);
-        if (!p) return;
-        if (confirm(t('msg_delete_confirm', { name: getProductName(p) }))) {
-            products = products.filter(pr => pr.id !== id);
-            saveData();
-            renderProducts();
-            updateProductSelects();
-            updateDashboard();
-        }
-    }
-
-    function deleteProductFromModal() {
-        if (!editingId) return;
-        const p = products.find(pr => pr.id === editingId);
-        if (!p) return;
-        if (confirm(t('msg_delete_confirm', { name: getProductName(p) }))) {
-            products = products.filter(pr => pr.id !== editingId);
-            saveData();
-            closeEditModal();
-            renderProducts();
-            updateProductSelects();
-            updateDashboard();
-        }
-    }
-
-    // Close modal when clicking overlay
-    document.getElementById('edit-modal').addEventListener('click', function(e) {
-        if (e.target === this) closeEditModal();
+  if (!filtered.length) {
+    html += `<tr><td colspan="7" class="empty-state"><div class="empty-state-icon">📋</div><p>${t('empty_history')}</p></td></tr>`;
+  } else {
+    filtered.forEach(tx => {
+      const prod   = products.find(p => p.id===tx.productId);
+      const txName = prod ? getProductName(prod) : (tx.productName||'—');
+      const badge  = tx.type==='in'
+        ? `<span class="badge badge-success">${t('in_type')}</span>`
+        : `<span class="badge badge-danger">${t('out_type')}</span>`;
+      const detail = tx.type==='in'
+        ? (tx.note||'')
+        : `${getOutTypeDisplay(tx.outType||'')} ${tx.reason?'— '+tx.reason:''} ${tx.note?'('+tx.note+')':''}`;
+      html += `<tr>
+        <td style="white-space:nowrap">${formatDateTime(tx.date)}</td>
+        <td>${badge}</td>
+        <td><span class="crimson-text">${tx.productCode||'—'}</span></td>
+        <td>${txName}</td>
+        <td><strong class="warm-text">${tx.quantity}</strong> ${getUnitDisplay(tx.unit||prod?.unit||'')}</td>
+        <td style="font-size:0.8rem;">${detail}</td>
+        <td>
+          <div class="btn-group">
+            <button class="btn btn-warning btn-sm" onclick="openHistModal(${tx.id})">${t('btn_edit')}</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteHistTx(${tx.id})">${t('btn_delete')}</button>
+          </div>
+        </td>
+      </tr>`;
     });
+  }
+  html += '</tbody></table>';
+  document.getElementById('history-table-container').innerHTML = html;
+}
 
-    // ===== STOCK IN =====
-    function addStockIn(e) {
-        e.preventDefault();
-        const productId = parseInt(document.getElementById('in-product').value);
-        const quantity  = parseFloat(document.getElementById('in-quantity').value);
-        const price     = parseFloat(document.getElementById('in-price').value) || 0;
-        const expiry    = document.getElementById('in-expiry').value;
-        const note      = document.getElementById('in-note').value;
-        const product   = products.find(p => p.id === productId);
-        if (!product) return;
+// ============================================================
+//  [5] HISTORY EDIT / DELETE
+// ============================================================
+function openHistModal(id) {
+  const tx = transactions.find(x => x.id===id); if (!tx) return;
+  editingHistId = id;
+  document.getElementById('hist-edit-id').value   = id;
+  document.getElementById('hist-edit-qty').value  = tx.quantity;
+  document.getElementById('hist-edit-note').value = tx.note || tx.reason || '';
+  document.getElementById('hist-edit-modal').classList.add('show');
+}
+function closeHistModal() { document.getElementById('hist-edit-modal').classList.remove('show'); editingHistId=null; }
 
-        product.stock += quantity;
-        if (expiry) product.expiry = expiry;
+function saveHistEdit() {
+  if (!editingHistId) return;
+  const tx = transactions.find(x => x.id===editingHistId); if (!tx) return;
+  const oldQty = tx.quantity;
+  const newQty = parseFloat(document.getElementById('hist-edit-qty').value)||0;
+  const note   = document.getElementById('hist-edit-note').value;
 
-        transactions.push({
-            id: Date.now(), type: 'in', productId,
-            productName: getProductName(product),
-            productCode: product.code, quantity, price,
-            total: price * quantity, note, date: new Date().toISOString()
-        });
+  // Adjust product stock
+  const prod = products.find(p => p.id===tx.productId);
+  if (prod) {
+    const diff = newQty - oldQty;
+    if (tx.type==='in')  prod.stock += diff;
+    if (tx.type==='out') prod.stock -= diff;
+  }
+  tx.quantity = newQty;
+  tx.note = note;
+  if (tx.type==='out') tx.reason = note;
 
-        saveData();
-        document.getElementById('stock-in-form').reset();
-        renderProducts();
-        updateDashboard();
-        alert(t('msg_stock_in_success', { name: getProductName(product), qty: quantity, unit: getUnitDisplay(product.unit) }));
-    }
+  saveData(); closeHistModal(); renderProducts(); renderHistory(); updateDashboard();
+  alert(t('msg_hist_edit_success'));
+}
 
-    // ===== STOCK OUT =====
-    function addStockOut(e) {
-        e.preventDefault();
-        const productId = parseInt(document.getElementById('out-product').value);
-        const quantity  = parseFloat(document.getElementById('out-quantity').value);
-        const type      = document.getElementById('out-type').value;
-        const reason    = document.getElementById('out-reason').value;
-        const note      = document.getElementById('out-note').value;
-        const product   = products.find(p => p.id === productId);
-        if (!product) return;
+function deleteHistTx(id) {
+  if (!confirm(t('msg_hist_delete_confirm'))) return;
+  const tx = transactions.find(x => x.id===id); if (!tx) return;
+  // Reverse stock
+  const prod = products.find(p => p.id===tx.productId);
+  if (prod) {
+    if (tx.type==='in')  prod.stock -= tx.quantity;
+    if (tx.type==='out') prod.stock += tx.quantity;
+  }
+  transactions = transactions.filter(x => x.id!==id);
+  saveData(); renderProducts(); renderHistory(); updateDashboard();
+}
 
-        if (product.stock < quantity) {
-            alert(t('msg_stock_low', { stock: product.stock, unit: getUnitDisplay(product.unit) }));
-            return;
-        }
+document.getElementById('hist-edit-modal').addEventListener('click', function(e){ if(e.target===this) closeHistModal(); });
 
-        product.stock -= quantity;
+// ============================================================
+//  [6] REPORT — DAILY
+// ============================================================
+function renderDailyReport() {
+  const today = new Date().toDateString();
+  const todayTx = transactions.filter(tx => new Date(tx.date).toDateString()===today);
 
-        transactions.push({
-            id: Date.now(), type: 'out', productId,
-            productName: getProductName(product),
-            productCode: product.code, quantity,
-            outType: type, reason, note, date: new Date().toISOString()
-        });
+  const rows = products.map(p => {
+    const inQty  = todayTx.filter(tx => tx.productId===p.id && tx.type==='in').reduce((s,tx)=>s+tx.quantity,0);
+    const outQty = todayTx.filter(tx => tx.productId===p.id && tx.type==='out').reduce((s,tx)=>s+tx.quantity,0);
+    return { code:p.code, name:getProductName(p), category:getCategoryDisplay(p.category), inQty, outQty, stock:p.stock, unit:getUnitDisplay(p.unit) };
+  });
 
-        saveData();
-        document.getElementById('stock-out-form').reset();
-        renderProducts();
-        updateDashboard();
-        alert(t('msg_stock_out_success', { name: getProductName(product), qty: quantity, unit: getUnitDisplay(product.unit) }));
-    }
+  let html = `<table><thead><tr>
+    <th>${t('col_daily_code')}</th><th>${t('col_daily_name')}</th><th>${t('col_daily_cat')}</th>
+    <th>${t('col_daily_in')}</th><th>${t('col_daily_out')}</th>
+    <th>${t('col_daily_stock')}</th><th>${t('col_daily_unit')}</th>
+  </tr></thead><tbody>`;
+  if (!rows.length) { html+=`<tr><td colspan="7" class="empty-state"><p>${t('empty_report')}</p></td></tr>`; }
+  else { rows.forEach(r => { html+=`<tr><td><strong class="crimson-text">${r.code}</strong></td><td>${r.name}</td><td>${r.category}</td><td class="${r.inQty?'':'text-muted'}">${r.inQty||'—'}</td><td class="${r.outQty?'':'text-muted'}">${r.outQty||'—'}</td><td><strong class="warm-text">${r.stock}</strong></td><td>${r.unit}</td></tr>`; }); }
+  html += '</tbody></table>';
+  document.getElementById('daily-report-container').innerHTML = html;
+}
 
-    // ===== RENDER PRODUCTS TABLE =====
-    function renderProducts() {
-        const search   = (document.getElementById('product-search')?.value || '').toLowerCase();
-        const filtered = products.filter(p =>
-            (p.name_th || '').toLowerCase().includes(search) ||
-            (p.name_en || '').toLowerCase().includes(search) ||
-            (p.name_zh || '').toLowerCase().includes(search) ||
-            (p.code   || '').toLowerCase().includes(search)
-        );
+// [6] REPORT — MONTHLY
+function renderMonthlyReport() {
+  const ym = document.getElementById('month-picker').value; // "2025-03"
+  if (!ym) return;
+  const [yr, mo] = ym.split('-').map(Number);
 
-        let html = `<table><thead><tr>
-            <th>${t('table_code')}</th>
-            <th>${t('table_name')}</th>
-            <th>${t('table_category')}</th>
-            <th>${t('table_stock')}</th>
-            <th>${t('table_min')}</th>
-            <th>${t('table_status')}</th>
-            <th>${t('table_expiry')}</th>
-            <th>${t('table_action')}</th>
-        </tr></thead><tbody>`;
+  // Group by date
+  const byDate = {};
+  transactions.filter(tx => {
+    const d = new Date(tx.date);
+    return d.getFullYear()===yr && d.getMonth()+1===mo;
+  }).forEach(tx => {
+    const key = tx.date.slice(0,10);
+    if (!byDate[key]) byDate[key] = {inQty:0, outQty:0, inCost:0};
+    if (tx.type==='in')  { byDate[key].inQty  += tx.quantity; byDate[key].inCost += (tx.total||0); }
+    if (tx.type==='out') { byDate[key].outQty += tx.quantity; }
+  });
 
-        if (filtered.length === 0) {
-            html += `<tr><td colspan="8" class="empty-state">
-                <div class="empty-state-icon">📦</div>
-                <p>${t('empty_products')}</p>
-            </td></tr>`;
-        } else {
-            filtered.forEach(p => {
-                const status  = getStockStatus(p);
-                const expWarn = getExpiryWarning(p.expiry);
-                const expText = p.expiry ? formatDate(p.expiry) + ' ' + expWarn : '—';
+  const dates = Object.keys(byDate).sort();
+  let html = `<table><thead><tr>
+    <th>${t('col_monthly_date')}</th><th>${t('col_monthly_in')}</th>
+    <th>${t('col_monthly_out')}</th><th>${t('col_monthly_cost')}</th>
+  </tr></thead><tbody>`;
 
-                // แสดงชื่อทุกภาษาในแถว
-                const nameDisplay = `<strong class="crimson-text">${getProductName(p)}</strong>
-                    <div style="font-size:0.72rem;color:var(--ink-muted);margin-top:2px;">
-                        ${p.name_th && currentLang !== 'th' ? '🇹🇭 ' + p.name_th + ' ' : ''}
-                        ${p.name_en && currentLang !== 'en' ? '🇬🇧 ' + p.name_en + ' ' : ''}
-                        ${p.name_zh && currentLang !== 'zh' ? '🇨🇳 ' + p.name_zh : ''}
-                    </div>`;
+  if (!dates.length) { html+=`<tr><td colspan="4" class="empty-state"><p>${t('empty_report')}</p></td></tr>`; }
+  else {
+    let totIn=0,totOut=0,totCost=0;
+    dates.forEach(d => {
+      const r=byDate[d]; totIn+=r.inQty; totOut+=r.outQty; totCost+=r.inCost;
+      html+=`<tr><td>${d}</td><td>${r.inQty.toFixed(2)}</td><td>${r.outQty.toFixed(2)}</td><td>${r.inCost.toFixed(2)}</td></tr>`;
+    });
+    html+=`<tr style="font-weight:700;background:var(--cream);">
+      <td>รวม / Total / 合计</td>
+      <td class="warm-text">${totIn.toFixed(2)}</td>
+      <td class="crimson-text">${totOut.toFixed(2)}</td>
+      <td class="warm-text">${totCost.toFixed(2)}</td>
+    </tr>`;
+  }
+  html += '</tbody></table>';
+  document.getElementById('monthly-report-container').innerHTML = html;
+}
 
-                html += `<tr>
-                    <td><strong class="crimson-text">${p.code}</strong></td>
-                    <td>${nameDisplay}</td>
-                    <td>${getCategoryDisplay(p.category)}</td>
-                    <td><span class="warm-text">${p.stock}</span> ${getUnitDisplay(p.unit)}</td>
-                    <td>${p.minStock} ${getUnitDisplay(p.unit)}</td>
-                    <td><span class="badge ${status.class}">${status.text}</span></td>
-                    <td style="font-size:0.82rem;">${expText}</td>
-                    <td>
-                        <button class="btn btn-warning btn-sm" onclick="openEditModal(${p.id})">${t('btn_edit')}</button>
-                    </td>
-                </tr>`;
-            });
-        }
+// ============================================================
+//  [6] EXPORT EXCEL (SheetJS)
+// ============================================================
+function exportDailyExcel() {
+  const today = new Date().toDateString();
+  const todayTx = transactions.filter(tx => new Date(tx.date).toDateString()===today);
+  const rows = products.map(p => {
+    const inQty  = todayTx.filter(tx=>tx.productId===p.id&&tx.type==='in').reduce((s,tx)=>s+tx.quantity,0);
+    const outQty = todayTx.filter(tx=>tx.productId===p.id&&tx.type==='out').reduce((s,tx)=>s+tx.quantity,0);
+    return [p.code, getProductName(p), getCategoryDisplay(p.category), inQty||0, outQty||0, p.stock, getUnitDisplay(p.unit)];
+  });
+  const header = [t('col_daily_code'),t('col_daily_name'),t('col_daily_cat'),t('col_daily_in'),t('col_daily_out'),t('col_daily_stock'),t('col_daily_unit')];
+  const ws = XLSX.utils.aoa_to_sheet([header,...rows]);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Daily');
+  XLSX.writeFile(wb, `Stock_Daily_${new Date().toISOString().slice(0,10)}.xlsx`);
+}
 
-        html += '</tbody></table>';
-        document.getElementById('products-table-container').innerHTML = html;
-    }
+function exportMonthlyExcel() {
+  const ym = document.getElementById('month-picker').value;
+  if (!ym) return;
+  const [yr,mo] = ym.split('-').map(Number);
+  const byDate = {};
+  transactions.filter(tx => { const d=new Date(tx.date); return d.getFullYear()===yr && d.getMonth()+1===mo; }).forEach(tx => {
+    const key = tx.date.slice(0,10);
+    if (!byDate[key]) byDate[key]={inQty:0,outQty:0,inCost:0};
+    if (tx.type==='in')  { byDate[key].inQty+=tx.quantity; byDate[key].inCost+=(tx.total||0); }
+    if (tx.type==='out') { byDate[key].outQty+=tx.quantity; }
+  });
+  const header = [t('col_monthly_date'),t('col_monthly_in'),t('col_monthly_out'),t('col_monthly_cost')];
+  const rows = Object.keys(byDate).sort().map(d => [d, byDate[d].inQty, byDate[d].outQty, byDate[d].inCost]);
+  const ws = XLSX.utils.aoa_to_sheet([header,...rows]);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Monthly');
+  XLSX.writeFile(wb, `Stock_Monthly_${ym}.xlsx`);
+}
 
-    // ===== RENDER HISTORY =====
-    function renderHistory() {
-        const search   = (document.getElementById('history-search')?.value || '').toLowerCase();
-        const filtered = transactions.filter(tx =>
-            (tx.productName || '').toLowerCase().includes(search) ||
-            (tx.productCode || '').toLowerCase().includes(search)
-        ).sort((a, b) => new Date(b.date) - new Date(a.date));
+// ============================================================
+//  [6] EXPORT PDF (print window)
+// ============================================================
+function buildPrintWindow(title, tableHtml) {
+  const w = window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html><head>
+    <meta charset="UTF-8">
+    <title>${title}</title>
+    <style>
+      body{font-family:'Noto Sans Thai',Arial,sans-serif;padding:20px;font-size:12px;}
+      h2{color:#9B2226;margin-bottom:12px;}
+      table{width:100%;border-collapse:collapse;}
+      th{background:#9B2226;color:white;padding:7px 8px;text-align:left;font-size:11px;}
+      td{padding:6px 8px;border-bottom:1px solid #ddd;}
+      tr:nth-child(even){background:#FAF3E8;}
+      @media print{button{display:none;}}
+    </style>
+  </head><body>
+    <h2>${title}</h2>
+    <p style="color:#888;margin-bottom:12px;">${new Date().toLocaleString('th-TH')}</p>
+    ${tableHtml}
+    <br><button onclick="window.print()" style="padding:10px 22px;background:#9B2226;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;">🖨️ พิมพ์ / Print</button>
+  </body></html>`);
+  w.document.close();
+}
 
-        let html = `<table><thead><tr>
-            <th>${t('table_date')}</th>
-            <th>${t('table_type')}</th>
-            <th>${t('table_code')}</th>
-            <th>${t('table_name')}</th>
-            <th>${t('table_quantity')}</th>
-            <th>${t('table_detail')}</th>
-        </tr></thead><tbody>`;
+function exportDailyPDF() {
+  const today = new Date().toDateString();
+  const todayTx = transactions.filter(tx=>new Date(tx.date).toDateString()===today);
+  const rows = products.map(p => {
+    const inQty  = todayTx.filter(tx=>tx.productId===p.id&&tx.type==='in').reduce((s,tx)=>s+tx.quantity,0);
+    const outQty = todayTx.filter(tx=>tx.productId===p.id&&tx.type==='out').reduce((s,tx)=>s+tx.quantity,0);
+    return `<tr><td>${p.code}</td><td>${getProductName(p)}</td><td>${getCategoryDisplay(p.category)}</td>
+      <td>${inQty||'—'}</td><td>${outQty||'—'}</td><td><strong>${p.stock}</strong></td><td>${getUnitDisplay(p.unit)}</td></tr>`;
+  }).join('');
+  const html = `<table><thead><tr>
+    <th>${t('col_daily_code')}</th><th>${t('col_daily_name')}</th><th>${t('col_daily_cat')}</th>
+    <th>${t('col_daily_in')}</th><th>${t('col_daily_out')}</th>
+    <th>${t('col_daily_stock')}</th><th>${t('col_daily_unit')}</th>
+  </tr></thead><tbody>${rows}</tbody></table>`;
+  buildPrintWindow(t('report_daily_title'), html);
+}
 
-        if (filtered.length === 0) {
-            html += `<tr><td colspan="6" class="empty-state">
-                <div class="empty-state-icon">📋</div>
-                <p>${t('empty_history')}</p>
-            </td></tr>`;
-        } else {
-            filtered.forEach(tx => {
-                // หา product เพื่อเอาชื่อตามภาษาปัจจุบัน
-                const prod   = products.find(p => p.id === tx.productId);
-                const txName = prod ? getProductName(prod) : (tx.productName || '—');
-                const badge  = tx.type === 'in'
-                    ? `<span class="badge badge-success">${t('in_type')}</span>`
-                    : `<span class="badge badge-danger">${t('out_type')}</span>`;
-                const detail = tx.type === 'in'
-                    ? (tx.note || '')
-                    : `${getOutTypeDisplay(tx.outType || '')} ${tx.reason ? '— ' + tx.reason : ''} ${tx.note ? '(' + tx.note + ')' : ''}`;
+function exportMonthlyPDF() {
+  const ym = document.getElementById('month-picker').value; if (!ym) return;
+  const [yr,mo] = ym.split('-').map(Number);
+  const byDate = {};
+  transactions.filter(tx=>{const d=new Date(tx.date);return d.getFullYear()===yr&&d.getMonth()+1===mo;}).forEach(tx=>{
+    const key=tx.date.slice(0,10);
+    if (!byDate[key]) byDate[key]={inQty:0,outQty:0,inCost:0};
+    if (tx.type==='in')  {byDate[key].inQty+=tx.quantity;byDate[key].inCost+=(tx.total||0);}
+    if (tx.type==='out') {byDate[key].outQty+=tx.quantity;}
+  });
+  let totIn=0,totOut=0,totCost=0;
+  const rows = Object.keys(byDate).sort().map(d=>{
+    const r=byDate[d]; totIn+=r.inQty; totOut+=r.outQty; totCost+=r.inCost;
+    return `<tr><td>${d}</td><td>${r.inQty.toFixed(2)}</td><td>${r.outQty.toFixed(2)}</td><td>${r.inCost.toFixed(2)}</td></tr>`;
+  }).join('');
+  const html = `<table><thead><tr>
+    <th>${t('col_monthly_date')}</th><th>${t('col_monthly_in')}</th>
+    <th>${t('col_monthly_out')}</th><th>${t('col_monthly_cost')}</th>
+  </tr></thead><tbody>${rows}
+  <tr style="font-weight:700;background:#F5EBDC;">
+    <td>รวม / Total</td><td>${totIn.toFixed(2)}</td><td>${totOut.toFixed(2)}</td><td>${totCost.toFixed(2)}</td>
+  </tr></tbody></table>`;
+  buildPrintWindow(`${t('report_monthly_title')} — ${ym}`, html);
+}
 
-                html += `<tr>
-                    <td style="white-space:nowrap;">${formatDateTime(tx.date)}</td>
-                    <td>${badge}</td>
-                    <td><span class="crimson-text">${tx.productCode || '—'}</span></td>
-                    <td>${txName}</td>
-                    <td><strong class="warm-text">${tx.quantity}</strong> ${getUnitDisplay(tx.unit || prod?.unit || '')}</td>
-                    <td style="font-size:0.82rem;">${detail}</td>
-                </tr>`;
-            });
-        }
+// ============================================================
+//  DASHBOARD
+// ============================================================
+function updateDashboard() {
+  document.getElementById('total-products').textContent = products.length;
+  const low     = products.filter(p=>p.stock<=p.minStock);
+  const expSoon = products.filter(p=>{if(!p.expiry)return false;const d=getDaysUntilExpiry(p.expiry);return d<=7&&d>=0;});
+  document.getElementById('low-stock-count').textContent = low.length;
+  document.getElementById('expiring-count').textContent  = expSoon.length;
 
-        html += '</tbody></table>';
-        document.getElementById('history-table-container').innerHTML = html;
-    }
+  let html='';
+  if (low.length) {
+    html+=`<div class="alert alert-danger"><strong>${t('alert_low_stock')}</strong><ul style="margin-top:10px;padding-left:20px;">`;
+    low.forEach(p=>html+=`<li>${getProductName(p)} (${p.stock}/${p.minStock} ${getUnitDisplay(p.unit)})</li>`);
+    html+='</ul></div>';
+  }
+  const expired=products.filter(p=>p.expiry&&getDaysUntilExpiry(p.expiry)<0);
+  if (expired.length) {
+    html+=`<div class="alert alert-danger"><strong>${t('alert_expired')}</strong><ul style="margin-top:10px;padding-left:20px;">`;
+    expired.forEach(p=>html+=`<li>${getProductName(p)} (${formatDate(p.expiry)})</li>`);
+    html+='</ul></div>';
+  }
+  if (expSoon.length) {
+    html+=`<div class="alert alert-warning"><strong>${t('alert_expiring')}</strong><ul style="margin-top:10px;padding-left:20px;">`;
+    expSoon.forEach(p=>{const days=getDaysUntilExpiry(p.expiry);html+=`<li>${getProductName(p)} (${t('days_left',{days})} — ${formatDate(p.expiry)})</li>`;});
+    html+='</ul></div>';
+  }
+  if (!html) html=`<div class="alert alert-success"><strong>${t('alert_no_issue')}</strong></div>`;
+  document.getElementById('alerts-container').innerHTML=html;
+}
 
-    // ===== UPDATE PRODUCT SELECTS =====
-    function updateProductSelects() {
-        const opts = products.map(p =>
-            `<option value="${p.id}">${p.code} — ${getProductName(p)} (${p.stock} ${getUnitDisplay(p.unit)})</option>`
-        ).join('');
-        const placeholder = `<option value="">${t('label_select_product')}</option>`;
-        document.getElementById('in-product').innerHTML  = placeholder + opts;
-        document.getElementById('out-product').innerHTML = placeholder + opts;
-    }
-
-    // ===== UPDATE DASHBOARD =====
-    function updateDashboard() {
-        document.getElementById('total-products').textContent = products.length;
-
-        const low    = products.filter(p => p.stock <= p.minStock);
-        const expSoon = products.filter(p => {
-            if (!p.expiry) return false;
-            const days = getDaysUntilExpiry(p.expiry);
-            return days <= 7 && days >= 0;
-        });
-
-        document.getElementById('low-stock-count').textContent  = low.length;
-        document.getElementById('expiring-count').textContent    = expSoon.length;
-
-        let html = '';
-
-        if (low.length > 0) {
-            html += `<div class="alert alert-danger"><strong>${t('alert_low_stock')}</strong>
-                <ul style="margin-top:10px; padding-left:20px;">`;
-            low.forEach(p => html += `<li>${getProductName(p)} (${p.stock}/${p.minStock} ${getUnitDisplay(p.unit)})</li>`);
-            html += '</ul></div>';
-        }
-
-        const expired = products.filter(p => p.expiry && getDaysUntilExpiry(p.expiry) < 0);
-        if (expired.length > 0) {
-            html += `<div class="alert alert-danger"><strong>${t('alert_expired')}</strong>
-                <ul style="margin-top:10px; padding-left:20px;">`;
-            expired.forEach(p => html += `<li>${getProductName(p)} (${formatDate(p.expiry)})</li>`);
-            html += '</ul></div>';
-        }
-
-        if (expSoon.length > 0) {
-            html += `<div class="alert alert-warning"><strong>${t('alert_expiring')}</strong>
-                <ul style="margin-top:10px; padding-left:20px;">`;
-            expSoon.forEach(p => {
-                const days = getDaysUntilExpiry(p.expiry);
-                html += `<li>${getProductName(p)} (${t('days_left', { days })} — ${formatDate(p.expiry)})</li>`;
-            });
-            html += '</ul></div>';
-        }
-
-        if (html === '') {
-            html = `<div class="alert alert-success"><strong>${t('alert_no_issue')}</strong></div>`;
-        }
-
-        document.getElementById('alerts-container').innerHTML = html;
-    }
-
-    // ===== STOCK STATUS =====
-    function getStockStatus(p) {
-        if (p.stock <= 0)              return { class: 'badge-danger',  text: t('status_out') };
-        if (p.stock <= p.minStock)     return { class: 'badge-warning', text: t('status_low') };
-        return { class: 'badge-success', text: t('status_normal') };
-    }
-
-    function getExpiryWarning(date) {
-        if (!date) return '';
-        const days = getDaysUntilExpiry(date);
-        if (days < 0)  return `<span class="badge badge-danger">${t('status_out')}</span>`;
-        if (days <= 3) return `<span class="badge badge-danger">${t('days_left', { days })}</span>`;
-        if (days <= 7) return `<span class="badge badge-warning">${t('days_left', { days })}</span>`;
-        return '';
-    }
-
-    function getDaysUntilExpiry(date) {
-        const today = new Date(); today.setHours(0,0,0,0);
-        const exp   = new Date(date); exp.setHours(0,0,0,0);
-        return Math.ceil((exp - today) / (1000 * 60 * 60 * 24));
-    }
-
-    function formatDate(dateStr) {
-        const d = new Date(dateStr);
-        const locale = currentLang === 'zh' ? 'zh-CN' : currentLang === 'en' ? 'en-US' : 'th-TH';
-        return d.toLocaleDateString(locale, { year: 'numeric', month: 'short', day: 'numeric' });
-    }
-
-    function formatDateTime(dateStr) {
-        const d = new Date(dateStr);
-        const locale = currentLang === 'zh' ? 'zh-CN' : currentLang === 'en' ? 'en-US' : 'th-TH';
-        return d.toLocaleString(locale, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-    }
-
-    // ===== SAVE =====
-    function saveData() {
-        localStorage.setItem('ok_products',    JSON.stringify(products));
-        localStorage.setItem('ok_transactions', JSON.stringify(transactions));
-    }
+// ============================================================
+//  UTILITIES
+// ============================================================
+function getStockStatus(p) {
+  if (p.stock<=0)          return {class:'badge-danger', text:t('status_out')};
+  if (p.stock<=p.minStock) return {class:'badge-warning',text:t('status_low')};
+  return {class:'badge-success',text:t('status_normal')};
+}
+function getExpiryWarning(date) {
+  if (!date) return '';
+  const days=getDaysUntilExpiry(date);
+  if (days<0)  return `<span class="badge badge-danger">${t('status_out')}</span>`;
+  if (days<=3) return `<span class="badge badge-danger">${t('days_left',{days})}</span>`;
+  if (days<=7) return `<span class="badge badge-warning">${t('days_left',{days})}</span>`;
+  return '';
+}
+function getDaysUntilExpiry(date) {
+  const today=new Date();today.setHours(0,0,0,0);
+  const exp=new Date(date);exp.setHours(0,0,0,0);
+  return Math.ceil((exp-today)/(1000*60*60*24));
+}
+function formatDate(dateStr) {
+  const d=new Date(dateStr);
+  const locale=currentLang==='zh'?'zh-CN':currentLang==='en'?'en-US':'th-TH';
+  return d.toLocaleDateString(locale,{year:'numeric',month:'short',day:'numeric'});
+}
+function formatDateTime(dateStr) {
+  const d=new Date(dateStr);
+  const locale=currentLang==='zh'?'zh-CN':currentLang==='en'?'en-US':'th-TH';
+  return d.toLocaleString(locale,{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+}
+function saveData() {
+  localStorage.setItem('ok_products',    JSON.stringify(products));
+  localStorage.setItem('ok_transactions',JSON.stringify(transactions));
+}
 </script>
 </body>
-</html>>
+</html>
