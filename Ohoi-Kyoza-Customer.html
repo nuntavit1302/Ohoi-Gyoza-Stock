@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ohoi Kyoza - สั่งอาหาร</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;600;700&family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --crimson:#9B2226;--crimson-light:#AE2012;--crimson-soft:rgba(155,34,38,0.08);
+  --gold:#D4A373;--gold-light:#E9C496;--gold-soft:rgba(212,163,115,0.15);
+  --jade:#588157;--jade-soft:rgba(88,129,87,0.12);
+  --warm-white:#FDF6EC;--cream:#F5EBDC;--paper:#FAF3E8;
+  --ink:#3D2B1F;--ink-light:#6B5B4F;--ink-muted:#9B8B7F;
+  --shadow-warm:rgba(155,34,38,0.08);
+}
+body{font-family:'Noto Sans Thai',sans-serif;background:var(--warm-white);color:var(--ink);min-height:100vh;padding-bottom:140px;}
+
+@keyframes slide-up{from{transform:translateY(24px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+@keyframes warm-pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.03);}}
+@keyframes bounce-in{0%{transform:scale(0.5);opacity:0;}70%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
+@keyframes fade-in{from{opacity:0;}to{opacity:1;}}
+
+/* HEADER */
+.header{
+  background:linear-gradient(160deg,var(--crimson) 0%,#7B181C 60%,#5A1216 100%);
+  padding:28px 20px 36px; text-align:center; position:relative; overflow:hidden;
+}
+.header::before{content:'🥟';position:absolute;top:14px;left:18px;font-size:1.8rem;opacity:0.35;animation:warm-pulse 4s ease-in-out infinite;}
+.header::after{content:'🏮';position:absolute;top:14px;right:18px;font-size:1.8rem;opacity:0.35;animation:warm-pulse 4s ease-in-out infinite 2s;}
+.logo{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:700;color:var(--gold-light);letter-spacing:3px;text-shadow:0 2px 10px rgba(0,0,0,0.3);}
+.logo span{color:#FFF8F0;font-weight:400;font-style:italic;}
+.table-badge{
+  display:inline-block; margin-top:10px;
+  background:rgba(255,255,255,0.18); border:1.5px solid rgba(255,255,255,0.35);
+  color:#FFF8F0; padding:7px 22px; border-radius:24px;
+  font-size:1rem; font-weight:700; letter-spacing:1px;
+}
+.lang-switcher{display:flex;justify-content:center;gap:8px;margin-top:14px;}
+.lang-btn{padding:6px 14px;border:1.5px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.85);border-radius:20px;cursor:pointer;font-weight:600;font-size:0.78rem;transition:all 0.3s ease;font-family:inherit;}
+.lang-btn:hover{background:rgba(255,255,255,0.22);}
+.lang-btn.active{background:var(--gold);border-color:var(--gold);color:var(--crimson);font-weight:700;}
+
+/* CATEGORY TABS */
+.cat-tabs{display:flex;gap:8px;padding:16px 16px 4px;overflow-x:auto;scrollbar-width:none;position:sticky;top:0;z-index:50;background:var(--warm-white);}
+.cat-tabs::-webkit-scrollbar{display:none;}
+.cat-tab{padding:9px 18px;border:1.5px solid rgba(155,34,38,0.15);background:#FFF;color:var(--ink-muted);border-radius:24px;cursor:pointer;font-weight:600;font-size:0.82rem;white-space:nowrap;transition:all 0.3s ease;font-family:inherit;}
+.cat-tab:hover{border-color:var(--crimson);color:var(--crimson);}
+.cat-tab.active{background:linear-gradient(135deg,var(--crimson),var(--crimson-light));color:white;border-color:var(--crimson);box-shadow:0 3px 12px rgba(155,34,38,0.25);}
+
+/* MENU GRID */
+.menu-section{padding:16px;}
+.section-label{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:700;color:var(--crimson);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.section-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(155,34,38,0.2),transparent);}
+.menu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px;}
+
+.menu-card{
+  background:#FFF;border-radius:20px;padding:16px;
+  border:1px solid rgba(155,34,38,0.08);
+  box-shadow:0 2px 10px var(--shadow-warm);
+  transition:all 0.35s ease; position:relative; overflow:hidden;
+  animation:slide-up 0.4s ease;
+}
+.menu-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,var(--crimson),var(--gold));opacity:0;transition:opacity 0.3s;}
+.menu-card:hover{transform:translateY(-3px);box-shadow:0 6px 22px rgba(155,34,38,0.12);}
+.menu-card:hover::before{opacity:1;}
+.menu-card.unavailable{opacity:0.45;filter:grayscale(0.5);}
+
+.menu-emoji{font-size:2.4rem;text-align:center;margin-bottom:8px;display:block;}
+.menu-name{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;color:var(--crimson);margin-bottom:3px;line-height:1.3;}
+.menu-name-sub{font-size:0.68rem;color:var(--ink-muted);margin-bottom:7px;line-height:1.4;}
+.menu-price{font-size:1rem;font-weight:700;color:var(--gold);margin-bottom:10px;}
+.menu-avail{font-size:0.7rem;margin-bottom:8px;}
+.avail-ok{color:var(--jade);}
+.avail-no{color:var(--crimson);}
+
+/* QTY CONTROL */
+.qty-row{display:flex;align-items:center;justify-content:center;gap:8px;}
+.qty-btn{width:32px;height:32px;border-radius:10px;border:1.5px solid rgba(155,34,38,0.2);background:var(--warm-white);color:var(--crimson);font-size:1.1rem;font-weight:700;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;}
+.qty-btn:hover{background:var(--crimson);color:white;}
+.qty-num{width:34px;text-align:center;font-size:1rem;font-weight:700;color:var(--crimson);}
+.add-btn{width:100%;padding:9px;background:linear-gradient(135deg,var(--jade),#6B9B6A);color:white;border:none;border-radius:12px;font-family:inherit;font-weight:700;font-size:0.85rem;cursor:pointer;margin-top:8px;transition:all 0.3s;}
+.add-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(88,129,87,0.3);}
+.add-btn:disabled{background:#ccc;cursor:not-allowed;transform:none;}
+
+/* CART BOTTOM BAR */
+.cart-bar{
+  position:fixed;bottom:0;left:0;right:0;
+  background:linear-gradient(135deg,var(--crimson),var(--crimson-light));
+  padding:16px 20px; display:none;
+  box-shadow:0 -4px 20px rgba(155,34,38,0.3);
+  z-index:200;
+}
+.cart-bar.show{display:flex;align-items:center;justify-content:space-between;animation:slide-up 0.3s ease;}
+.cart-info{color:white;}
+.cart-count{font-size:0.82rem;opacity:0.85;margin-bottom:2px;}
+.cart-total{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;}
+.cart-btn{background:var(--gold);color:var(--crimson);border:none;padding:13px 24px;border-radius:16px;font-family:inherit;font-weight:700;font-size:0.95rem;cursor:pointer;transition:all 0.3s;}
+.cart-btn:hover{transform:scale(1.04);}
+
+/* CART MODAL */
+.overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:500;backdrop-filter:blur(4px);}
+.overlay.show{display:block;animation:fade-in 0.3s ease;}
+.cart-modal{
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--paper);border-radius:28px 28px 0 0;
+  max-height:88vh;overflow-y:auto;z-index:501;
+  display:none;padding:24px 20px 40px;
+  box-shadow:0 -8px 40px rgba(155,34,38,0.2);
+}
+.cart-modal.show{display:block;animation:slide-up 0.35s ease;}
+.modal-handle{width:44px;height:4px;background:rgba(155,34,38,0.2);border-radius:4px;margin:0 auto 20px;}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;color:var(--crimson);margin-bottom:18px;text-align:center;}
+
+/* CART ITEMS */
+.cart-item{
+  background:#FFF;border-radius:16px;padding:14px 16px;margin-bottom:10px;
+  display:flex;justify-content:space-between;align-items:center;
+  border:1px solid rgba(155,34,38,0.07);
+  box-shadow:0 2px 8px var(--shadow-warm);
+}
+.cart-item-info{flex:1;}
+.cart-item-name{font-weight:700;color:var(--crimson);font-size:0.95rem;}
+.cart-item-price{font-size:0.8rem;color:var(--ink-muted);margin-top:3px;}
+.cart-item-right{display:flex;align-items:center;gap:10px;}
+.cart-item-total{font-weight:700;color:var(--gold);font-size:1rem;white-space:nowrap;}
+.remove-btn{background:rgba(155,34,38,0.1);border:none;color:var(--crimson);width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.remove-btn:hover{background:var(--crimson);color:white;}
+
+/* NOTE INPUT */
+.note-group{margin:16px 0;}
+.note-group label{display:block;font-weight:700;color:var(--crimson);font-size:0.88rem;margin-bottom:8px;}
+.note-group textarea{width:100%;padding:12px 16px;background:var(--warm-white);border:1.5px solid rgba(155,34,38,0.15);border-radius:14px;font-family:inherit;font-size:0.95rem;color:var(--ink);resize:none;min-height:70px;transition:all 0.3s;}
+.note-group textarea:focus{outline:none;border-color:var(--crimson);box-shadow:0 0 0 4px var(--crimson-soft);}
+
+/* SUMMARY */
+.order-summary{background:linear-gradient(135deg,var(--crimson-soft),var(--gold-soft));border-radius:18px;padding:18px;margin:16px 0;}
+.summary-row{display:flex;justify-content:space-between;padding:6px 0;font-size:0.9rem;color:var(--ink-light);}
+.summary-row.total{font-weight:700;font-size:1.1rem;color:var(--crimson);border-top:1px solid rgba(155,34,38,0.15);padding-top:10px;margin-top:4px;}
+
+/* ORDER BTN */
+.order-btn{
+  width:100%;padding:17px;
+  background:linear-gradient(135deg,var(--crimson),var(--crimson-light));
+  color:white;border:none;border-radius:16px;
+  font-family:inherit;font-weight:700;font-size:1.05rem;
+  cursor:pointer;transition:all 0.3s;
+  box-shadow:0 4px 18px rgba(155,34,38,0.3);
+}
+.order-btn:hover{transform:translateY(-2px);box-shadow:0 6px 26px rgba(155,34,38,0.4);}
+.order-btn:disabled{background:#ccc;cursor:not-allowed;transform:none;box-shadow:none;}
+
+/* SUCCESS SCREEN */
+.success-screen{
+  display:none;position:fixed;top:0;left:0;right:0;bottom:0;
+  background:linear-gradient(160deg,var(--crimson),#5A1216);
+  z-index:1000;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:30px;
+}
+.success-screen.show{display:flex;}
+.success-icon{font-size:5rem;margin-bottom:20px;animation:bounce-in 0.6s ease;}
+.success-title{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;color:var(--gold-light);margin-bottom:12px;}
+.success-sub{color:rgba(255,248,240,0.75);font-size:1rem;line-height:1.6;margin-bottom:30px;}
+.order-code{
+  background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.3);
+  border-radius:16px;padding:14px 28px;
+  font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;
+  color:var(--gold-light);letter-spacing:3px;margin-bottom:30px;
+}
+.new-order-btn{background:var(--gold);color:var(--crimson);border:none;padding:15px 36px;border-radius:16px;font-family:inherit;font-weight:700;font-size:1rem;cursor:pointer;transition:all 0.3s;}
+.new-order-btn:hover{transform:scale(1.04);}
+
+/* LOADING */
+.loading-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.7);z-index:2000;align-items:center;justify-content:center;}
+.loading-overlay.show{display:flex;}
+.loading-box{background:white;border-radius:20px;padding:30px 36px;text-align:center;}
+.loading-spinner{font-size:2.5rem;animation:warm-pulse 1s ease-in-out infinite;margin-bottom:12px;}
+.loading-text{color:var(--crimson);font-weight:700;}
+
+/* EMPTY */
+.empty-cat{text-align:center;padding:50px 20px;color:var(--ink-muted);}
+.empty-cat-icon{font-size:3rem;margin-bottom:12px;opacity:0.5;}
+
+@media(max-width:400px){
+  .menu-grid{grid-template-columns:1fr;}
+  .logo{font-size:2rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div class="loading-overlay" id="loading-overlay">
+  <div class="loading-box">
+    <div class="loading-spinner">🥟</div>
+    <div class="loading-text" id="loading-text">กำลังส่งออเดอร์...</div>
+  </div>
+</div>
+
+<!-- SUCCESS SCREEN -->
+<div class="success-screen" id="success-screen">
+  <div class="success-icon">✅</div>
+  <div class="success-title" id="success-title">ส่งออเดอร์เรียบร้อย!</div>
+  <div class="success-sub" id="success-sub">ครัวได้รับออเดอร์ของคุณแล้ว<br>กรุณารอสักครู่</div>
+  <div class="order-code" id="success-order-code">#0000</div>
+  <button class="new-order-btn" id="new-order-btn" onclick="resetOrder()">+ สั่งอาหารเพิ่ม</button>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">Ohoi <span>Kyoza</span></div>
+  <div class="table-badge" id="table-badge">🪑 โต๊ะ 1</div>
+  <div class="lang-switcher">
+    <button class="lang-btn active" onclick="setLang('th')" data-lang="th">🇹🇭 ไทย</button>
+    <button class="lang-btn" onclick="setLang('en')" data-lang="en">🇬🇧 EN</button>
+    <button class="lang-btn" onclick="setLang('zh')" data-lang="zh">🇨🇳 中文</button>
+  </div>
+</div>
+
+<!-- CATEGORY TABS -->
+<div class="cat-tabs" id="cat-tabs"></div>
+
+<!-- MENU -->
+<div class="menu-section" id="menu-section"></div>
+
+<!-- CART BAR -->
+<div class="cart-bar" id="cart-bar">
+  <div class="cart-info">
+    <div class="cart-count" id="cart-count-text">0 รายการ</div>
+    <div class="cart-total" id="cart-total-text">0 ฿</div>
+  </div>
+  <button class="cart-btn" id="cart-open-btn" onclick="openCart()">🛒 <span id="cart-btn-label">ดูตะกร้า</span></button>
+</div>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay" onclick="closeCart()"></div>
+
+<!-- CART MODAL -->
+<div class="cart-modal" id="cart-modal">
+  <div class="modal-handle"></div>
+  <div class="modal-title" id="cart-modal-title">🛒 ตะกร้าของคุณ</div>
+  <div id="cart-items-container"></div>
+
+  <div class="note-group">
+    <label id="note-label">📝 หมายเหตุ / แพ้อาหาร</label>
+    <textarea id="order-note" rows="2" placeholder="เช่น: ไม่ใส่ผัก, แพ้กุ้ง..."></textarea>
+  </div>
+
+  <div class="order-summary" id="order-summary"></div>
+
+  <button class="order-btn" id="confirm-order-btn" onclick="confirmOrder()">
+    🥟 <span id="confirm-btn-text">ยืนยันสั่งอาหาร</span>
+  </button>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp }        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, push, set, onValue }
+                                from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+// ===== FIREBASE CONFIG =====
+const firebaseConfig = {
+  apiKey:            "AIzaSyC650BBAj_y7bObsIA5KpMQkLDNg4FEtmw",
+  authDomain:        "ohoi-kyoza.firebaseapp.com",
+  databaseURL:       "https://ohoi-kyoza-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:         "ohoi-kyoza",
+  storageBucket:     "ohoi-kyoza.firebasestorage.app",
+  messagingSenderId: "311350815436",
+  appId:             "1:311350815436:web:5638717dc207f286e5b069"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getDatabase(app);
+
+// ===== I18N =====
+const i18n = {
+  th:{
+    table:'โต๊ะ', cat_all:'🍽️ ทั้งหมด',
+    cart_count:'{n} รายการ', cart_view:'ดูตะกร้า',
+    cart_title:'🛒 ตะกร้าของคุณ',
+    note_label:'📝 หมายเหตุ / แพ้อาหาร',
+    note_ph:'เช่น: ไม่ใส่ผัก, แพ้กุ้ง...',
+    subtotal:'ยอดรวม', tax:'ค่าบริการ (0%)', total:'รวมทั้งสิ้น',
+    confirm_btn:'🥟 ยืนยันสั่งอาหาร',
+    avail:'✅ พร้อมเสิร์ฟ', unavail:'❌ หมดชั่วคราว',
+    add_btn:'+ เพิ่มในตะกร้า', added_btn:'✓ เพิ่มแล้ว',
+    loading:'กำลังส่งออเดอร์...',
+    success_title:'ส่งออเดอร์เรียบร้อย!',
+    success_sub:'ครัวได้รับออเดอร์ของคุณแล้ว\nกรุณารอสักครู่',
+    new_order:'+ สั่งอาหารเพิ่ม',
+    empty_menu:'ยังไม่มีเมนู — กรุณารอสักครู่',
+    baht:'฿'
+  },
+  en:{
+    table:'Table', cat_all:'🍽️ All',
+    cart_count:'{n} items', cart_view:'View Cart',
+    cart_title:'🛒 Your Cart',
+    note_label:'📝 Special Requests / Allergies',
+    note_ph:'e.g. No vegetables, shrimp allergy...',
+    subtotal:'Subtotal', tax:'Service Charge (0%)', total:'Total',
+    confirm_btn:'🥟 Confirm Order',
+    avail:'✅ Available', unavail:'❌ Unavailable',
+    add_btn:'+ Add to Cart', added_btn:'✓ Added',
+    loading:'Placing your order...',
+    success_title:'Order Placed!',
+    success_sub:'The kitchen has received your order.\nPlease wait a moment.',
+    new_order:'+ Order More',
+    empty_menu:'No menus yet — please wait',
+    baht:'฿'
+  },
+  zh:{
+    table:'桌', cat_all:'🍽️ 全部',
+    cart_count:'{n} 件', cart_view:'查看购物车',
+    cart_title:'🛒 您的购物车',
+    note_label:'📝 备注 / 过敏信息',
+    note_ph:'例如：不放蔬菜，虾过敏...',
+    subtotal:'小计', tax:'服务费 (0%)', total:'合计',
+    confirm_btn:'🥟 确认下单',
+    avail:'✅ 可供应', unavail:'❌ 暂时售完',
+    add_btn:'+ 加入购物车', added_btn:'✓ 已添加',
+    loading:'正在提交订单...',
+    success_title:'下单成功！',
+    success_sub:'厨房已收到您的订单\n请稍候',
+    new_order:'+ 继续点餐',
+    empty_menu:'暂无菜单，请稍候',
+    baht:'฿'
+  }
+};
+
+// category display names
+const catNames = {
+  gyoza:   {th:'🥟 เกี๊ยวซ่า', en:'🥟 Gyoza',    zh:'🥟 煎饺'},
+  rice:    {th:'🍚 ข้าว',      en:'🍚 Rice',      zh:'🍚 米饭'},
+  noodle:  {th:'🍜 เส้น',      en:'🍜 Noodles',   zh:'🍜 面条'},
+  soup:    {th:'🍲 ซุป',       en:'🍲 Soup',      zh:'🍲 汤'},
+  drink:   {th:'🥤 เครื่องดื่ม',en:'🥤 Drinks',  zh:'🥤 饮料'},
+  dessert: {th:'🍮 ของหวาน',   en:'🍮 Dessert',   zh:'🍮 甜点'},
+  set:     {th:'🍱 เซ็ต',      en:'🍱 Set',       zh:'🍱 套餐'}
+};
+
+// menu emoji map
+const menuEmoji = {
+  gyoza:'🥟', rice:'🍚', noodle:'🍜', soup:'🍲',
+  drink:'🥤', dessert:'🍮', set:'🍱'
+};
+
+// ===== STATE =====
+let currentLang  = 'th';
+let tableNo      = 1;
+let menus        = [];
+let products     = [];
+let cart         = [];  // [{menuId, name_th, name_en, name_zh, price, qty}]
+let currentCat   = 'all';
+
+// ===== READ TABLE FROM URL ?table=N =====
+function getTableFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  return parseInt(params.get('table')) || 1;
+}
+
+// ===== INIT =====
+window.addEventListener('DOMContentLoaded', () => {
+  tableNo = getTableFromURL();
+  renderTableBadge();
+  // Load menus & products from Firebase
+  loadMenusFromFirebase();
+  loadProductsFromFirebase();
+});
+
+function loadMenusFromFirebase() {
+  onValue(ref(db, 'menus'), snap => {
+    menus = [];
+    if (snap.exists()) {
+      snap.forEach(child => menus.push({ fbKey: child.key, ...child.val() }));
+    }
+    renderCatTabs();
+    renderMenus();
+  });
+}
+
+function loadProductsFromFirebase() {
+  onValue(ref(db, 'products'), snap => {
+    products = [];
+    if (snap.exists()) {
+      snap.forEach(child => products.push({ fbKey: child.key, ...child.val() }));
+    }
+    renderMenus(); // re-render stock status
+  });
+}
+
+// ===== HELPERS =====
+function t(key, params={}) {
+  let text = i18n[currentLang][key] || key;
+  Object.keys(params).forEach(k => { text = text.replace(`{${k}}`, params[k]); });
+  return text;
+}
+
+function getMenuName(m) {
+  if (currentLang==='en' && m.name_en) return m.name_en;
+  if (currentLang==='zh' && m.name_zh) return m.name_zh;
+  return m.name_th || m.name || '—';
+}
+
+function getCatLabel(key) {
+  return catNames[key]?.[currentLang] || key;
+}
+
+function checkMenuAvail(menu) {
+  if (!menu.ingredients || !menu.ingredients.length) return true;
+  return menu.ingredients.every(ing => {
+    const p = products.find(x => x.id === ing.productId);
+    return p && p.stock >= ing.quantity;
+  });
+}
+
+// ===== RENDER TABLE BADGE =====
+function renderTableBadge() {
+  document.getElementById('table-badge').textContent =
+    `🪑 ${t('table')} ${tableNo}`;
+}
+
+// ===== RENDER CATEGORY TABS =====
+function renderCatTabs() {
+  const cats = ['all', ...new Set(menus.map(m => m.category).filter(Boolean))];
+  document.getElementById('cat-tabs').innerHTML = cats.map(c =>
+    `<button class="cat-tab ${currentCat===c?'active':''}"
+       onclick="filterCat('${c}')">${c==='all'?t('cat_all'):getCatLabel(c)}</button>`
+  ).join('');
+}
+
+// ===== FILTER CATEGORY =====
+window.filterCat = function(cat) {
+  currentCat = cat;
+  renderCatTabs();
+  renderMenus();
+};
+
+// ===== RENDER MENUS =====
+function renderMenus() {
+  const filtered = currentCat==='all'
+    ? menus
+    : menus.filter(m => m.category===currentCat);
+
+  const section = document.getElementById('menu-section');
+  if (!filtered.length) {
+    section.innerHTML = `<div class="empty-cat">
+      <div class="empty-cat-icon">🍽️</div>
+      <p>${t('empty_menu')}</p></div>`;
+    return;
+  }
+
+  // Group by category for "all" view
+  if (currentCat === 'all') {
+    const groups = {};
+    filtered.forEach(m => {
+      const c = m.category || 'other';
+      if (!groups[c]) groups[c] = [];
+      groups[c].push(m);
+    });
+    section.innerHTML = Object.entries(groups).map(([cat, items]) =>
+      `<div>
+        <div class="section-label">${getCatLabel(cat)}</div>
+        <div class="menu-grid">${items.map(m => menuCardHTML(m)).join('')}</div>
+      </div>`
+    ).join('');
+  } else {
+    section.innerHTML = `<div class="menu-grid">${filtered.map(m => menuCardHTML(m)).join('')}</div>`;
+  }
+}
+
+function menuCardHTML(m) {
+  const avail  = checkMenuAvail(m);
+  const emoji  = menuEmoji[m.category] || '🍽️';
+  const inCart = cart.find(c => c.menuId === (m.id || m.fbKey));
+  const subNames = [
+    m.name_en && currentLang!=='en' ? m.name_en : '',
+    m.name_zh && currentLang!=='zh' ? m.name_zh : ''
+  ].filter(Boolean).join(' · ');
+
+  return `
+    <div class="menu-card ${!avail?'unavailable':''}">
+      <span class="menu-emoji">${emoji}</span>
+      <div class="menu-name">${getMenuName(m)}</div>
+      ${subNames?`<div class="menu-name-sub">${subNames}</div>`:''}
+      <div class="menu-price">${m.price} ${t('baht')}</div>
+      <div class="menu-avail ${avail?'avail-ok':'avail-no'}">${avail?t('avail'):t('unavail')}</div>
+      ${avail ? `
+        <div class="qty-row">
+          <button class="qty-btn" onclick="changeQty('${m.id||m.fbKey}',-1)">−</button>
+          <span class="qty-num" id="qty-${m.id||m.fbKey}">${inCart?inCart.qty:0}</span>
+          <button class="qty-btn" onclick="changeQty('${m.id||m.fbKey}',1)">+</button>
+        </div>
+        <button class="add-btn" id="add-${m.id||m.fbKey}" onclick="addToCart('${m.id||m.fbKey}')">
+          ${inCart ? t('added_btn') : t('add_btn')}
+        </button>
+      ` : `<button class="add-btn" disabled>${t('unavail')}</button>`}
+    </div>`;
+}
+
+// ===== QTY =====
+window.changeQty = function(menuId, delta) {
+  const el = document.getElementById(`qty-${menuId}`);
+  if (!el) return;
+  let v = parseInt(el.textContent) + delta;
+  v = Math.max(0, Math.min(20, v));
+  el.textContent = v;
+};
+
+// ===== ADD TO CART =====
+window.addToCart = function(menuId) {
+  const menu = menus.find(m => (m.id||m.fbKey) === menuId);
+  if (!menu) return;
+  const qtyEl = document.getElementById(`qty-${menuId}`);
+  const qty   = parseInt(qtyEl?.textContent) || 1;
+  if (qty === 0) { if(qtyEl) qtyEl.textContent='1'; return; }
+
+  const existing = cart.find(c => c.menuId === menuId);
+  if (existing) {
+    existing.qty += qty;
+  } else {
+    cart.push({
+      menuId,
+      name_th: menu.name_th || menu.name,
+      name_en: menu.name_en || menu.name,
+      name_zh: menu.name_zh || menu.name,
+      price: menu.price,
+      qty
+    });
+  }
+
+  // Reset qty display
+  if (qtyEl) qtyEl.textContent = '0';
+
+  updateCartBar();
+  renderMenus(); // refresh add btn state
+};
+
+// ===== UPDATE CART BAR =====
+function updateCartBar() {
+  const total = cart.reduce((s,c) => s + c.price*c.qty, 0);
+  const count = cart.reduce((s,c) => s + c.qty, 0);
+  const bar   = document.getElementById('cart-bar');
+
+  if (!cart.length) { bar.classList.remove('show'); return; }
+
+  bar.classList.add('show');
+  document.getElementById('cart-count-text').textContent = t('cart_count',{n:count});
+  document.getElementById('cart-total-text').textContent = `${total} ${t('baht')}`;
+  document.getElementById('cart-btn-label').textContent  = t('cart_view');
+}
+
+// ===== OPEN / CLOSE CART =====
+window.openCart = function() {
+  renderCartModal();
+  document.getElementById('cart-modal').classList.add('show');
+  document.getElementById('overlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+};
+window.closeCart = function() {
+  document.getElementById('cart-modal').classList.remove('show');
+  document.getElementById('overlay').classList.remove('show');
+  document.body.style.overflow = '';
+};
+
+// ===== RENDER CART MODAL =====
+function renderCartModal() {
+  document.getElementById('cart-modal-title').textContent = t('cart_title');
+  document.getElementById('note-label').textContent       = t('note_label');
+  document.getElementById('order-note').placeholder       = t('note_ph');
+  document.getElementById('confirm-btn-text').textContent = t('confirm_btn').replace('🥟 ','');
+
+  const container = document.getElementById('cart-items-container');
+  container.innerHTML = cart.map((item,i) => {
+    const name = currentLang==='en'&&item.name_en ? item.name_en
+                : currentLang==='zh'&&item.name_zh ? item.name_zh
+                : item.name_th;
+    return `
+      <div class="cart-item">
+        <div class="cart-item-info">
+          <div class="cart-item-name">${name}</div>
+          <div class="cart-item-price">${item.price} ${t('baht')} × ${item.qty}</div>
+        </div>
+        <div class="cart-item-right">
+          <div class="cart-item-total">${item.price*item.qty} ${t('baht')}</div>
+          <button class="remove-btn" onclick="removeFromCart(${i})">✕</button>
+        </div>
+      </div>`;
+  }).join('');
+
+  const subtotal = cart.reduce((s,c)=>s+c.price*c.qty,0);
+  document.getElementById('order-summary').innerHTML = `
+    <div class="summary-row"><span>${t('subtotal')}</span><span>${subtotal} ${t('baht')}</span></div>
+    <div class="summary-row total"><span>${t('total')}</span><span>${subtotal} ${t('baht')}</span></div>`;
+}
+
+window.removeFromCart = function(idx) {
+  cart.splice(idx,1);
+  renderCartModal();
+  updateCartBar();
+  if (!cart.length) closeCart();
+};
+
+// ===== CONFIRM ORDER → FIREBASE =====
+window.confirmOrder = async function() {
+  if (!cart.length) return;
+
+  const btn = document.getElementById('confirm-order-btn');
+  btn.disabled = true;
+
+  document.getElementById('loading-text').textContent = t('loading');
+  document.getElementById('loading-overlay').classList.add('show');
+
+  const note    = document.getElementById('order-note').value.trim();
+  const orderId = 'ORD-' + Date.now().toString().slice(-6);
+  const total   = cart.reduce((s,c)=>s+c.price*c.qty,0);
+
+  const orderData = {
+    orderId,
+    tableNo,
+    status:    'pending',   // pending | cooking | done | cancelled
+    items:     cart.map(c=>({
+      menuId:   c.menuId,
+      name_th:  c.name_th,
+      name_en:  c.name_en,
+      name_zh:  c.name_zh,
+      price:    c.price,
+      qty:      c.qty,
+      subtotal: c.price*c.qty
+    })),
+    note,
+    total,
+    createdAt: new Date().toISOString(),
+    lang:      currentLang
+  };
+
+  try {
+    await push(ref(db, 'orders'), orderData);
+
+    document.getElementById('loading-overlay').classList.remove('show');
+    closeCart();
+
+    // Show success
+    document.getElementById('success-title').textContent = t('success_title');
+    document.getElementById('success-sub').textContent   = t('success_sub').replace('\\n','\n');
+    document.getElementById('success-order-code').textContent = `#${orderId.split('-')[1]}`;
+    document.getElementById('new-order-btn').textContent  = t('new_order');
+    document.getElementById('success-screen').classList.add('show');
+
+  } catch(err) {
+    document.getElementById('loading-overlay').classList.remove('show');
+    alert('เกิดข้อผิดพลาด กรุณาลองใหม่\nError: ' + err.message);
+    btn.disabled = false;
+  }
+};
+
+// ===== RESET ORDER =====
+window.resetOrder = function() {
+  cart = [];
+  document.getElementById('success-screen').classList.remove('show');
+  document.getElementById('order-note').value = '';
+  updateCartBar();
+  renderMenus();
+};
+
+// ===== SET LANG =====
+window.setLang = function(lang) {
+  currentLang = lang;
+  localStorage.setItem('ok_lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang===lang));
+  renderTableBadge();
+  renderCatTabs();
+  renderMenus();
+  updateCartBar();
+};
+
+// Restore lang from localStorage
+const savedLang = localStorage.getItem('ok_lang');
+if (savedLang && i18n[savedLang]) {
+  currentLang = savedLang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang===savedLang));
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ohoi Kyoza - หน้าครัว</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;600;700&family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --crimson:#9B2226;--crimson-light:#AE2012;--crimson-soft:rgba(155,34,38,0.08);
+  --gold:#D4A373;--gold-light:#E9C496;--gold-soft:rgba(212,163,115,0.15);
+  --jade:#588157;--jade-soft:rgba(88,129,87,0.12);--jade-light:#6B9B6A;
+  --warm-white:#FDF6EC;--cream:#F5EBDC;--paper:#FAF3E8;
+  --ink:#3D2B1F;--ink-light:#6B5B4F;--ink-muted:#9B8B7F;
+  --shadow-warm:rgba(155,34,38,0.08);
+  --orange:#E67E22;--orange-soft:rgba(230,126,34,0.12);
+  --purple:#6B5B95;--purple-soft:rgba(107,91,149,0.12);
+}
+body{font-family:'Noto Sans Thai',sans-serif;background:#1A1A2E;color:#F0F0F0;min-height:100vh;}
+
+@keyframes slide-up{from{transform:translateY(20px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+@keyframes pulse-new{0%,100%{box-shadow:0 0 0 0 rgba(155,34,38,0.6);}50%{box-shadow:0 0 0 12px rgba(155,34,38,0);}}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.4;}}
+@keyframes spin{to{transform:rotate(360deg);}}
+@keyframes fade-in{from{opacity:0;}to{opacity:1;}}
+
+/* ===== HEADER ===== */
+.header{
+background:linear-gradient(135deg,#0D0D1A,#1A1A2E);
+padding:16px 20px;
+display:flex;align-items:center;justify-content:space-between;
+border-bottom:2px solid var(–crimson);
+position:sticky;top:0;z-index:100;
+}
+.header-left{display:flex;align-items:center;gap:14px;}
+.logo{font-family:‘Cormorant Garamond’,serif;font-size:1.7rem;font-weight:700;color:var(–gold-light);}
+.logo span{color:#FFF;font-weight:400;font-style:italic;}
+.kitchen-badge{background:var(–crimson);color:white;padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:700;letter-spacing:1px;}
+
+.header-right{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end;}
+.connection-dot{width:10px;height:10px;border-radius:50%;background:#ccc;display:inline-block;transition:background 0.3s;}
+.connection-dot.online{background:#27AE60;box-shadow:0 0 8px rgba(39,174,96,0.6);}
+.connection-dot.offline{background:var(–crimson);animation:blink 1.5s infinite;}
+.connection-label{font-size:0.78rem;color:#aaa;}
+.clock{font-family:‘Cormorant Garamond’,serif;font-size:1.3rem;color:var(–gold-light);font-weight:700;}
+
+/* LANG BTN */
+.lang-switcher{display:flex;gap:6px;}
+.lang-btn{padding:5px 12px;border:1.5px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.75);border-radius:16px;cursor:pointer;font-weight:600;font-size:0.74rem;transition:all 0.3s;font-family:inherit;}
+.lang-btn:hover{background:rgba(255,255,255,0.16);}
+.lang-btn.active{background:var(–gold);border-color:var(–gold);color:var(–crimson);font-weight:700;}
+
+/* ===== STATS BAR ===== */
+.stats-bar{
+display:grid;grid-template-columns:repeat(5,1fr);gap:10px;
+padding:14px 18px;background:#12122A;border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.stat-chip{text-align:center;padding:10px 8px;border-radius:14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);}
+.stat-chip-val{font-family:‘Cormorant Garamond’,serif;font-size:1.9rem;font-weight:700;}
+.stat-chip-val.pending{color:var(–crimson);}
+.stat-chip-val.cooking{color:var(–orange);}
+.stat-chip-val.done{color:var(–jade);}
+.stat-chip-val.cancelled{color:#888;}
+.stat-chip-val.revenue{color:var(–gold);}
+.stat-chip-label{font-size:0.7rem;color:#aaa;margin-top:2px;}
+
+/* ===== FILTER BAR ===== */
+.filter-bar{
+display:flex;gap:8px;padding:12px 18px;
+background:#12122A;border-bottom:1px solid rgba(255,255,255,0.06);
+overflow-x:auto;scrollbar-width:none;flex-wrap:wrap;
+}
+.filter-bar::-webkit-scrollbar{display:none;}
+.filter-btn{padding:8px 18px;border-radius:22px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:#ccc;font-family:inherit;font-weight:600;font-size:0.8rem;cursor:pointer;white-space:nowrap;transition:all 0.3s;}
+.filter-btn:hover{border-color:rgba(255,255,255,0.35);}
+.filter-btn.active-all     {background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.4);color:white;}
+.filter-btn.active-pending {background:rgba(155,34,38,0.3);border-color:var(–crimson);color:#FF9999;}
+.filter-btn.active-cooking {background:rgba(230,126,34,0.25);border-color:var(–orange);color:#FFB84D;}
+.filter-btn.active-done    {background:rgba(88,129,87,0.25);border-color:var(–jade);color:#90EE90;}
+
+/* ===== SOUND TOGGLE ===== */
+.sound-btn{padding:7px 14px;border-radius:16px;border:1.5px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.06);color:#ccc;font-family:inherit;font-size:0.78rem;cursor:pointer;transition:all 0.3s;}
+.sound-btn.on{border-color:var(–jade);color:#90EE90;background:rgba(88,129,87,0.2);}
+
+/* ===== ORDERS GRID ===== */
+.orders-container{padding:18px;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;align-items:start;}
+
+/* ===== ORDER CARD ===== */
+.order-card{
+background:#1E1E35;border-radius:20px;padding:20px;
+border:1.5px solid rgba(255,255,255,0.08);
+animation:slide-up 0.4s ease;
+transition:all 0.35s ease;position:relative;overflow:hidden;
+}
+.order-card.status-pending{border-color:rgba(155,34,38,0.6);animation:slide-up 0.4s ease,pulse-new 2s ease-in-out 3;}
+.order-card.status-cooking{border-color:rgba(230,126,34,0.5);}
+.order-card.status-done   {border-color:rgba(88,129,87,0.4);opacity:0.7;}
+.order-card.status-cancelled{border-color:rgba(100,100,100,0.3);opacity:0.45;}
+
+.order-card::before{content:’’;position:absolute;top:0;left:0;width:100%;height:4px;}
+.order-card.status-pending::before  {background:linear-gradient(90deg,var(–crimson),#E74C3C);}
+.order-card.status-cooking::before  {background:linear-gradient(90deg,var(–orange),#F39C12);}
+.order-card.status-done::before     {background:linear-gradient(90deg,var(–jade),var(–jade-light));}
+.order-card.status-cancelled::before{background:linear-gradient(90deg,#555,#777);}
+
+/* CARD HEADER */
+.card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;}
+.order-id{font-family:‘Cormorant Garamond’,serif;font-size:1.3rem;font-weight:700;color:var(–gold-light);}
+.table-tag{background:rgba(212,163,115,0.18);border:1px solid rgba(212,163,115,0.4);color:var(–gold-light);padding:5px 12px;border-radius:14px;font-size:0.82rem;font-weight:700;}
+
+/* STATUS BADGE */
+.status-badge{display:inline-flex;align-items:center;gap:5px;padding:5px 13px;border-radius:20px;font-size:0.76rem;font-weight:700;margin-bottom:12px;}
+.status-badge.pending  {background:rgba(155,34,38,0.25);color:#FF9999;border:1px solid rgba(155,34,38,0.4);}
+.status-badge.cooking  {background:rgba(230,126,34,0.22);color:#FFB84D;border:1px solid rgba(230,126,34,0.4);}
+.status-badge.done     {background:rgba(88,129,87,0.22);color:#90EE90;border:1px solid rgba(88,129,87,0.4);}
+.status-badge.cancelled{background:rgba(100,100,100,0.2);color:#aaa;border:1px solid rgba(100,100,100,0.3);}
+.status-dot{width:7px;height:7px;border-radius:50%;}
+.status-badge.pending  .status-dot{background:#FF6B6B;animation:blink 1.2s infinite;}
+.status-badge.cooking  .status-dot{background:var(–orange);animation:blink 1.8s infinite;}
+.status-badge.done     .status-dot{background:var(–jade);}
+.status-badge.cancelled .status-dot{background:#888;}
+
+/* TIMER */
+.order-timer{font-size:0.78rem;color:#888;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.timer-val{font-weight:700;}
+.timer-val.urgent{color:#FF6B6B;animation:blink 1s infinite;}
+.timer-val.warning{color:var(–orange);}
+.timer-val.ok{color:var(–jade);}
+
+/* ITEMS */
+.items-list{background:rgba(0,0,0,0.25);border-radius:14px;padding:14px;margin-bottom:14px;}
+.item-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.item-row:last-child{border-bottom:none;}
+.item-name{font-weight:600;color:#E8E8E8;font-size:0.9rem;}
+.item-qty{background:rgba(155,34,38,0.3);color:#FF9999;padding:3px 10px;border-radius:10px;font-weight:700;font-size:0.82rem;white-space:nowrap;}
+
+/* NOTE */
+.order-note{background:rgba(212,163,115,0.1);border:1px solid rgba(212,163,115,0.2);border-radius:10px;padding:9px 12px;font-size:0.8rem;color:var(–gold-light);margin-bottom:14px;}
+.note-icon{margin-right:4px;}
+
+/* TOTAL */
+.order-total{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid rgba(255,255,255,0.08);margin-bottom:14px;}
+.total-label{font-size:0.82rem;color:#aaa;}
+.total-val{font-family:‘Cormorant Garamond’,serif;font-size:1.3rem;font-weight:700;color:var(–gold);}
+
+/* ACTION BUTTONS */
+.action-row{display:grid;gap:8px;}
+.action-btn{width:100%;padding:12px;border:none;border-radius:13px;font-family:inherit;font-weight:700;font-size:0.88rem;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:7px;}
+.btn-start  {background:linear-gradient(135deg,var(–orange),#E67E22);color:white;}
+.btn-start:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(230,126,34,0.4);}
+.btn-done   {background:linear-gradient(135deg,var(–jade),var(–jade-light));color:white;}
+.btn-done:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(88,129,87,0.4);}
+.btn-cancel {background:rgba(100,100,100,0.25);color:#ccc;border:1px solid rgba(100,100,100,0.3);}
+.btn-cancel:hover{background:rgba(155,34,38,0.3);color:#FF9999;border-color:var(–crimson);}
+.btn-undo   {background:rgba(107,91,149,0.3);color:#C3B8FF;border:1px solid rgba(107,91,149,0.4);}
+.btn-undo:hover{background:rgba(107,91,149,0.5);}
+.action-row-2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+
+/* ===== EMPTY STATE ===== */
+.empty-state{grid-column:1/-1;text-align:center;padding:70px 20px;color:#555;}
+.empty-icon{font-size:4rem;margin-bottom:16px;opacity:0.5;}
+.empty-text{font-size:1.1rem;}
+
+/* ===== TOAST ===== */
+.toast{
+position:fixed;top:20px;left:50%;transform:translateX(-50%);
+background:#1E1E35;border:1.5px solid rgba(255,255,255,0.15);
+color:white;padding:14px 24px;border-radius:16px;
+font-weight:700;font-size:0.9rem;
+box-shadow:0 8px 30px rgba(0,0,0,0.5);
+z-index:3000;display:none;
+align-items:center;gap:10px;white-space:nowrap;
+}
+.toast.show{display:flex;animation:slide-up 0.35s ease;}
+.toast.success{border-color:var(–jade);background:rgba(88,129,87,0.25);}
+.toast.error  {border-color:var(–crimson);background:rgba(155,34,38,0.25);}
+.toast.info   {border-color:var(–gold);background:rgba(212,163,115,0.15);}
+
+/* SPINNER */
+.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,0.2);border-top-color:var(–gold);border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block;}
+
+@media(max-width:768px){
+.stats-bar{grid-template-columns:repeat(3,1fr);}
+.header{flex-wrap:wrap;gap:10px;}
+.orders-container{grid-template-columns:1fr;}
+.clock{font-size:1.1rem;}
+}
+</style>
+
+</head>
+<body>
+
+<!-- TOAST -->
+
+<div class="toast" id="toast"></div>
+
+<!-- HEADER -->
+
+<div class="header">
+  <div class="header-left">
+    <div>
+      <div class="logo">Ohoi <span>Kyoza</span></div>
+    </div>
+    <span class="kitchen-badge" data-i18n="kitchen_badge">👨‍🍳 หน้าครัว</span>
+  </div>
+  <div class="header-right">
+    <div style="display:flex;align-items:center;gap:6px;">
+      <span class="connection-dot" id="conn-dot"></span>
+      <span class="connection-label" id="conn-label">กำลังเชื่อมต่อ...</span>
+    </div>
+    <div class="clock" id="clock">00:00:00</div>
+    <button class="sound-btn on" id="sound-btn" onclick="toggleSound()">🔔 <span id="sound-label">เสียง ON</span></button>
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('th')" data-lang="th">🇹🇭</button>
+      <button class="lang-btn" onclick="setLang('en')" data-lang="en">🇬🇧</button>
+      <button class="lang-btn" onclick="setLang('zh')" data-lang="zh">🇨🇳</button>
+    </div>
+  </div>
+</div>
+
+<!-- STATS BAR -->
+
+<div class="stats-bar">
+  <div class="stat-chip"><div class="stat-chip-val pending" id="s-pending">0</div><div class="stat-chip-label" data-i18n="stat_pending">รอทำ</div></div>
+  <div class="stat-chip"><div class="stat-chip-val cooking" id="s-cooking">0</div><div class="stat-chip-label" data-i18n="stat_cooking">กำลังทำ</div></div>
+  <div class="stat-chip"><div class="stat-chip-val done"    id="s-done">0</div><div class="stat-chip-label" data-i18n="stat_done">เสร็จแล้ว</div></div>
+  <div class="stat-chip"><div class="stat-chip-val cancelled" id="s-cancelled">0</div><div class="stat-chip-label" data-i18n="stat_cancelled">ยกเลิก</div></div>
+  <div class="stat-chip"><div class="stat-chip-val revenue" id="s-revenue">0฿</div><div class="stat-chip-label" data-i18n="stat_revenue">รายได้วันนี้</div></div>
+</div>
+
+<!-- FILTER BAR -->
+
+<div class="filter-bar">
+  <button class="filter-btn active-all" onclick="setFilter('all')"       data-i18n="filter_all">📋 ทั้งหมด</button>
+  <button class="filter-btn" onclick="setFilter('pending')"  data-i18n="filter_pending">🔴 รอทำ</button>
+  <button class="filter-btn" onclick="setFilter('cooking')"  data-i18n="filter_cooking">🟡 กำลังทำ</button>
+  <button class="filter-btn" onclick="setFilter('done')"     data-i18n="filter_done">🟢 เสร็จแล้ว</button>
+  <button class="filter-btn" onclick="setFilter('cancelled')" data-i18n="filter_cancelled">⚫ ยกเลิก</button>
+</div>
+
+<!-- ORDERS -->
+
+<div class="orders-container" id="orders-container">
+  <div class="empty-state">
+    <div class="empty-icon">🥟</div>
+    <div class="empty-text" data-i18n="loading_orders">กำลังโหลดออเดอร์...</div>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+
+<script type="module">
+import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, onValue, update, serverTimestamp }
+                            from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+// ===== FIREBASE =====
+const firebaseConfig = {
+  apiKey:            "AIzaSyC650BBAj_y7bObsIA5KpMQkLDNg4FEtmw",
+  authDomain:        "ohoi-kyoza.firebaseapp.com",
+  databaseURL:       "https://ohoi-kyoza-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:         "ohoi-kyoza",
+  storageBucket:     "ohoi-kyoza.firebasestorage.app",
+  messagingSenderId: "311350815436",
+  appId:             "1:311350815436:web:5638717dc207f286e5b069"
+};
+const app = initializeApp(firebaseConfig);
+const db  = getDatabase(app);
+
+// ===== I18N =====
+const i18n = {
+  th:{
+    kitchen_badge:'👨‍🍳 หน้าครัว',
+    stat_pending:'รอทำ', stat_cooking:'กำลังทำ',
+    stat_done:'เสร็จแล้ว', stat_cancelled:'ยกเลิก', stat_revenue:'รายได้วันนี้',
+    filter_all:'📋 ทั้งหมด', filter_pending:'🔴 รอทำ',
+    filter_cooking:'🟡 กำลังทำ', filter_done:'🟢 เสร็จแล้ว', filter_cancelled:'⚫ ยกเลิก',
+    loading_orders:'กำลังโหลดออเดอร์...',
+    empty_orders:'ไม่มีออเดอร์ในตอนนี้ 🎉',
+    table:'โต๊ะ',
+    status_pending:'🔴 รอทำ', status_cooking:'🟡 กำลังทำ',
+    status_done:'✅ เสร็จแล้ว', status_cancelled:'⚫ ยกเลิก',
+    note_label:'📝 หมายเหตุ:',
+    total_label:'รวม:',
+    btn_start:'🔥 เริ่มทำ', btn_done:'✅ เสร็จแล้ว',
+    btn_cancel:'❌ ยกเลิก', btn_undo:'↩️ ย้อนกลับ',
+    toast_cooking:'เริ่มทำออเดอร์ #{id}',
+    toast_done:'ออเดอร์ #{id} เสร็จแล้ว! 🎉',
+    toast_cancelled:'ยกเลิกออเดอร์ #{id}',
+    toast_undo:'ย้อนกลับออเดอร์ #{id}',
+    sound_on:'🔔 เสียง ON', sound_off:'🔕 เสียง OFF',
+    conn_online:'เชื่อมต่อแล้ว', conn_offline:'ขาดการเชื่อมต่อ',
+    timer_min:'{m} นาที {s} วินาที',
+    baht:'฿'
+  },
+  en:{
+    kitchen_badge:'👨‍🍳 Kitchen Display',
+    stat_pending:'Pending', stat_cooking:'Cooking',
+    stat_done:'Done', stat_cancelled:'Cancelled', stat_revenue:"Today's Revenue",
+    filter_all:'📋 All', filter_pending:'🔴 Pending',
+    filter_cooking:'🟡 Cooking', filter_done:'🟢 Done', filter_cancelled:'⚫ Cancelled',
+    loading_orders:'Loading orders...',
+    empty_orders:'No orders right now 🎉',
+    table:'Table',
+    status_pending:'🔴 Pending', status_cooking:'🟡 Cooking',
+    status_done:'✅ Done', status_cancelled:'⚫ Cancelled',
+    note_label:'📝 Note:',
+    total_label:'Total:',
+    btn_start:'🔥 Start Cooking', btn_done:'✅ Mark Done',
+    btn_cancel:'❌ Cancel', btn_undo:'↩️ Undo',
+    toast_cooking:'Started cooking order #{id}',
+    toast_done:'Order #{id} done! 🎉',
+    toast_cancelled:'Cancelled order #{id}',
+    toast_undo:'Reverted order #{id}',
+    sound_on:'🔔 Sound ON', sound_off:'🔕 Sound OFF',
+    conn_online:'Connected', conn_offline:'Disconnected',
+    timer_min:'{m}m {s}s',
+    baht:'฿'
+  },
+  zh:{
+    kitchen_badge:'👨‍🍳 厨房显示',
+    stat_pending:'待制作', stat_cooking:'制作中',
+    stat_done:'已完成', stat_cancelled:'已取消', stat_revenue:'今日收入',
+    filter_all:'📋 全部', filter_pending:'🔴 待制作',
+    filter_cooking:'🟡 制作中', filter_done:'🟢 已完成', filter_cancelled:'⚫ 已取消',
+    loading_orders:'正在加载订单...',
+    empty_orders:'暂无订单 🎉',
+    table:'桌',
+    status_pending:'🔴 待制作', status_cooking:'🟡 制作中',
+    status_done:'✅ 已完成', status_cancelled:'⚫ 已取消',
+    note_label:'📝 备注:',
+    total_label:'合计:',
+    btn_start:'🔥 开始制作', btn_done:'✅ 标记完成',
+    btn_cancel:'❌ 取消', btn_undo:'↩️ 撤销',
+    toast_cooking:'开始制作订单 #{id}',
+    toast_done:'订单 #{id} 已完成！🎉',
+    toast_cancelled:'已取消订单 #{id}',
+    toast_undo:'已撤销订单 #{id}',
+    sound_on:'🔔 声音 ON', sound_off:'🔕 声音 OFF',
+    conn_online:'已连接', conn_offline:'连接断开',
+    timer_min:'{m}分{s}秒',
+    baht:'฿'
+  }
+};
+
+// ===== STATE =====
+let currentLang  = localStorage.getItem('ok_lang') || 'th';
+let currentFilter = 'all';
+let soundEnabled  = true;
+let allOrders     = {};   // { fbKey: orderData }
+let timerInterval = null;
+
+// ===== TRANSLATE =====
+function t(key, params={}) {
+  let text = i18n[currentLang][key] || key;
+  Object.keys(params).forEach(k => { text = text.replace(`{${k}}`, params[k]); });
+  return text;
+}
+
+function getItemName(item) {
+  if (currentLang==='en' && item.name_en) return item.name_en;
+  if (currentLang==='zh' && item.name_zh) return item.name_zh;
+  return item.name_th || item.name || '—';
+}
+
+// ===== SET LANG =====
+window.setLang = function(lang) {
+  currentLang = lang;
+  localStorage.setItem('ok_lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang===lang));
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.dataset.i18n;
+    if (i18n[lang][k]) el.textContent = i18n[lang][k];
+  });
+  document.getElementById('sound-label').textContent =
+    (soundEnabled ? t('sound_on') : t('sound_off')).replace(/🔔 |🔕 /,'');
+  renderOrders();
+};
+
+// ===== CLOCK =====
+function startClock() {
+  function tick() {
+    const now = new Date();
+    document.getElementById('clock').textContent =
+      now.toLocaleTimeString(currentLang==='en'?'en-US':'th-TH', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  }
+  tick();
+  setInterval(tick, 1000);
+}
+
+// ===== SOUND =====
+window.toggleSound = function() {
+  soundEnabled = !soundEnabled;
+  const btn = document.getElementById('sound-btn');
+  btn.classList.toggle('on', soundEnabled);
+  document.getElementById('sound-label').textContent =
+    (soundEnabled ? t('sound_on') : t('sound_off')).replace(/🔔 |🔕 /,'');
+};
+
+function playSound(type) {
+  if (!soundEnabled) return;
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    if (type === 'new') {
+      // 3 beeps
+      [0, 0.2, 0.4].forEach(delay => {
+        const o2 = ctx.createOscillator();
+        const g2 = ctx.createGain();
+        o2.connect(g2); g2.connect(ctx.destination);
+        o2.frequency.value = 880;
+        g2.gain.setValueAtTime(0.3, ctx.currentTime + delay);
+        g2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.15);
+        o2.start(ctx.currentTime + delay);
+        o2.stop(ctx.currentTime + delay + 0.15);
+      });
+    } else if (type === 'done') {
+      osc.frequency.value = 660;
+      gain.gain.setValueAtTime(0.3, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+      osc.start(); osc.stop(ctx.currentTime + 0.5);
+    }
+  } catch(e) {}
+}
+
+// ===== TOAST =====
+function showToast(msg, type='info') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `toast show ${type}`;
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// ===== FILTER =====
+window.setFilter = function(f) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.className = 'filter-btn';
+    const match = b.getAttribute('onclick')?.match(/'([^']+)'/);
+    if (match && match[1] === f) b.classList.add(`active-${f}`);
+  });
+  renderOrders();
+};
+
+// ===== TIMER HELPER =====
+function getElapsed(createdAt) {
+  const ms = Date.now() - new Date(createdAt).getTime();
+  const m  = Math.floor(ms / 60000);
+  const s  = Math.floor((ms % 60000) / 1000);
+  return { m, s, total: ms };
+}
+
+function timerClass(ms) {
+  if (ms > 900000) return 'urgent';   // > 15 min
+  if (ms > 600000) return 'warning';  // > 10 min
+  return 'ok';
+}
+
+// ===== UPDATE STATS =====
+function updateStats() {
+  const today  = new Date().toDateString();
+  const orders = Object.values(allOrders);
+  const todayO = orders.filter(o => new Date(o.createdAt).toDateString() === today);
+
+  document.getElementById('s-pending').textContent   = todayO.filter(o=>o.status==='pending').length;
+  document.getElementById('s-cooking').textContent   = todayO.filter(o=>o.status==='cooking').length;
+  document.getElementById('s-done').textContent      = todayO.filter(o=>o.status==='done').length;
+  document.getElementById('s-cancelled').textContent = todayO.filter(o=>o.status==='cancelled').length;
+  const revenue = todayO.filter(o=>o.status==='done').reduce((s,o)=>s+(o.total||0),0);
+  document.getElementById('s-revenue').textContent   = revenue.toLocaleString() + t('baht');
+}
+
+// ===== RENDER ORDERS =====
+function renderOrders() {
+  const today  = new Date().toDateString();
+  let orders   = Object.entries(allOrders)
+    .map(([k,v]) => ({fbKey:k,...v}))
+    .filter(o => new Date(o.createdAt).toDateString() === today);
+
+  // filter by status
+  if (currentFilter !== 'all') orders = orders.filter(o => o.status === currentFilter);
+
+  // sort: pending first, then cooking, then done/cancelled; newest first within group
+  const order_map = {pending:0, cooking:1, done:2, cancelled:3};
+  orders.sort((a,b) => {
+    if (order_map[a.status] !== order_map[b.status]) return order_map[a.status] - order_map[b.status];
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
+
+  const container = document.getElementById('orders-container');
+
+  if (!orders.length) {
+    container.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">🥟</div>
+      <div class="empty-text">${t('empty_orders')}</div>
+    </div>`;
+    return;
+  }
+
+  container.innerHTML = orders.map(o => orderCardHTML(o)).join('');
+}
+
+function orderCardHTML(o) {
+  const elapsed   = getElapsed(o.createdAt);
+  const tClass    = timerClass(elapsed.total);
+  const timeStr   = t('timer_min', {m: elapsed.m, s: String(elapsed.s).padStart(2,'0')});
+  const statusKey = `status_${o.status}`;
+
+  const itemsHTML = (o.items||[]).map(item => `
+    <div class="item-row">
+      <span class="item-name">${getItemName(item)}</span>
+      <span class="item-qty">× ${item.qty}</span>
+    </div>`).join('');
+
+  const noteHTML = o.note
+    ? `<div class="order-note"><span class="note-icon">📝</span>${o.note}</div>` : '';
+
+  // Action buttons by status
+  let actionsHTML = '';
+  if (o.status === 'pending') {
+    actionsHTML = `
+      <div class="action-row">
+        <button class="action-btn btn-start"  onclick="updateStatus('${o.fbKey}','cooking')">${t('btn_start')}</button>
+      </div>
+      <div class="action-row-2" style="margin-top:8px;">
+        <button class="action-btn btn-cancel" onclick="updateStatus('${o.fbKey}','cancelled')">${t('btn_cancel')}</button>
+        <div></div>
+      </div>`;
+  } else if (o.status === 'cooking') {
+    actionsHTML = `
+      <div class="action-row">
+        <button class="action-btn btn-done" onclick="updateStatus('${o.fbKey}','done')">${t('btn_done')}</button>
+      </div>
+      <div class="action-row-2" style="margin-top:8px;">
+        <button class="action-btn btn-undo"   onclick="updateStatus('${o.fbKey}','pending')">${t('btn_undo')}</button>
+        <button class="action-btn btn-cancel" onclick="updateStatus('${o.fbKey}','cancelled')">${t('btn_cancel')}</button>
+      </div>`;
+  } else if (o.status === 'done') {
+    actionsHTML = `
+      <div class="action-row">
+        <button class="action-btn btn-undo" onclick="updateStatus('${o.fbKey}','cooking')">${t('btn_undo')}</button>
+      </div>`;
+  } else if (o.status === 'cancelled') {
+    actionsHTML = `
+      <div class="action-row">
+        <button class="action-btn btn-undo" onclick="updateStatus('${o.fbKey}','pending')">${t('btn_undo')}</button>
+      </div>`;
+  }
+
+  const shortId = (o.orderId||o.fbKey).slice(-6);
+
+  return `
+    <div class="order-card status-${o.status}" id="card-${o.fbKey}">
+      <div class="card-header">
+        <div class="order-id">#${shortId}</div>
+        <div class="table-tag">🪑 ${t('table')} ${o.tableNo||'?'}</div>
+      </div>
+      <span class="status-badge ${o.status}">
+        <span class="status-dot"></span>${t(statusKey)}
+      </span>
+      <div class="order-timer">
+        ⏱ <span class="timer-val ${tClass}">${timeStr}</span>
+      </div>
+      <div class="items-list">${itemsHTML}</div>
+      ${noteHTML}
+      <div class="order-total">
+        <span class="total-label">${t('total_label')}</span>
+        <span class="total-val">${(o.total||0).toLocaleString()} ${t('baht')}</span>
+      </div>
+      ${actionsHTML}
+    </div>`;
+}
+
+// ===== UPDATE STATUS → FIREBASE =====
+window.updateStatus = async function(fbKey, newStatus) {
+  const o = allOrders[fbKey]; if (!o) return;
+  const shortId = (o.orderId||fbKey).slice(-6);
+  try {
+    await update(ref(db, `orders/${fbKey}`), {
+      status: newStatus,
+      [`${newStatus}At`]: new Date().toISOString()
+    });
+    // toast
+    const toastKey = newStatus === 'cooking'   ? 'toast_cooking'
+                   : newStatus === 'done'       ? 'toast_done'
+                   : newStatus === 'cancelled'  ? 'toast_cancelled'
+                   : 'toast_undo';
+    const type = newStatus==='done' ? 'success' : newStatus==='cancelled' ? 'error' : 'info';
+    showToast(t(toastKey, {id: shortId}), type);
+    if (newStatus==='done') playSound('done');
+  } catch(err) {
+    showToast('❌ เกิดข้อผิดพลาด: ' + err.message, 'error');
+  }
+};
+
+// ===== LISTEN TO ORDERS — REALTIME =====
+let prevKeys = new Set();
+
+onValue(ref(db, 'orders'), snap => {
+  // Connection OK
+  document.getElementById('conn-dot').className   = 'connection-dot online';
+  document.getElementById('conn-label').textContent = t('conn_online');
+
+  const newOrders = {};
+  if (snap.exists()) {
+    snap.forEach(child => { newOrders[child.key] = child.val(); });
+  }
+
+  // Detect new pending orders → play sound
+  Object.entries(newOrders).forEach(([k, o]) => {
+    if (!prevKeys.has(k) && o.status === 'pending') {
+      playSound('new');
+      showToast(`🆕 ออเดอร์ใหม่! โต๊ะ ${o.tableNo} — #${(o.orderId||k).slice(-6)}`, 'info');
+    }
+  });
+  prevKeys = new Set(Object.keys(newOrders));
+
+  allOrders = newOrders;
+  updateStats();
+  renderOrders();
+}, error => {
+  document.getElementById('conn-dot').className    = 'connection-dot offline';
+  document.getElementById('conn-label').textContent = t('conn_offline');
+});
+
+// ===== REFRESH TIMERS EVERY 10s =====
+setInterval(() => { renderOrders(); updateStats(); }, 10000);
+
+// ===== INIT =====
+window.addEventListener('DOMContentLoaded', () => {
+  startClock();
+  setLang(currentLang);
+});
+
+</script>
+
+</body>
+</html>
