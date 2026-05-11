@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="th">
 <head>
     <meta charset="UTF-8">
@@ -8,198 +9,205 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        :root {
-            --crimson: #9B2226; --crimson-light: #AE2012;
-            --crimson-soft: rgba(155,34,38,0.08);
-            --gold: #D4A373; --gold-light: #E9C496;
-            --gold-soft: rgba(212,163,115,0.15);
-            --jade: #588157; --jade-soft: rgba(88,129,87,0.12);
-            --warm-white: #FDF6EC; --cream: #F5EBDC; --paper: #FAF3E8;
-            --ink: #3D2B1F; --ink-light: #6B5B4F; --ink-muted: #9B8B7F;
-            --shadow-warm: rgba(155,34,38,0.08);
-        }
+```
+    :root {
+        --crimson: #9B2226; --crimson-light: #AE2012;
+        --crimson-soft: rgba(155,34,38,0.08);
+        --gold: #D4A373; --gold-light: #E9C496;
+        --gold-soft: rgba(212,163,115,0.15);
+        --jade: #588157; --jade-soft: rgba(88,129,87,0.12);
+        --warm-white: #FDF6EC; --cream: #F5EBDC; --paper: #FAF3E8;
+        --ink: #3D2B1F; --ink-light: #6B5B4F; --ink-muted: #9B8B7F;
+        --shadow-warm: rgba(155,34,38,0.08);
+    }
 
-        body { font-family:'Noto Sans Thai',sans-serif; background:var(--warm-white); color:var(--ink); min-height:100vh; overflow-x:hidden; }
+    body { font-family:'Noto Sans Thai',sans-serif; background:var(--warm-white); color:var(--ink); min-height:100vh; overflow-x:hidden; }
 
-        body::before { content:''; position:fixed; top:0;left:0;right:0;bottom:0; background-image:url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E"); pointer-events:none; z-index:1000; opacity:0.6; }
+    body::before { content:''; position:fixed; top:0;left:0;right:0;bottom:0; background-image:url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E"); pointer-events:none; z-index:1000; opacity:0.6; }
 
-        @keyframes lantern-glow { 0%,100%{box-shadow:0 4px 20px rgba(155,34,38,0.15);} 50%{box-shadow:0 4px 30px rgba(155,34,38,0.22);} }
-        @keyframes slide-up { from{transform:translateY(20px);opacity:0;} to{transform:translateY(0);opacity:1;} }
-        @keyframes warm-pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.02);} }
+    @keyframes lantern-glow { 0%,100%{box-shadow:0 4px 20px rgba(155,34,38,0.15);} 50%{box-shadow:0 4px 30px rgba(155,34,38,0.22);} }
+    @keyframes slide-up { from{transform:translateY(20px);opacity:0;} to{transform:translateY(0);opacity:1;} }
+    @keyframes warm-pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.02);} }
 
-        /* HEADER */
-        .header { background:linear-gradient(160deg,var(--crimson) 0%,#7B181C 60%,#5A1216 100%); padding:35px 20px 40px; text-align:center; position:relative; overflow:hidden; }
-        .header::before { content:'🥟'; position:absolute; top:15px;left:20px; font-size:2rem; opacity:0.4; animation:warm-pulse 4s ease-in-out infinite; }
-        .header::after  { content:'🥟'; position:absolute; top:15px;right:20px; font-size:2rem; opacity:0.4; animation:warm-pulse 4s ease-in-out infinite 2s; }
+    /* HEADER */
+    .header { background:linear-gradient(160deg,var(--crimson) 0%,#7B181C 60%,#5A1216 100%); padding:35px 20px 40px; text-align:center; position:relative; overflow:hidden; }
+    .header::before { content:'🥟'; position:absolute; top:15px;left:20px; font-size:2rem; opacity:0.4; animation:warm-pulse 4s ease-in-out infinite; }
+    .header::after  { content:'🥟'; position:absolute; top:15px;right:20px; font-size:2rem; opacity:0.4; animation:warm-pulse 4s ease-in-out infinite 2s; }
 
-        .back-btn { position:absolute;top:15px;left:60px; background:rgba(255,255,255,0.15); border:1.5px solid rgba(255,255,255,0.3); color:rgba(255,248,240,0.9); padding:7px 14px; border-radius:20px; cursor:pointer; font-size:0.8rem;font-weight:600; font-family:'Noto Sans Thai',sans-serif; transition:all 0.3s ease; z-index:2; text-decoration:none; display:inline-flex; align-items:center; gap:5px; }
-        .back-btn:hover { background:rgba(255,255,255,0.25); transform:translateX(-2px); }
+    .back-btn { position:absolute;top:15px;left:60px; background:rgba(255,255,255,0.15); border:1.5px solid rgba(255,255,255,0.3); color:rgba(255,248,240,0.9); padding:7px 14px; border-radius:20px; cursor:pointer; font-size:0.8rem;font-weight:600; font-family:'Noto Sans Thai',sans-serif; transition:all 0.3s ease; z-index:2; text-decoration:none; display:inline-flex; align-items:center; gap:5px; }
+    .back-btn:hover { background:rgba(255,255,255,0.25); transform:translateX(-2px); }
 
-        .logo { font-family:'Cormorant Garamond',serif; font-size:2.6rem;font-weight:700; color:var(--gold-light); letter-spacing:3px; position:relative;z-index:1; text-shadow:0 2px 10px rgba(0,0,0,0.3); }
-        .logo span { color:#FFF8F0; font-weight:400; font-style:italic; }
-        .subtitle { color:rgba(255,248,240,0.7); font-size:0.95rem; margin-top:8px; font-weight:300; letter-spacing:1px; }
+    .logo { font-family:'Cormorant Garamond',serif; font-size:2.6rem;font-weight:700; color:var(--gold-light); letter-spacing:3px; position:relative;z-index:1; text-shadow:0 2px 10px rgba(0,0,0,0.3); }
+    .logo span { color:#FFF8F0; font-weight:400; font-style:italic; }
+    .subtitle { color:rgba(255,248,240,0.7); font-size:0.95rem; margin-top:8px; font-weight:300; letter-spacing:1px; }
 
-        .lang-switcher { display:flex; justify-content:center; gap:8px; margin-top:18px; position:relative;z-index:1; }
-        .lang-btn { padding:6px 14px; border:1.5px solid rgba(212,163,115,0.4); background:rgba(255,255,255,0.08); color:rgba(255,248,240,0.8); border-radius:20px; cursor:pointer; font-weight:600;font-size:0.8rem; transition:all 0.4s ease; font-family:'Noto Sans Thai',sans-serif; }
-        .lang-btn:hover { background:rgba(212,163,115,0.2); border-color:var(--gold); transform:translateY(-1px); }
-        .lang-btn.active { background:rgba(212,163,115,0.25); border-color:var(--gold-light); color:var(--gold-light); }
+    .lang-switcher { display:flex; justify-content:center; gap:8px; margin-top:18px; position:relative;z-index:1; }
+    .lang-btn { padding:6px 14px; border:1.5px solid rgba(212,163,115,0.4); background:rgba(255,255,255,0.08); color:rgba(255,248,240,0.8); border-radius:20px; cursor:pointer; font-weight:600;font-size:0.8rem; transition:all 0.4s ease; font-family:'Noto Sans Thai',sans-serif; }
+    .lang-btn:hover { background:rgba(212,163,115,0.2); border-color:var(--gold); transform:translateY(-1px); }
+    .lang-btn.active { background:rgba(212,163,115,0.25); border-color:var(--gold-light); color:var(--gold-light); }
 
-        /* NAV */
-        .nav-tabs { display:flex; background:var(--cream); border-bottom:1px solid rgba(155,34,38,0.1); overflow-x:auto; scrollbar-width:none; padding:0 10px; position:sticky;top:0;z-index:100; backdrop-filter:blur(10px); }
-        .nav-tabs::-webkit-scrollbar { display:none; }
-        .nav-tab { flex:1; min-width:90px; padding:16px 10px; border:none; background:none; color:var(--ink-muted); font-family:'Noto Sans Thai',sans-serif; font-weight:600; font-size:0.85rem; cursor:pointer; transition:all 0.4s ease; position:relative; white-space:nowrap; border-radius:12px 12px 0 0; margin:0 2px; }
-        .nav-tab:hover { color:var(--crimson); background:rgba(155,34,38,0.05); }
-        .nav-tab.active { color:var(--crimson); background:var(--paper); font-weight:700; }
-        .nav-tab.active::after { content:''; position:absolute; bottom:0;left:20%;width:60%;height:3px; background:linear-gradient(90deg,transparent,var(--crimson),var(--gold),var(--crimson),transparent); border-radius:3px; }
+    /* NAV */
+    .nav-tabs { display:flex; background:var(--cream); border-bottom:1px solid rgba(155,34,38,0.1); overflow-x:auto; scrollbar-width:none; padding:0 10px; position:sticky;top:0;z-index:100; backdrop-filter:blur(10px); }
+    .nav-tabs::-webkit-scrollbar { display:none; }
+    .nav-tab { flex:1; min-width:90px; padding:16px 10px; border:none; background:none; color:var(--ink-muted); font-family:'Noto Sans Thai',sans-serif; font-weight:600; font-size:0.85rem; cursor:pointer; transition:all 0.4s ease; position:relative; white-space:nowrap; border-radius:12px 12px 0 0; margin:0 2px; }
+    .nav-tab:hover { color:var(--crimson); background:rgba(155,34,38,0.05); }
+    .nav-tab.active { color:var(--crimson); background:var(--paper); font-weight:700; }
+    .nav-tab.active::after { content:''; position:absolute; bottom:0;left:20%;width:60%;height:3px; background:linear-gradient(90deg,transparent,var(--crimson),var(--gold),var(--crimson),transparent); border-radius:3px; }
 
-        /* CONTENT */
-        .content { padding:25px 20px; max-width:900px; margin:0 auto; background:var(--paper); min-height:calc(100vh - 200px); }
-        .tab-content { display:none; animation:slide-up 0.4s ease; }
-        .tab-content.active { display:block; }
+    /* CONTENT */
+    .content { padding:25px 20px; max-width:900px; margin:0 auto; background:var(--paper); min-height:calc(100vh - 200px); }
+    .tab-content { display:none; animation:slide-up 0.4s ease; }
+    .tab-content.active { display:block; }
 
-        /* CARD */
-        .card { background:#FFFFFF; border-radius:20px; padding:28px; margin-bottom:20px; position:relative; overflow:hidden; transition:all 0.4s ease; border:1px solid rgba(155,34,38,0.06); box-shadow:0 2px 8px var(--shadow-warm),0 8px 32px rgba(155,34,38,0.04); }
-        .card::before { content:''; position:absolute; top:0;left:0; width:100%;height:4px; background:linear-gradient(90deg,var(--crimson),var(--gold),var(--jade),var(--gold),var(--crimson)); opacity:0.6; }
-        .card:hover { box-shadow:0 4px 16px var(--shadow-warm),0 12px 40px rgba(155,34,38,0.08); transform:translateY(-2px); }
-        .card-title { font-family:'Cormorant Garamond',serif; font-size:1.6rem;font-weight:700; color:var(--crimson); margin-bottom:22px; display:flex;align-items:center;gap:10px; padding-bottom:12px; border-bottom:1px solid rgba(155,34,38,0.1); }
+    /* CARD */
+    .card { background:#FFFFFF; border-radius:20px; padding:28px; margin-bottom:20px; position:relative; overflow:hidden; transition:all 0.4s ease; border:1px solid rgba(155,34,38,0.06); box-shadow:0 2px 8px var(--shadow-warm),0 8px 32px rgba(155,34,38,0.04); }
+    .card::before { content:''; position:absolute; top:0;left:0; width:100%;height:4px; background:linear-gradient(90deg,var(--crimson),var(--gold),var(--jade),var(--gold),var(--crimson)); opacity:0.6; }
+    .card:hover { box-shadow:0 4px 16px var(--shadow-warm),0 12px 40px rgba(155,34,38,0.08); transform:translateY(-2px); }
+    .card-title { font-family:'Cormorant Garamond',serif; font-size:1.6rem;font-weight:700; color:var(--crimson); margin-bottom:22px; display:flex;align-items:center;gap:10px; padding-bottom:12px; border-bottom:1px solid rgba(155,34,38,0.1); }
 
-        /* STATS */
-        .stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:15px; margin-bottom:25px; }
-        .stat-card { background:linear-gradient(145deg,#FFFFFF,var(--warm-white)); border:1px solid rgba(155,34,38,0.1); border-radius:20px; padding:22px 15px; text-align:center; animation:lantern-glow 4s ease-in-out infinite; transition:all 0.4s ease; }
-        .stat-card:nth-child(1){border-top:3px solid var(--crimson);} .stat-card:nth-child(2){border-top:3px solid var(--gold);animation-delay:1.3s;} .stat-card:nth-child(3){border-top:3px solid var(--jade);animation-delay:2.6s;}
-        .stat-card:hover { transform:translateY(-4px); box-shadow:0 8px 30px rgba(155,34,38,0.12); }
-        .stat-card h3 { font-family:'Cormorant Garamond',serif; font-size:2.4rem;font-weight:700; margin-bottom:6px; }
-        .stat-card:nth-child(1) h3{color:var(--crimson);} .stat-card:nth-child(2) h3{color:var(--gold);} .stat-card:nth-child(3) h3{color:var(--jade);}
-        .stat-card p { color:var(--ink-muted); font-size:0.85rem;font-weight:600; }
+    /* STATS */
+    .stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:15px; margin-bottom:25px; }
+    .stat-card { background:linear-gradient(145deg,#FFFFFF,var(--warm-white)); border:1px solid rgba(155,34,38,0.1); border-radius:20px; padding:22px 15px; text-align:center; animation:lantern-glow 4s ease-in-out infinite; transition:all 0.4s ease; }
+    .stat-card:nth-child(1){border-top:3px solid var(--crimson);} .stat-card:nth-child(2){border-top:3px solid var(--gold);animation-delay:1.3s;} .stat-card:nth-child(3){border-top:3px solid var(--jade);animation-delay:2.6s;}
+    .stat-card:hover { transform:translateY(-4px); box-shadow:0 8px 30px rgba(155,34,38,0.12); }
+    .stat-card h3 { font-family:'Cormorant Garamond',serif; font-size:2.4rem;font-weight:700; margin-bottom:6px; }
+    .stat-card:nth-child(1) h3{color:var(--crimson);} .stat-card:nth-child(2) h3{color:var(--gold);} .stat-card:nth-child(3) h3{color:var(--jade);}
+    .stat-card p { color:var(--ink-muted); font-size:0.85rem;font-weight:600; }
 
-        /* FORM */
-        .form-group { margin-bottom:18px; }
-        .form-group label { display:block; margin-bottom:8px; font-weight:600; color:var(--crimson); font-size:0.9rem; }
-        .form-group input, .form-group select, .form-group textarea { width:100%; padding:14px 18px; background:var(--warm-white); border:1.5px solid rgba(155,34,38,0.15); border-radius:14px; color:var(--ink); font-family:'Noto Sans Thai',sans-serif; font-size:1rem; transition:all 0.3s ease; }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline:none; border-color:var(--crimson); box-shadow:0 0 0 4px var(--crimson-soft); background:#FFFFFF; }
-        .form-group textarea { min-height:65px; resize:vertical; }
-        .form-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:15px; }
-        .form-row-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+    /* FORM */
+    .form-group { margin-bottom:18px; }
+    .form-group label { display:block; margin-bottom:8px; font-weight:600; color:var(--crimson); font-size:0.9rem; }
+    .form-group input, .form-group select, .form-group textarea { width:100%; padding:14px 18px; background:var(--warm-white); border:1.5px solid rgba(155,34,38,0.15); border-radius:14px; color:var(--ink); font-family:'Noto Sans Thai',sans-serif; font-size:1rem; transition:all 0.3s ease; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline:none; border-color:var(--crimson); box-shadow:0 0 0 4px var(--crimson-soft); background:#FFFFFF; }
+    .form-group textarea { min-height:65px; resize:vertical; }
+    .form-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:15px; }
+    .form-row-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
 
-        .lang-name-section { background:var(--warm-white); border:1.5px solid rgba(155,34,38,0.1); border-radius:14px; padding:16px; margin-bottom:18px; }
-        .lang-name-section .lang-label { font-size:0.78rem;font-weight:700; color:var(--ink-muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px; }
+    .lang-name-section { background:var(--warm-white); border:1.5px solid rgba(155,34,38,0.1); border-radius:14px; padding:16px; margin-bottom:18px; }
+    .lang-name-section .lang-label { font-size:0.78rem;font-weight:700; color:var(--ink-muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px; }
 
-        /* BUTTONS */
-        .btn { padding:13px 26px; border:none; border-radius:14px; font-family:'Noto Sans Thai',sans-serif; font-weight:700; font-size:0.9rem; cursor:pointer; transition:all 0.4s ease; }
-        .btn-primary { background:linear-gradient(135deg,var(--crimson),var(--crimson-light)); color:#FFF8F0; box-shadow:0 4px 15px rgba(155,34,38,0.25); }
-        .btn-primary:hover { transform:translateY(-2px); box-shadow:0 6px 25px rgba(155,34,38,0.35); }
-        .btn-success { background:linear-gradient(135deg,var(--jade),#6B9B6A); color:#FFF8F0; box-shadow:0 4px 15px rgba(88,129,87,0.25); }
-        .btn-success:hover { transform:translateY(-2px); }
-        .btn-warning { background:linear-gradient(135deg,#B8860B,#D4A373); color:#FFF8F0; }
-        .btn-warning:hover { transform:translateY(-2px); }
-        .btn-danger { background:linear-gradient(135deg,#C0392B,#E74C3C); color:#FFF8F0; box-shadow:0 4px 15px rgba(192,57,43,0.25); }
-        .btn-danger:hover { transform:translateY(-2px); }
-        .btn-sm { padding:7px 13px; font-size:0.78rem; border-radius:10px; }
-        .btn:disabled { opacity:0.45; cursor:not-allowed; transform:none !important; }
+    /* BUTTONS */
+    .btn { padding:13px 26px; border:none; border-radius:14px; font-family:'Noto Sans Thai',sans-serif; font-weight:700; font-size:0.9rem; cursor:pointer; transition:all 0.4s ease; }
+    .btn-primary { background:linear-gradient(135deg,var(--crimson),var(--crimson-light)); color:#FFF8F0; box-shadow:0 4px 15px rgba(155,34,38,0.25); }
+    .btn-primary:hover { transform:translateY(-2px); box-shadow:0 6px 25px rgba(155,34,38,0.35); }
+    .btn-success { background:linear-gradient(135deg,var(--jade),#6B9B6A); color:#FFF8F0; box-shadow:0 4px 15px rgba(88,129,87,0.25); }
+    .btn-success:hover { transform:translateY(-2px); }
+    .btn-warning { background:linear-gradient(135deg,#B8860B,#D4A373); color:#FFF8F0; }
+    .btn-warning:hover { transform:translateY(-2px); }
+    .btn-danger { background:linear-gradient(135deg,#C0392B,#E74C3C); color:#FFF8F0; box-shadow:0 4px 15px rgba(192,57,43,0.25); }
+    .btn-danger:hover { transform:translateY(-2px); }
+    .btn-sm { padding:7px 13px; font-size:0.78rem; border-radius:10px; }
+    .btn:disabled { opacity:0.45; cursor:not-allowed; transform:none !important; }
 
-        /* ALERTS */
-        .alert { padding:16px 20px; border-radius:14px; margin-bottom:12px; border:1px solid; position:relative; background:#FFFFFF; }
-        .alert-danger { border-color:rgba(155,34,38,0.2); background:linear-gradient(135deg,#FFF5F5,#FFFFFF); color:var(--crimson); }
-        .alert-danger::before { content:''; position:absolute; left:0;top:0;bottom:0; width:4px; background:linear-gradient(180deg,var(--crimson),var(--crimson-light)); border-radius:14px 0 0 14px; }
-        .alert-warning { border-color:rgba(212,163,115,0.3); background:linear-gradient(135deg,#FFFBF5,#FFFFFF); color:#8B6914; }
-        .alert-warning::before { content:''; position:absolute; left:0;top:0;bottom:0; width:4px; background:linear-gradient(180deg,var(--gold),var(--gold-light)); border-radius:14px 0 0 14px; }
-        .alert-success { border-color:rgba(88,129,87,0.2); background:linear-gradient(135deg,#F5FBF5,#FFFFFF); color:var(--jade); }
-        .alert-success::before { content:''; position:absolute; left:0;top:0;bottom:0; width:4px; background:linear-gradient(180deg,var(--jade),#6B9B6A); border-radius:14px 0 0 14px; }
+    /* ALERTS */
+    .alert { padding:16px 20px; border-radius:14px; margin-bottom:12px; border:1px solid; position:relative; background:#FFFFFF; }
+    .alert-danger { border-color:rgba(155,34,38,0.2); background:linear-gradient(135deg,#FFF5F5,#FFFFFF); color:var(--crimson); }
+    .alert-danger::before { content:''; position:absolute; left:0;top:0;bottom:0; width:4px; background:linear-gradient(180deg,var(--crimson),var(--crimson-light)); border-radius:14px 0 0 14px; }
+    .alert-warning { border-color:rgba(212,163,115,0.3); background:linear-gradient(135deg,#FFFBF5,#FFFFFF); color:#8B6914; }
+    .alert-warning::before { content:''; position:absolute; left:0;top:0;bottom:0; width:4px; background:linear-gradient(180deg,var(--gold),var(--gold-light)); border-radius:14px 0 0 14px; }
+    .alert-success { border-color:rgba(88,129,87,0.2); background:linear-gradient(135deg,#F5FBF5,#FFFFFF); color:var(--jade); }
+    .alert-success::before { content:''; position:absolute; left:0;top:0;bottom:0; width:4px; background:linear-gradient(180deg,var(--jade),#6B9B6A); border-radius:14px 0 0 14px; }
 
-        /* SEARCH */
-        .search-box { margin-bottom:20px; position:relative; }
-        .search-box input { width:100%; padding:14px 20px 14px 48px; background:var(--warm-white); border:1.5px solid rgba(155,34,38,0.12); border-radius:14px; color:var(--ink); font-family:'Noto Sans Thai',sans-serif; font-size:1rem; transition:all 0.3s ease; }
-        .search-box input:focus { outline:none; border-color:var(--crimson); box-shadow:0 0 0 4px var(--crimson-soft); background:#FFFFFF; }
-        .search-box::before { content:'🔍'; position:absolute; left:18px;top:50%; transform:translateY(-50%); font-size:1rem; opacity:0.5; }
+    /* SEARCH */
+    .search-box { margin-bottom:20px; position:relative; }
+    .search-box input { width:100%; padding:14px 20px 14px 48px; background:var(--warm-white); border:1.5px solid rgba(155,34,38,0.12); border-radius:14px; color:var(--ink); font-family:'Noto Sans Thai',sans-serif; font-size:1rem; transition:all 0.3s ease; }
+    .search-box input:focus { outline:none; border-color:var(--crimson); box-shadow:0 0 0 4px var(--crimson-soft); background:#FFFFFF; }
+    .search-box::before { content:'🔍'; position:absolute; left:18px;top:50%; transform:translateY(-50%); font-size:1rem; opacity:0.5; }
 
-        /* EMPTY */
-        .empty-state { text-align:center; padding:50px 20px; color:var(--ink-muted); }
-        .empty-state-icon { font-size:3.5rem; margin-bottom:15px; opacity:0.6; }
+    /* EMPTY */
+    .empty-state { text-align:center; padding:50px 20px; color:var(--ink-muted); }
+    .empty-state-icon { font-size:3.5rem; margin-bottom:15px; opacity:0.6; }
 
-        /* TABLE */
-        .table-container { overflow-x:auto; border-radius:16px; border:1px solid rgba(155,34,38,0.08); background:#FFFFFF; }
-        table { width:100%; border-collapse:separate; border-spacing:0; font-size:0.88rem; }
-        th { background:linear-gradient(180deg,var(--cream),var(--warm-white)); color:var(--crimson); padding:14px 10px; font-weight:700; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.5px; border-bottom:2px solid rgba(155,34,38,0.1); white-space:nowrap; }
-        td { padding:13px 10px; border-bottom:1px solid rgba(155,34,38,0.05); color:var(--ink-light); vertical-align:middle; }
-        tr:hover td { background:var(--crimson-soft); color:var(--ink); }
-        tr:last-child td { border-bottom:none; }
+    /* TABLE */
+    .table-container { overflow-x:auto; border-radius:16px; border:1px solid rgba(155,34,38,0.08); background:#FFFFFF; }
+    table { width:100%; border-collapse:separate; border-spacing:0; font-size:0.88rem; }
+    th { background:linear-gradient(180deg,var(--cream),var(--warm-white)); color:var(--crimson); padding:14px 10px; font-weight:700; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.5px; border-bottom:2px solid rgba(155,34,38,0.1); white-space:nowrap; }
+    td { padding:13px 10px; border-bottom:1px solid rgba(155,34,38,0.05); color:var(--ink-light); vertical-align:middle; }
+    tr:hover td { background:var(--crimson-soft); color:var(--ink); }
+    tr:last-child td { border-bottom:none; }
 
-        /* INGREDIENT ROW */
-        .ingredient-row { display:grid; grid-template-columns:2fr 1fr 1fr auto; gap:10px; align-items:end; margin-bottom:12px; padding:12px; background:var(--warm-white); border-radius:12px; border:1px solid rgba(155,34,38,0.08); }
-        .ingredient-row .form-group { margin-bottom:0; }
-        .remove-ingredient { background:#FFE5E5; border:none; color:var(--crimson); width:36px;height:36px; border-radius:10px; cursor:pointer; font-size:1.2rem; transition:all 0.3s ease; display:flex;align-items:center;justify-content:center; }
-        .remove-ingredient:hover { background:var(--crimson); color:white; transform:scale(1.1); }
-        .add-ingredient-btn { width:100%; padding:12px; background:var(--gold-soft); border:2px dashed var(--gold); border-radius:12px; color:var(--gold); font-weight:700; cursor:pointer; transition:all 0.3s ease; margin-top:8px; font-family:'Noto Sans Thai',sans-serif; font-size:0.9rem; }
-        .add-ingredient-btn:hover { background:var(--gold); color:white; border-style:solid; }
+    /* INGREDIENT ROW */
+    .ingredient-row { display:grid; grid-template-columns:2fr 1fr 1fr auto; gap:10px; align-items:end; margin-bottom:12px; padding:12px; background:var(--warm-white); border-radius:12px; border:1px solid rgba(155,34,38,0.08); }
+    .ingredient-row .form-group { margin-bottom:0; }
+    .remove-ingredient { background:#FFE5E5; border:none; color:var(--crimson); width:36px;height:36px; border-radius:10px; cursor:pointer; font-size:1.2rem; transition:all 0.3s ease; display:flex;align-items:center;justify-content:center; }
+    .remove-ingredient:hover { background:var(--crimson); color:white; transform:scale(1.1); }
+    .add-ingredient-btn { width:100%; padding:12px; background:var(--gold-soft); border:2px dashed var(--gold); border-radius:12px; color:var(--gold); font-weight:700; cursor:pointer; transition:all 0.3s ease; margin-top:8px; font-family:'Noto Sans Thai',sans-serif; font-size:0.9rem; }
+    .add-ingredient-btn:hover { background:var(--gold); color:white; border-style:solid; }
 
-        /* MENU GRID */
-        .menu-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(265px,1fr)); gap:20px; }
-        .menu-card { background:#FFFFFF; border-radius:20px; padding:22px; border:1px solid rgba(155,34,38,0.08); box-shadow:0 2px 8px var(--shadow-warm); transition:all 0.4s ease; position:relative; overflow:hidden; }
-        .menu-card::before { content:''; position:absolute; top:0;left:0; width:100%;height:3px; background:linear-gradient(90deg,var(--crimson),var(--gold)); }
-        .menu-card:hover { transform:translateY(-4px); box-shadow:0 8px 30px rgba(155,34,38,0.12); }
-        .menu-card-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px; }
-        .menu-card-title { font-family:'Cormorant Garamond',serif; font-size:1.3rem;font-weight:700; color:var(--crimson); }
-        .menu-card-price { font-size:1.1rem;font-weight:700; color:var(--gold); white-space:nowrap; }
-        .menu-card-names { font-size:0.72rem; color:var(--ink-muted); margin-bottom:8px; line-height:1.5; }
-        .menu-card-category { display:inline-block; padding:4px 12px; background:var(--crimson-soft); color:var(--crimson); border-radius:20px; font-size:0.72rem;font-weight:600; margin-bottom:10px; }
-        .menu-card-desc { font-size:0.8rem; color:var(--ink-muted); margin-bottom:8px; line-height:1.5; }
-        .menu-card-ingredients { color:var(--ink-muted); font-size:0.82rem; line-height:1.6; margin-bottom:10px; }
-        .menu-card-time { font-size:0.75rem; color:var(--ink-muted); margin-bottom:6px; }
-        .menu-card-actions { display:flex; gap:7px; padding-top:12px; border-top:1px solid rgba(155,34,38,0.08); flex-wrap:wrap; }
+    /* MENU GRID */
+    .menu-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(265px,1fr)); gap:20px; }
+    .menu-card { background:#FFFFFF; border-radius:20px; padding:22px; border:1px solid rgba(155,34,38,0.08); box-shadow:0 2px 8px var(--shadow-warm); transition:all 0.4s ease; position:relative; overflow:hidden; }
+    .menu-card::before { content:''; position:absolute; top:0;left:0; width:100%;height:3px; background:linear-gradient(90deg,var(--crimson),var(--gold)); }
+    .menu-card:hover { transform:translateY(-4px); box-shadow:0 8px 30px rgba(155,34,38,0.12); }
+    .menu-card-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px; }
+    .menu-card-title { font-family:'Cormorant Garamond',serif; font-size:1.3rem;font-weight:700; color:var(--crimson); }
+    .menu-card-price { font-size:1.1rem;font-weight:700; color:var(--gold); white-space:nowrap; }
+    .menu-card-names { font-size:0.72rem; color:var(--ink-muted); margin-bottom:8px; line-height:1.5; }
+    .menu-card-category { display:inline-block; padding:4px 12px; background:var(--crimson-soft); color:var(--crimson); border-radius:20px; font-size:0.72rem;font-weight:600; margin-bottom:10px; }
+    .menu-card-desc { font-size:0.8rem; color:var(--ink-muted); margin-bottom:8px; line-height:1.5; }
+    .menu-card-ingredients { color:var(--ink-muted); font-size:0.82rem; line-height:1.6; margin-bottom:10px; }
+    .menu-card-time { font-size:0.75rem; color:var(--ink-muted); margin-bottom:6px; }
+    .menu-card-actions { display:flex; gap:7px; padding-top:12px; border-top:1px solid rgba(155,34,38,0.08); flex-wrap:wrap; }
 
-        /* COOK MODAL */
-        .modal-overlay { display:none; position:fixed; top:0;left:0;right:0;bottom:0; background:rgba(61,43,31,0.6); z-index:2000; backdrop-filter:blur(5px); align-items:center;justify-content:center; padding:20px; }
-        .modal-overlay.active { display:flex; }
-        .modal { background:var(--paper); border-radius:24px; padding:32px; max-width:500px;width:100%; max-height:90vh; overflow-y:auto; position:relative; animation:slide-up 0.3s ease; box-shadow:0 20px 60px rgba(0,0,0,0.3); }
-        .modal::before { content:''; position:absolute; top:0;left:0;width:100%;height:5px; background:linear-gradient(90deg,var(--crimson),var(--gold),var(--jade)); border-radius:24px 24px 0 0; }
+    /* COOK MODAL */
+    .modal-overlay { display:none; position:fixed; top:0;left:0;right:0;bottom:0; background:rgba(61,43,31,0.6); z-index:2000; backdrop-filter:blur(5px); align-items:center;justify-content:center; padding:20px; }
+    .modal-overlay.active { display:flex; }
+    .modal { background:var(--paper); border-radius:24px; padding:32px; max-width:500px;width:100%; max-height:90vh; overflow-y:auto; position:relative; animation:slide-up 0.3s ease; box-shadow:0 20px 60px rgba(0,0,0,0.3); }
+    .modal::before { content:''; position:absolute; top:0;left:0;width:100%;height:5px; background:linear-gradient(90deg,var(--crimson),var(--gold),var(--jade)); border-radius:24px 24px 0 0; }
 
-        .modal-close { position:absolute; top:16px;right:16px; background:rgba(155,34,38,0.1); border:none; color:var(--crimson); width:36px;height:36px; border-radius:50%; font-size:1.1rem; cursor:pointer;font-weight:700; display:flex;align-items:center;justify-content:center; transition:all 0.3s ease; }
-        .modal-close:hover { background:var(--crimson); color:white; }
-        .modal-title { font-family:'Cormorant Garamond',serif; font-size:1.7rem;font-weight:700; color:var(--crimson); margin-bottom:16px; padding-right:40px; }
+    .modal-close { position:absolute; top:16px;right:16px; background:rgba(155,34,38,0.1); border:none; color:var(--crimson); width:36px;height:36px; border-radius:50%; font-size:1.1rem; cursor:pointer;font-weight:700; display:flex;align-items:center;justify-content:center; transition:all 0.3s ease; }
+    .modal-close:hover { background:var(--crimson); color:white; }
+    .modal-title { font-family:'Cormorant Garamond',serif; font-size:1.7rem;font-weight:700; color:var(--crimson); margin-bottom:16px; padding-right:40px; }
 
-        .cook-ingredient-list { background:var(--warm-white); border-radius:16px; padding:16px; margin-bottom:18px; }
-        .cook-ingredient-item { display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid rgba(155,34,38,0.06); }
-        .cook-ingredient-item:last-child { border-bottom:none; }
-        .cook-ingredient-name { font-weight:600; color:var(--ink); }
-        .cook-ingredient-qty  { color:var(--crimson); font-weight:700; }
-        .cook-ingredient-stock { font-size:0.78rem; color:var(--ink-muted); }
-        .cook-ingredient-item.insufficient { background:rgba(255,0,0,0.05); border-radius:8px; padding:9px; margin:0 -8px; }
-        .cook-ingredient-item.insufficient .cook-ingredient-name { color:var(--crimson); }
+    .cook-ingredient-list { background:var(--warm-white); border-radius:16px; padding:16px; margin-bottom:18px; }
+    .cook-ingredient-item { display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid rgba(155,34,38,0.06); }
+    .cook-ingredient-item:last-child { border-bottom:none; }
+    .cook-ingredient-name { font-weight:600; color:var(--ink); }
+    .cook-ingredient-qty  { color:var(--crimson); font-weight:700; }
+    .cook-ingredient-stock { font-size:0.78rem; color:var(--ink-muted); }
+    .cook-ingredient-item.insufficient { background:rgba(255,0,0,0.05); border-radius:8px; padding:9px; margin:0 -8px; }
+    .cook-ingredient-item.insufficient .cook-ingredient-name { color:var(--crimson); }
 
-        .qty-input { display:flex; align-items:center; gap:12px; margin-bottom:18px; }
-        .qty-input label { font-weight:700; color:var(--crimson); white-space:nowrap; }
-        .qty-input input { width:80px; text-align:center; padding:10px; font-size:1.1rem;font-weight:700; border:2px solid var(--crimson); border-radius:12px; background:white; }
-        .qty-input input:focus { outline:none; box-shadow:0 0 0 4px var(--crimson-soft); }
+    .qty-input { display:flex; align-items:center; gap:12px; margin-bottom:18px; }
+    .qty-input label { font-weight:700; color:var(--crimson); white-space:nowrap; }
+    .qty-input input { width:80px; text-align:center; padding:10px; font-size:1.1rem;font-weight:700; border:2px solid var(--crimson); border-radius:12px; background:white; }
+    .qty-input input:focus { outline:none; box-shadow:0 0 0 4px var(--crimson-soft); }
 
-        .cook-total { background:linear-gradient(135deg,var(--crimson-soft),var(--gold-soft)); border-radius:16px; padding:16px; margin-bottom:18px; text-align:center; }
-        .cook-total-label { font-size:0.85rem; color:var(--ink-muted); margin-bottom:4px; }
-        .cook-total-value { font-family:'Cormorant Garamond',serif; font-size:2rem;font-weight:700; color:var(--crimson); }
-        .btn-cook { width:100%; padding:16px; font-size:1.05rem; }
+    .cook-total { background:linear-gradient(135deg,var(--crimson-soft),var(--gold-soft)); border-radius:16px; padding:16px; margin-bottom:18px; text-align:center; }
+    .cook-total-label { font-size:0.85rem; color:var(--ink-muted); margin-bottom:4px; }
+    .cook-total-value { font-family:'Cormorant Garamond',serif; font-size:2rem;font-weight:700; color:var(--crimson); }
+    .btn-cook { width:100%; padding:16px; font-size:1.05rem; }
 
-        /* EDIT MODAL */
-        .edit-modal-overlay { display:none; position:fixed; top:0;left:0;right:0;bottom:0; background:rgba(61,43,31,0.65); z-index:3000; backdrop-filter:blur(5px); align-items:center;justify-content:center; padding:20px; }
-        .edit-modal-overlay.show { display:flex; }
-        .edit-modal-box { background:#FFFFFF; border-radius:24px; padding:30px; width:100%;max-width:620px; max-height:92vh; overflow-y:auto; box-shadow:0 20px 60px rgba(155,34,38,0.25); animation:slide-up 0.3s ease; position:relative; }
-        .edit-modal-box::before { content:''; position:absolute; top:0;left:0;width:100%;height:5px; background:linear-gradient(90deg,var(--crimson),var(--gold),var(--jade)); border-radius:24px 24px 0 0; }
-        .modal-footer { display:flex; gap:10px; margin-top:22px; flex-wrap:wrap; }
+    /* EDIT MODAL */
+    .edit-modal-overlay { display:none; position:fixed; top:0;left:0;right:0;bottom:0; background:rgba(61,43,31,0.65); z-index:3000; backdrop-filter:blur(5px); align-items:center;justify-content:center; padding:20px; }
+    .edit-modal-overlay.show { display:flex; }
+    .edit-modal-box { background:#FFFFFF; border-radius:24px; padding:30px; width:100%;max-width:620px; max-height:92vh; overflow-y:auto; box-shadow:0 20px 60px rgba(155,34,38,0.25); animation:slide-up 0.3s ease; position:relative; }
+    .edit-modal-box::before { content:''; position:absolute; top:0;left:0;width:100%;height:5px; background:linear-gradient(90deg,var(--crimson),var(--gold),var(--jade)); border-radius:24px 24px 0 0; }
+    .modal-footer { display:flex; gap:10px; margin-top:22px; flex-wrap:wrap; }
 
-        /* UTILS */
-        .warm-text { color:var(--gold); font-weight:700; }
-        .crimson-text { color:var(--crimson); font-weight:700; }
-        .warm-divider { height:1px; background:linear-gradient(90deg,transparent,rgba(155,34,38,0.15),var(--gold),rgba(155,34,38,0.15),transparent); margin:22px 0; }
-        .footer-note { text-align:center; padding:30px 20px; color:var(--ink-muted); font-size:0.85rem; font-style:italic; }
+    /* UTILS */
+    .warm-text { color:var(--gold); font-weight:700; }
+    .crimson-text { color:var(--crimson); font-weight:700; }
+    .warm-divider { height:1px; background:linear-gradient(90deg,transparent,rgba(155,34,38,0.15),var(--gold),rgba(155,34,38,0.15),transparent); margin:22px 0; }
+    .footer-note { text-align:center; padding:30px 20px; color:var(--ink-muted); font-size:0.85rem; font-style:italic; }
 
-        @media (max-width: 768px) {
-            .logo{font-size:2rem;} .stats-grid{grid-template-columns:1fr;gap:10px;}
-            .form-row{grid-template-columns:1fr;} .form-row-3{grid-template-columns:1fr;}
-            .nav-tab{font-size:0.75rem;padding:14px 6px;min-width:80px;}
-            .content{padding:16px 12px;} .card{padding:18px;border-radius:16px;}
-            .menu-grid{grid-template-columns:1fr;}
-            .ingredient-row{grid-template-columns:1fr 1fr;}
-            table{font-size:0.78rem;} th,td{padding:10px 7px;}
-            .back-btn{left:54px;font-size:0.72rem;padding:5px 10px;}
-        }
-    </style>
+    @media (max-width: 768px) {
+        .logo{font-size:2rem;} .stats-grid{grid-template-columns:1fr;gap:10px;}
+        .form-row{grid-template-columns:1fr;} .form-row-3{grid-template-columns:1fr;}
+        .nav-tab{font-size:0.75rem;padding:14px 6px;min-width:80px;}
+        .content{padding:16px 12px;} .card{padding:18px;border-radius:16px;}
+        .menu-grid{grid-template-columns:1fr;}
+        .ingredient-row{grid-template-columns:1fr 1fr;}
+        table{font-size:0.78rem;} th,td{padding:10px 7px;}
+        .back-btn{left:54px;font-size:0.72rem;padding:5px 10px;}
+    }
+</style>
+```
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+
 </head>
 <body>
 
@@ -224,118 +232,121 @@
 
 <div class="content">
 
-    <div id="dashboard" class="tab-content active">
-        <div class="stats-grid">
-            <div class="stat-card"><h3 id="total-menus">0</h3><p data-i18n="stat_menus">เมนูทั้งหมด</p></div>
-            <div class="stat-card"><h3 id="today-orders">0</h3><p data-i18n="stat_orders">ออเดอร์วันนี้</p></div>
-            <div class="stat-card"><h3 id="low-ingredients">0</h3><p data-i18n="stat_low_ing">วัตถุดิบใกล้หมด</p></div>
-        </div>
-        <div class="card">
-            <div class="card-title" data-i18n="alerts_title">⚠️ แจ้งเตือนวัตถุดิบ</div>
-            <div id="alerts-container"></div>
-        </div>
+```
+<div id="dashboard" class="tab-content active">
+    <div class="stats-grid">
+        <div class="stat-card"><h3 id="total-menus">0</h3><p data-i18n="stat_menus">เมนูทั้งหมด</p></div>
+        <div class="stat-card"><h3 id="today-orders">0</h3><p data-i18n="stat_orders">ออเดอร์วันนี้</p></div>
+        <div class="stat-card"><h3 id="low-ingredients">0</h3><p data-i18n="stat_low_ing">วัตถุดิบใกล้หมด</p></div>
     </div>
+    <div class="card">
+        <div class="card-title" data-i18n="alerts_title">⚠️ แจ้งเตือนวัตถุดิบ</div>
+        <div id="alerts-container"></div>
+    </div>
+</div>
 
-    <div id="menus" class="tab-content">
-        <div class="card">
-            <div class="card-title" data-i18n="tab_menus">🍽️ เมนูอาหารทั้งหมด</div>
-            <div class="search-box">
-                <input type="text" id="menu-search" data-i18n-placeholder="ph_search_menu" placeholder="ค้นหาเมนู..." onkeyup="renderMenus()">
+<div id="menus" class="tab-content">
+    <div class="card">
+        <div class="card-title" data-i18n="tab_menus">🍽️ เมนูอาหารทั้งหมด</div>
+        <div class="search-box">
+            <input type="text" id="menu-search" data-i18n-placeholder="ph_search_menu" placeholder="ค้นหาเมนู..." onkeyup="renderMenus()">
+        </div>
+        <div id="menus-grid-container" class="menu-grid"></div>
+    </div>
+</div>
+
+<div id="add-menu" class="tab-content">
+    <div class="card">
+        <div class="card-title" data-i18n="title_add_menu">➕ เพิ่มเมนูใหม่</div>
+        <form id="menu-form" onsubmit="addMenu(event)">
+
+            <div class="lang-name-section">
+                <div class="lang-label" data-i18n="label_name_multilang">ชื่อเมนู (กรอกทุกภาษา)</div>
+                <div class="form-row-3">
+                    <div class="form-group" style="margin-bottom:0">
+                        <label>🇹🇭 ภาษาไทย *</label>
+                        <input type="text" id="menu-name-th" placeholder="เกี๊ยวซ่าหมู" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom:0">
+                        <label>🇬🇧 English</label>
+                        <input type="text" id="menu-name-en" placeholder="Pork Gyoza">
+                    </div>
+                    <div class="form-group" style="margin-bottom:0">
+                        <label>🇨🇳 中文</label>
+                        <input type="text" id="menu-name-zh" placeholder="猪肉煎饺">
+                    </div>
+                </div>
             </div>
-            <div id="menus-grid-container" class="menu-grid"></div>
-        </div>
-    </div>
 
-    <div id="add-menu" class="tab-content">
-        <div class="card">
-            <div class="card-title" data-i18n="title_add_menu">➕ เพิ่มเมนูใหม่</div>
-            <form id="menu-form" onsubmit="addMenu(event)">
-
-                <div class="lang-name-section">
-                    <div class="lang-label" data-i18n="label_name_multilang">ชื่อเมนู (กรอกทุกภาษา)</div>
-                    <div class="form-row-3">
-                        <div class="form-group" style="margin-bottom:0">
-                            <label>🇹🇭 ภาษาไทย *</label>
-                            <input type="text" id="menu-name-th" placeholder="เกี๊ยวซ่าหมู" required>
-                        </div>
-                        <div class="form-group" style="margin-bottom:0">
-                            <label>🇬🇧 English</label>
-                            <input type="text" id="menu-name-en" placeholder="Pork Gyoza">
-                        </div>
-                        <div class="form-group" style="margin-bottom:0">
-                            <label>🇨🇳 中文</label>
-                            <input type="text" id="menu-name-zh" placeholder="猪肉煎饺">
-                        </div>
-                    </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label data-i18n="label_price">ราคา (บาท)</label>
+                    <input type="number" id="menu-price" placeholder="89" min="0" step="0.01" required>
                 </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label data-i18n="label_price">ราคา (บาท)</label>
-                        <input type="number" id="menu-price" placeholder="89" min="0" step="0.01" required>
-                    </div>
-                    <div class="form-group">
-                        <label data-i18n="label_category">หมวดหมู่</label>
-                        <select id="menu-category" required></select>
-                    </div>
-                    <div class="form-group">
-                        <label data-i18n="label_time">เวลาทำ (นาที)</label>
-                        <input type="number" id="menu-time" placeholder="15" min="1">
-                    </div>
+                <div class="form-group">
+                    <label data-i18n="label_category">หมวดหมู่</label>
+                    <select id="menu-category" required></select>
                 </div>
-
-                <div class="lang-name-section">
-                    <div class="lang-label" data-i18n="label_desc_multilang">คำอธิบายเมนู (ถ้ามี)</div>
-                    <div class="form-row-3">
-                        <div class="form-group" style="margin-bottom:0"><label>🇹🇭 ไทย</label><textarea id="menu-desc-th" placeholder="รสชาติกลมกล่อม..." style="min-height:60px"></textarea></div>
-                        <div class="form-group" style="margin-bottom:0"><label>🇬🇧 EN</label><textarea id="menu-desc-en" placeholder="Rich flavor..." style="min-height:60px"></textarea></div>
-                        <div class="form-group" style="margin-bottom:0"><label>🇨🇳 中文</label><textarea id="menu-desc-zh" placeholder="味道鲜美..." style="min-height:60px"></textarea></div>
-                    </div>
+                <div class="form-group">
+                    <label data-i18n="label_time">เวลาทำ (นาที)</label>
+                    <input type="number" id="menu-time" placeholder="15" min="1">
                 </div>
-
-                <div class="warm-divider"></div>
-                <div style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:700;color:var(--crimson);margin-bottom:16px;" data-i18n="label_ingredients">🧂 วัตถุดิบในสูตร</div>
-
-                <div id="ingredients-container">
-                    <div class="ingredient-row">
-                        <div class="form-group"><label data-i18n="label_select_ing">เลือกวัตถุดิบ</label><select class="ing-product" required><option value=""></option></select></div>
-                        <div class="form-group"><label data-i18n="label_qty">จำนวน</label><input type="number" class="ing-qty" placeholder="0.5" min="0.01" step="0.01" required></div>
-                        <div class="form-group"><label data-i18n="label_unit">หน่วย</label><input type="text" class="ing-unit" readonly></div>
-                        <button type="button" class="remove-ingredient" onclick="removeIngredientRow(this)" style="visibility:hidden">×</button>
-                    </div>
-                </div>
-                <button type="button" class="add-ingredient-btn" id="btn-add-ing" onclick="addIngredientRow()">+ เพิ่มวัตถุดิบ</button>
-
-                <div style="margin-top:24px;">
-                    <button type="submit" class="btn btn-primary" data-i18n="btn_save_menu">💾 บันทึกเมนู</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="cook" class="tab-content">
-        <div class="card">
-            <div class="card-title" data-i18n="title_cook">👨‍🍳 ทำอาหาร (ตัดสต๊อกอัตโนมัติ)</div>
-            <div class="search-box">
-                <input type="text" id="cook-search" data-i18n-placeholder="ph_search_menu" placeholder="ค้นหาเมนู..." onkeyup="renderCookMenus()">
             </div>
-            <div id="cook-menus-container" class="menu-grid"></div>
-        </div>
-    </div>
 
-    <div id="history" class="tab-content">
-        <div class="card">
-            <div class="card-title" data-i18n="title_history">📋 ประวัติการทำอาหาร</div>
-            <div class="search-box">
-                <input type="text" id="history-search" data-i18n-placeholder="ph_search_history" placeholder="ค้นหาประวัติ..." onkeyup="renderHistory()">
+            <div class="lang-name-section">
+                <div class="lang-label" data-i18n="label_desc_multilang">คำอธิบายเมนู (ถ้ามี)</div>
+                <div class="form-row-3">
+                    <div class="form-group" style="margin-bottom:0"><label>🇹🇭 ไทย</label><textarea id="menu-desc-th" placeholder="รสชาติกลมกล่อม..." style="min-height:60px"></textarea></div>
+                    <div class="form-group" style="margin-bottom:0"><label>🇬🇧 EN</label><textarea id="menu-desc-en" placeholder="Rich flavor..." style="min-height:60px"></textarea></div>
+                    <div class="form-group" style="margin-bottom:0"><label>🇨🇳 中文</label><textarea id="menu-desc-zh" placeholder="味道鲜美..." style="min-height:60px"></textarea></div>
+                </div>
             </div>
-            <div class="table-container"><div id="history-table-container"></div></div>
-        </div>
+
+            <div class="warm-divider"></div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:700;color:var(--crimson);margin-bottom:16px;" data-i18n="label_ingredients">🧂 วัตถุดิบในสูตร</div>
+
+            <div id="ingredients-container">
+                <div class="ingredient-row">
+                    <div class="form-group"><label data-i18n="label_select_ing">เลือกวัตถุดิบ</label><select class="ing-product" required><option value=""></option></select></div>
+                    <div class="form-group"><label data-i18n="label_qty">จำนวน</label><input type="number" class="ing-qty" placeholder="0.5" min="0.01" step="0.01" required></div>
+                    <div class="form-group"><label data-i18n="label_unit">หน่วย</label><input type="text" class="ing-unit" readonly></div>
+                    <button type="button" class="remove-ingredient" onclick="removeIngredientRow(this)" style="visibility:hidden">×</button>
+                </div>
+            </div>
+            <button type="button" class="add-ingredient-btn" id="btn-add-ing" onclick="addIngredientRow()">+ เพิ่มวัตถุดิบ</button>
+
+            <div style="margin-top:24px;">
+                <button type="submit" class="btn btn-primary" data-i18n="btn_save_menu">💾 บันทึกเมนู</button>
+            </div>
+        </form>
     </div>
+</div>
+
+<div id="cook" class="tab-content">
+    <div class="card">
+        <div class="card-title" data-i18n="title_cook">👨‍🍳 ทำอาหาร (ตัดสต๊อกอัตโนมัติ)</div>
+        <div class="search-box">
+            <input type="text" id="cook-search" data-i18n-placeholder="ph_search_menu" placeholder="ค้นหาเมนู..." onkeyup="renderCookMenus()">
+        </div>
+        <div id="cook-menus-container" class="menu-grid"></div>
+    </div>
+</div>
+
+<div id="history" class="tab-content">
+    <div class="card">
+        <div class="card-title" data-i18n="title_history">📋 ประวัติการทำอาหาร</div>
+        <div class="search-box">
+            <input type="text" id="history-search" data-i18n-placeholder="ph_search_history" placeholder="ค้นหาประวัติ..." onkeyup="renderHistory()">
+        </div>
+        <div class="table-container"><div id="history-table-container"></div></div>
+    </div>
+</div>
+```
 
 </div>
 
 <!-- COOK MODAL -->
+
 <div class="modal-overlay" id="cook-modal">
     <div class="modal">
         <button class="modal-close" onclick="closeCookModal()">✕</button>
@@ -356,52 +367,76 @@
 </div>
 
 <!-- EDIT MODAL -->
+
 <div class="edit-modal-overlay" id="edit-modal">
     <div class="edit-modal-box">
         <button class="modal-close" onclick="closeEditModal()">✕</button>
         <div class="modal-title" data-i18n="title_edit_menu">✏️ แก้ไขเมนู</div>
         <input type="hidden" id="edit-menu-id">
 
-        <div class="lang-name-section">
-            <div class="lang-label" data-i18n="label_name_multilang">ชื่อเมนู (ทุกภาษา)</div>
-            <div class="form-row-3">
-                <div class="form-group" style="margin-bottom:0"><label>🇹🇭 ภาษาไทย</label><input type="text" id="edit-name-th"></div>
-                <div class="form-group" style="margin-bottom:0"><label>🇬🇧 English</label><input type="text" id="edit-name-en"></div>
-                <div class="form-group" style="margin-bottom:0"><label>🇨🇳 中文</label><input type="text" id="edit-name-zh"></div>
-            </div>
-        </div>
-
-        <div class="form-row">
-            <div class="form-group"><label data-i18n="label_price">ราคา (บาท)</label><input type="number" id="edit-price" min="0" step="0.01"></div>
-            <div class="form-group"><label data-i18n="label_category">หมวดหมู่</label><select id="edit-category"></select></div>
-            <div class="form-group"><label data-i18n="label_time">เวลาทำ (นาที)</label><input type="number" id="edit-time" min="1"></div>
-        </div>
-
-        <div class="lang-name-section">
-            <div class="lang-label" data-i18n="label_desc_multilang">คำอธิบายเมนู</div>
-            <div class="form-row-3">
-                <div class="form-group" style="margin-bottom:0"><label>🇹🇭 ไทย</label><textarea id="edit-desc-th" style="min-height:55px"></textarea></div>
-                <div class="form-group" style="margin-bottom:0"><label>🇬🇧 EN</label><textarea id="edit-desc-en" style="min-height:55px"></textarea></div>
-                <div class="form-group" style="margin-bottom:0"><label>🇨🇳 中文</label><textarea id="edit-desc-zh" style="min-height:55px"></textarea></div>
-            </div>
-        </div>
-
-        <div class="warm-divider"></div>
-        <div style="font-weight:700;color:var(--crimson);margin-bottom:14px;" data-i18n="label_ingredients">🧂 วัตถุดิบในสูตร</div>
-        <div id="edit-ingredients-container"></div>
-        <button type="button" class="add-ingredient-btn" id="btn-edit-add-ing" onclick="addEditIngredientRow()">+ เพิ่มวัตถุดิบ</button>
-
-        <div class="modal-footer">
-            <button class="btn btn-primary" onclick="saveEditMenu()" data-i18n="btn_save_edit">💾 บันทึกการแก้ไข</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteMenuFromModal()" data-i18n="btn_delete">🗑️ ลบเมนู</button>
-            <button class="btn btn-sm" style="background:var(--cream);color:var(--ink);" onclick="closeEditModal()" data-i18n="btn_cancel">ยกเลิก</button>
+```
+    <div class="lang-name-section">
+        <div class="lang-label" data-i18n="label_name_multilang">ชื่อเมนู (ทุกภาษา)</div>
+        <div class="form-row-3">
+            <div class="form-group" style="margin-bottom:0"><label>🇹🇭 ภาษาไทย</label><input type="text" id="edit-name-th"></div>
+            <div class="form-group" style="margin-bottom:0"><label>🇬🇧 English</label><input type="text" id="edit-name-en"></div>
+            <div class="form-group" style="margin-bottom:0"><label>🇨🇳 中文</label><input type="text" id="edit-name-zh"></div>
         </div>
     </div>
+
+    <div class="form-row">
+        <div class="form-group"><label data-i18n="label_price">ราคา (บาท)</label><input type="number" id="edit-price" min="0" step="0.01"></div>
+        <div class="form-group"><label data-i18n="label_category">หมวดหมู่</label><select id="edit-category"></select></div>
+        <div class="form-group"><label data-i18n="label_time">เวลาทำ (นาที)</label><input type="number" id="edit-time" min="1"></div>
+    </div>
+
+    <div class="lang-name-section">
+        <div class="lang-label" data-i18n="label_desc_multilang">คำอธิบายเมนู</div>
+        <div class="form-row-3">
+            <div class="form-group" style="margin-bottom:0"><label>🇹🇭 ไทย</label><textarea id="edit-desc-th" style="min-height:55px"></textarea></div>
+            <div class="form-group" style="margin-bottom:0"><label>🇬🇧 EN</label><textarea id="edit-desc-en" style="min-height:55px"></textarea></div>
+            <div class="form-group" style="margin-bottom:0"><label>🇨🇳 中文</label><textarea id="edit-desc-zh" style="min-height:55px"></textarea></div>
+        </div>
+    </div>
+
+    <div class="warm-divider"></div>
+    <div style="font-weight:700;color:var(--crimson);margin-bottom:14px;" data-i18n="label_ingredients">🧂 วัตถุดิบในสูตร</div>
+    <div id="edit-ingredients-container"></div>
+    <button type="button" class="add-ingredient-btn" id="btn-edit-add-ing" onclick="addEditIngredientRow()">+ เพิ่มวัตถุดิบ</button>
+
+    <div class="modal-footer">
+        <button class="btn btn-primary" onclick="saveEditMenu()" data-i18n="btn_save_edit">💾 บันทึกการแก้ไข</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteMenuFromModal()" data-i18n="btn_delete">🗑️ ลบเมนู</button>
+        <button class="btn btn-sm" style="background:var(--cream);color:var(--ink);" onclick="closeEditModal()" data-i18n="btn_cancel">ยกเลิก</button>
+    </div>
+</div>
+```
+
 </div>
 
 <div class="footer-note">🥟 Ohoi Kyoza — ทุกจานที่ทำ คือความใส่ใจ 🏮</div>
 
 <script>
+// ===== FIREBASE COMPAT =====
+const _db = (() => {
+  try {
+    if (!firebase.apps.length) {
+      firebase.initializeApp({
+        apiKey:"AIzaSyC650BBAj_y7bObsIA5KpMQkLDNg4FEtmw",
+        authDomain:"ohoi-kyoza.firebaseapp.com",
+        databaseURL:"https://ohoi-kyoza-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId:"ohoi-kyoza",
+        storageBucket:"ohoi-kyoza.firebasestorage.app",
+        messagingSenderId:"311350815436",
+        appId:"1:311350815436:web:5638717dc207f286e5b069"
+      });
+    }
+    return firebase.database();
+  } catch(e) { console.warn('Firebase init:', e); return null; }
+})();
+function fbSet(path, val) { if(_db) _db.ref(path).set(val).catch(e=>console.warn(e)); }
+function fbListen(path, cb) { if(_db) _db.ref(path).on('value', cb); }
+
 // ===== CATEGORY DATA =====
 const categoryData = {
     gyoza:{th:'🥟 เกี๊ยวซ่า',en:'🥟 Gyoza',zh:'🥟 煎饺'},
@@ -540,7 +575,31 @@ function changeLanguage(lang) {
     document.getElementById('btn-edit-add-ing').textContent = t('btn_add_ing');
 }
 
-document.addEventListener('DOMContentLoaded', () => { renderCategoryDropdowns(); changeLanguage(currentLang); });
+document.addEventListener('DOMContentLoaded', () => {
+  renderCategoryDropdowns();
+  fbListen('menus', snap => {
+    if (snap && snap.exists()) {
+      menus = Object.values(snap.val()).map(m=>({...m,id:Number(m.id)||m.id}));
+      localStorage.setItem('ok_menus', JSON.stringify(menus));
+    } else { menus = []; }
+    renderMenus(); renderCookMenus(); updateDashboard();
+  });
+  fbListen('products', snap => {
+    if (snap && snap.exists()) {
+      products = Object.values(snap.val()).map(p=>({...p,id:Number(p.id)||p.id}));
+      localStorage.setItem('ok_products', JSON.stringify(products));
+    } else { products = []; }
+    renderMenus(); renderCookMenus(); updateDashboard();
+  });
+  fbListen('cook_history', snap => {
+    if (snap && snap.exists()) {
+      cookHistory = Object.values(snap.val());
+      localStorage.setItem('ok_cook_history', JSON.stringify(cookHistory));
+    } else { cookHistory = []; }
+    renderHistory(); updateDashboard();
+  });
+  changeLanguage(currentLang);
+});
 
 // ===== CATEGORY DROPDOWNS =====
 function renderCategoryDropdowns() {
@@ -889,11 +948,15 @@ function renderHistory() {
 
 // ===== SAVE =====
 function saveData() {
-    localStorage.setItem('ok_products',     JSON.stringify(products));
-    localStorage.setItem('ok_transactions', JSON.stringify(transactions));
-    localStorage.setItem('ok_menus',        JSON.stringify(menus));
-    localStorage.setItem('ok_cook_history', JSON.stringify(cookHistory));
+  localStorage.setItem('ok_products',     JSON.stringify(products));
+  localStorage.setItem('ok_transactions', JSON.stringify(transactions));
+  localStorage.setItem('ok_menus',        JSON.stringify(menus));
+  localStorage.setItem('ok_cook_history', JSON.stringify(cookHistory));
+  const mo={}; menus.forEach(m=>{mo[String(m.id)]=m;}); fbSet('menus',mo);
+  const co={}; cookHistory.forEach(h=>{co[String(h.id)]=h;}); fbSet('cook_history',co);
+  const po={}; products.forEach(p=>{po[String(p.id)]=p;}); fbSet('products',po);
 }
 </script>
+
 </body>
 </html>

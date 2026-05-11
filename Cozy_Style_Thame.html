@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="th">
 <head>
 <meta charset="UTF-8">
@@ -24,79 +25,79 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background-
 @keyframes slide-up{from{transform:translateY(20px);opacity:0;}to{transform:translateY(0);opacity:1;}}
 
 /* HEADER */
-.header{background:linear-gradient(160deg,var(--crimson) 0%,#7B181C 60%,#5A1216 100%);padding:35px 20px 40px;text-align:center;position:relative;overflow:hidden;}
-.header::before{content:'🏮';position:absolute;top:15px;left:20px;font-size:2rem;opacity:0.4;animation:warm-pulse 4s ease-in-out infinite;}
-.header::after{content:'🏮';position:absolute;top:15px;right:20px;font-size:2rem;opacity:0.4;animation:warm-pulse 4s ease-in-out infinite 2s;}
-.back-btn{position:absolute;top:15px;left:60px;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.3);color:rgba(255,248,240,0.9);padding:7px 14px;border-radius:20px;cursor:pointer;font-size:0.8rem;font-weight:600;font-family:'Noto Sans Thai',sans-serif;transition:all 0.3s ease;z-index:2;text-decoration:none;display:inline-flex;align-items:center;gap:5px;}
+.header{background:linear-gradient(160deg,var(–crimson) 0%,#7B181C 60%,#5A1216 100%);padding:35px 20px 40px;text-align:center;position:relative;overflow:hidden;}
+.header::before{content:‘🏮’;position:absolute;top:15px;left:20px;font-size:2rem;opacity:0.4;animation:warm-pulse 4s ease-in-out infinite;}
+.header::after{content:‘🏮’;position:absolute;top:15px;right:20px;font-size:2rem;opacity:0.4;animation:warm-pulse 4s ease-in-out infinite 2s;}
+.back-btn{position:absolute;top:15px;left:60px;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.3);color:rgba(255,248,240,0.9);padding:7px 14px;border-radius:20px;cursor:pointer;font-size:0.8rem;font-weight:600;font-family:‘Noto Sans Thai’,sans-serif;transition:all 0.3s ease;z-index:2;text-decoration:none;display:inline-flex;align-items:center;gap:5px;}
 .back-btn:hover{background:rgba(255,255,255,0.25);transform:translateX(-2px);}
-.logo{font-family:'Cormorant Garamond',serif;font-size:2.6rem;font-weight:700;color:var(--gold-light);letter-spacing:3px;position:relative;z-index:1;text-shadow:0 2px 10px rgba(0,0,0,0.3);}
+.logo{font-family:‘Cormorant Garamond’,serif;font-size:2.6rem;font-weight:700;color:var(–gold-light);letter-spacing:3px;position:relative;z-index:1;text-shadow:0 2px 10px rgba(0,0,0,0.3);}
 .logo span{color:#FFF8F0;font-weight:400;font-style:italic;}
 .subtitle{color:rgba(255,248,240,0.7);font-size:0.95rem;margin-top:8px;font-weight:300;letter-spacing:1px;}
 .lang-switcher{display:flex;justify-content:center;gap:8px;margin-top:18px;position:relative;z-index:1;}
-.lang-btn{padding:6px 14px;border:1.5px solid rgba(212,163,115,0.4);background:rgba(255,255,255,0.08);color:rgba(255,248,240,0.8);border-radius:20px;cursor:pointer;font-weight:600;font-size:0.8rem;transition:all 0.4s ease;font-family:'Noto Sans Thai',sans-serif;}
-.lang-btn:hover{background:rgba(212,163,115,0.2);border-color:var(--gold);transform:translateY(-1px);}
-.lang-btn.active{background:rgba(212,163,115,0.25);border-color:var(--gold-light);color:var(--gold-light);}
+.lang-btn{padding:6px 14px;border:1.5px solid rgba(212,163,115,0.4);background:rgba(255,255,255,0.08);color:rgba(255,248,240,0.8);border-radius:20px;cursor:pointer;font-weight:600;font-size:0.8rem;transition:all 0.4s ease;font-family:‘Noto Sans Thai’,sans-serif;}
+.lang-btn:hover{background:rgba(212,163,115,0.2);border-color:var(–gold);transform:translateY(-1px);}
+.lang-btn.active{background:rgba(212,163,115,0.25);border-color:var(–gold-light);color:var(–gold-light);}
 
 /* NAV */
-.nav-tabs{display:flex;background:var(--cream);border-bottom:1px solid rgba(155,34,38,0.1);overflow-x:auto;scrollbar-width:none;padding:0 10px;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px);}
+.nav-tabs{display:flex;background:var(–cream);border-bottom:1px solid rgba(155,34,38,0.1);overflow-x:auto;scrollbar-width:none;padding:0 10px;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px);}
 .nav-tabs::-webkit-scrollbar{display:none;}
-.nav-tab{flex:1;min-width:80px;padding:14px 8px;border:none;background:none;color:var(--ink-muted);font-family:'Noto Sans Thai',sans-serif;font-weight:600;font-size:0.82rem;cursor:pointer;transition:all 0.4s ease;position:relative;white-space:nowrap;border-radius:12px 12px 0 0;margin:0 2px;}
-.nav-tab:hover{color:var(--crimson);background:rgba(155,34,38,0.05);}
-.nav-tab.active{color:var(--crimson);background:var(--paper);font-weight:700;}
-.nav-tab.active::after{content:'';position:absolute;bottom:0;left:20%;width:60%;height:3px;background:linear-gradient(90deg,transparent,var(--crimson),var(--gold),var(--crimson),transparent);border-radius:3px;}
+.nav-tab{flex:1;min-width:80px;padding:14px 8px;border:none;background:none;color:var(–ink-muted);font-family:‘Noto Sans Thai’,sans-serif;font-weight:600;font-size:0.82rem;cursor:pointer;transition:all 0.4s ease;position:relative;white-space:nowrap;border-radius:12px 12px 0 0;margin:0 2px;}
+.nav-tab:hover{color:var(–crimson);background:rgba(155,34,38,0.05);}
+.nav-tab.active{color:var(–crimson);background:var(–paper);font-weight:700;}
+.nav-tab.active::after{content:’’;position:absolute;bottom:0;left:20%;width:60%;height:3px;background:linear-gradient(90deg,transparent,var(–crimson),var(–gold),var(–crimson),transparent);border-radius:3px;}
 
 /* CONTENT */
-.content{padding:22px 18px;max-width:960px;margin:0 auto;background:var(--paper);min-height:calc(100vh - 200px);}
+.content{padding:22px 18px;max-width:960px;margin:0 auto;background:var(–paper);min-height:calc(100vh - 200px);}
 .tab-content{display:none;animation:slide-up 0.4s ease;}
 .tab-content.active{display:block;}
 
 /* CARD */
-.card{background:#FFFFFF;border-radius:20px;padding:26px;margin-bottom:20px;position:relative;overflow:hidden;transition:all 0.4s ease;border:1px solid rgba(155,34,38,0.06);box-shadow:0 2px 8px var(--shadow-warm),0 8px 32px rgba(155,34,38,0.04);}
-.card::before{content:'';position:absolute;top:0;left:0;width:100%;height:4px;background:linear-gradient(90deg,var(--crimson),var(--gold),var(--jade),var(--gold),var(--crimson));opacity:0.6;}
-.card:hover{box-shadow:0 4px 16px var(--shadow-warm),0 12px 40px rgba(155,34,38,0.08);transform:translateY(-2px);}
-.card-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:var(--crimson);margin-bottom:20px;display:flex;align-items:center;gap:10px;padding-bottom:12px;border-bottom:1px solid rgba(155,34,38,0.1);}
+.card{background:#FFFFFF;border-radius:20px;padding:26px;margin-bottom:20px;position:relative;overflow:hidden;transition:all 0.4s ease;border:1px solid rgba(155,34,38,0.06);box-shadow:0 2px 8px var(–shadow-warm),0 8px 32px rgba(155,34,38,0.04);}
+.card::before{content:’’;position:absolute;top:0;left:0;width:100%;height:4px;background:linear-gradient(90deg,var(–crimson),var(–gold),var(–jade),var(–gold),var(–crimson));opacity:0.6;}
+.card:hover{box-shadow:0 4px 16px var(–shadow-warm),0 12px 40px rgba(155,34,38,0.08);transform:translateY(-2px);}
+.card-title{font-family:‘Cormorant Garamond’,serif;font-size:1.5rem;font-weight:700;color:var(–crimson);margin-bottom:20px;display:flex;align-items:center;gap:10px;padding-bottom:12px;border-bottom:1px solid rgba(155,34,38,0.1);}
 
 /* STATS */
 .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px;}
-.stat-card{background:linear-gradient(145deg,#FFFFFF,var(--warm-white));border:1px solid rgba(155,34,38,0.1);border-radius:20px;padding:20px 15px;text-align:center;animation:lantern-glow 4s ease-in-out infinite;transition:all 0.4s ease;}
-.stat-card:nth-child(1){border-top:3px solid var(--crimson);}.stat-card:nth-child(2){border-top:3px solid var(--gold);animation-delay:1.3s;}.stat-card:nth-child(3){border-top:3px solid var(--jade);animation-delay:2.6s;}
+.stat-card{background:linear-gradient(145deg,#FFFFFF,var(–warm-white));border:1px solid rgba(155,34,38,0.1);border-radius:20px;padding:20px 15px;text-align:center;animation:lantern-glow 4s ease-in-out infinite;transition:all 0.4s ease;}
+.stat-card:nth-child(1){border-top:3px solid var(–crimson);}.stat-card:nth-child(2){border-top:3px solid var(–gold);animation-delay:1.3s;}.stat-card:nth-child(3){border-top:3px solid var(–jade);animation-delay:2.6s;}
 .stat-card:hover{transform:translateY(-4px);box-shadow:0 8px 30px rgba(155,34,38,0.12);}
-.stat-card h3{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;margin-bottom:6px;}
-.stat-card:nth-child(1) h3{color:var(--crimson);}.stat-card:nth-child(2) h3{color:var(--gold);}.stat-card:nth-child(3) h3{color:var(--jade);}
-.stat-card p{color:var(--ink-muted);font-size:0.82rem;font-weight:600;}
+.stat-card h3{font-family:‘Cormorant Garamond’,serif;font-size:2.2rem;font-weight:700;margin-bottom:6px;}
+.stat-card:nth-child(1) h3{color:var(–crimson);}.stat-card:nth-child(2) h3{color:var(–gold);}.stat-card:nth-child(3) h3{color:var(–jade);}
+.stat-card p{color:var(–ink-muted);font-size:0.82rem;font-weight:600;}
 
 /* FORM */
 .form-group{margin-bottom:16px;}
-.form-group label{display:block;margin-bottom:7px;font-weight:600;color:var(--crimson);font-size:0.88rem;}
-.form-group input,.form-group select{width:100%;padding:13px 16px;background:var(--warm-white);border:1.5px solid rgba(155,34,38,0.15);border-radius:14px;color:var(--ink);font-family:'Noto Sans Thai',sans-serif;font-size:0.95rem;transition:all 0.3s ease;}
-.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--crimson);box-shadow:0 0 0 4px var(--crimson-soft);background:#FFFFFF;}
+.form-group label{display:block;margin-bottom:7px;font-weight:600;color:var(–crimson);font-size:0.88rem;}
+.form-group input,.form-group select{width:100%;padding:13px 16px;background:var(–warm-white);border:1.5px solid rgba(155,34,38,0.15);border-radius:14px;color:var(–ink);font-family:‘Noto Sans Thai’,sans-serif;font-size:0.95rem;transition:all 0.3s ease;}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(–crimson);box-shadow:0 0 0 4px var(–crimson-soft);background:#FFFFFF;}
 .form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;}
 .form-row-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
-.lang-name-section{background:var(--warm-white);border:1.5px solid rgba(155,34,38,0.1);border-radius:14px;padding:15px;margin-bottom:16px;}
-.lang-name-section .lang-label{font-size:0.76rem;font-weight:700;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;}
+.lang-name-section{background:var(–warm-white);border:1.5px solid rgba(155,34,38,0.1);border-radius:14px;padding:15px;margin-bottom:16px;}
+.lang-name-section .lang-label{font-size:0.76rem;font-weight:700;color:var(–ink-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;}
 
 /* CATEGORY FILTER (for product list) */
 .cat-filter-bar{display:flex;gap:7px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none;padding-bottom:3px;flex-wrap:wrap;}
 .cat-filter-bar::-webkit-scrollbar{display:none;}
-.cat-f-btn{padding:7px 14px;border:1.5px solid rgba(155,34,38,0.15);background:#FFFFFF;color:var(--ink-muted);border-radius:20px;cursor:pointer;font-weight:600;font-size:0.78rem;transition:all 0.3s ease;white-space:nowrap;font-family:'Noto Sans Thai',sans-serif;}
-.cat-f-btn:hover{border-color:var(--crimson);color:var(--crimson);}
-.cat-f-btn.active{background:linear-gradient(135deg,var(--crimson),var(--crimson-light));color:white;border-color:var(--crimson);box-shadow:0 3px 12px rgba(155,34,38,0.25);}
+.cat-f-btn{padding:7px 14px;border:1.5px solid rgba(155,34,38,0.15);background:#FFFFFF;color:var(–ink-muted);border-radius:20px;cursor:pointer;font-weight:600;font-size:0.78rem;transition:all 0.3s ease;white-space:nowrap;font-family:‘Noto Sans Thai’,sans-serif;}
+.cat-f-btn:hover{border-color:var(–crimson);color:var(–crimson);}
+.cat-f-btn.active{background:linear-gradient(135deg,var(–crimson),var(–crimson-light));color:white;border-color:var(–crimson);box-shadow:0 3px 12px rgba(155,34,38,0.25);}
 
 /* AUTOCOMPLETE */
 .autocomplete-wrap{position:relative;}
-.autocomplete-list{position:absolute;top:100%;left:0;right:0;background:#FFFFFF;border:1.5px solid var(--crimson);border-top:none;border-radius:0 0 14px 14px;max-height:220px;overflow-y:auto;z-index:500;box-shadow:0 8px 24px rgba(155,34,38,0.15);display:none;}
+.autocomplete-list{position:absolute;top:100%;left:0;right:0;background:#FFFFFF;border:1.5px solid var(–crimson);border-top:none;border-radius:0 0 14px 14px;max-height:220px;overflow-y:auto;z-index:500;box-shadow:0 8px 24px rgba(155,34,38,0.15);display:none;}
 .autocomplete-list.show{display:block;}
-.autocomplete-item{padding:11px 16px;cursor:pointer;font-size:0.9rem;color:var(--ink);border-bottom:1px solid rgba(155,34,38,0.06);transition:background 0.2s;}
-.autocomplete-item:hover{background:var(--crimson-soft);color:var(--crimson);}
+.autocomplete-item{padding:11px 16px;cursor:pointer;font-size:0.9rem;color:var(–ink);border-bottom:1px solid rgba(155,34,38,0.06);transition:background 0.2s;}
+.autocomplete-item:hover{background:var(–crimson-soft);color:var(–crimson);}
 .autocomplete-item:last-child{border-bottom:none;}
-.autocomplete-item .code{font-weight:700;color:var(--crimson);margin-right:6px;}
-.autocomplete-item .stock{font-size:0.78rem;color:var(--ink-muted);float:right;}
+.autocomplete-item .code{font-weight:700;color:var(–crimson);margin-right:6px;}
+.autocomplete-item .stock{font-size:0.78rem;color:var(–ink-muted);float:right;}
 
 /* BUTTONS */
-.btn{padding:13px 26px;border:none;border-radius:14px;font-family:'Noto Sans Thai',sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;transition:all 0.4s ease;}
-.btn-primary{background:linear-gradient(135deg,var(--crimson),var(--crimson-light));color:#FFF8F0;box-shadow:0 4px 15px rgba(155,34,38,0.25);}
+.btn{padding:13px 26px;border:none;border-radius:14px;font-family:‘Noto Sans Thai’,sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;transition:all 0.4s ease;}
+.btn-primary{background:linear-gradient(135deg,var(–crimson),var(–crimson-light));color:#FFF8F0;box-shadow:0 4px 15px rgba(155,34,38,0.25);}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 25px rgba(155,34,38,0.35);}
-.btn-success{background:linear-gradient(135deg,var(--jade),#6B9B6A);color:#FFF8F0;box-shadow:0 4px 15px rgba(88,129,87,0.25);}
+.btn-success{background:linear-gradient(135deg,var(–jade),#6B9B6A);color:#FFF8F0;box-shadow:0 4px 15px rgba(88,129,87,0.25);}
 .btn-success:hover{transform:translateY(-2px);}
 .btn-warning{background:linear-gradient(135deg,#B8860B,#D4A373);color:#FFF8F0;}
 .btn-warning:hover{transform:translateY(-2px);}
@@ -109,46 +110,46 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background-
 
 /* ALERT */
 .alert{padding:16px 20px;border-radius:14px;margin-bottom:12px;border:1px solid;position:relative;background:#FFFFFF;}
-.alert-danger{border-color:rgba(155,34,38,0.2);background:linear-gradient(135deg,#FFF5F5,#FFFFFF);color:var(--crimson);}
-.alert-danger::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--crimson),var(--crimson-light));border-radius:14px 0 0 14px;}
+.alert-danger{border-color:rgba(155,34,38,0.2);background:linear-gradient(135deg,#FFF5F5,#FFFFFF);color:var(–crimson);}
+.alert-danger::before{content:’’;position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(–crimson),var(–crimson-light));border-radius:14px 0 0 14px;}
 .alert-warning{border-color:rgba(212,163,115,0.3);background:linear-gradient(135deg,#FFFBF5,#FFFFFF);color:#8B6914;}
-.alert-warning::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--gold),var(--gold-light));border-radius:14px 0 0 14px;}
-.alert-success{border-color:rgba(88,129,87,0.2);background:linear-gradient(135deg,#F5FBF5,#FFFFFF);color:var(--jade);}
-.alert-success::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--jade),#6B9B6A);border-radius:14px 0 0 14px;}
+.alert-warning::before{content:’’;position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(–gold),var(–gold-light));border-radius:14px 0 0 14px;}
+.alert-success{border-color:rgba(88,129,87,0.2);background:linear-gradient(135deg,#F5FBF5,#FFFFFF);color:var(–jade);}
+.alert-success::before{content:’’;position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(–jade),#6B9B6A);border-radius:14px 0 0 14px;}
 
 /* SEARCH */
 .search-box{margin-bottom:16px;position:relative;}
-.search-box input{width:100%;padding:13px 20px 13px 46px;background:var(--warm-white);border:1.5px solid rgba(155,34,38,0.12);border-radius:14px;color:var(--ink);font-family:'Noto Sans Thai',sans-serif;font-size:0.95rem;transition:all 0.3s ease;}
-.search-box input:focus{outline:none;border-color:var(--crimson);box-shadow:0 0 0 4px var(--crimson-soft);background:#FFFFFF;}
-.search-box::before{content:'🔍';position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:1rem;opacity:0.5;}
+.search-box input{width:100%;padding:13px 20px 13px 46px;background:var(–warm-white);border:1.5px solid rgba(155,34,38,0.12);border-radius:14px;color:var(–ink);font-family:‘Noto Sans Thai’,sans-serif;font-size:0.95rem;transition:all 0.3s ease;}
+.search-box input:focus{outline:none;border-color:var(–crimson);box-shadow:0 0 0 4px var(–crimson-soft);background:#FFFFFF;}
+.search-box::before{content:‘🔍’;position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:1rem;opacity:0.5;}
 
 /* TABLE */
 .table-container{overflow-x:auto;border-radius:16px;border:1px solid rgba(155,34,38,0.08);background:#FFFFFF;}
 table{width:100%;border-collapse:separate;border-spacing:0;font-size:0.86rem;}
-th{background:linear-gradient(180deg,var(--cream),var(--warm-white));color:var(--crimson);padding:13px 9px;font-weight:700;font-size:0.76rem;text-transform:uppercase;letter-spacing:0.5px;border-bottom:2px solid rgba(155,34,38,0.1);white-space:nowrap;}
-td{padding:12px 9px;border-bottom:1px solid rgba(155,34,38,0.05);color:var(--ink-light);vertical-align:middle;}
-tr:hover td{background:var(--crimson-soft);color:var(--ink);}
+th{background:linear-gradient(180deg,var(–cream),var(–warm-white));color:var(–crimson);padding:13px 9px;font-weight:700;font-size:0.76rem;text-transform:uppercase;letter-spacing:0.5px;border-bottom:2px solid rgba(155,34,38,0.1);white-space:nowrap;}
+td{padding:12px 9px;border-bottom:1px solid rgba(155,34,38,0.05);color:var(–ink-light);vertical-align:middle;}
+tr:hover td{background:var(–crimson-soft);color:var(–ink);}
 tr:last-child td{border-bottom:none;}
 
 /* BADGES */
 .badge{padding:4px 10px;border-radius:20px;font-size:0.73rem;font-weight:600;display:inline-block;}
-.badge-success{background:var(--jade-soft);color:var(--jade);border:1px solid rgba(88,129,87,0.3);}
-.badge-warning{background:var(--gold-soft);color:#B8860B;border:1px solid rgba(212,163,115,0.4);}
-.badge-danger{background:rgba(155,34,38,0.08);color:var(--crimson);border:1px solid rgba(155,34,38,0.3);}
+.badge-success{background:var(–jade-soft);color:var(–jade);border:1px solid rgba(88,129,87,0.3);}
+.badge-warning{background:var(–gold-soft);color:#B8860B;border:1px solid rgba(212,163,115,0.4);}
+.badge-danger{background:rgba(155,34,38,0.08);color:var(–crimson);border:1px solid rgba(155,34,38,0.3);}
 
 /* EMPTY */
-.empty-state{text-align:center;padding:44px 20px;color:var(--ink-muted);}
+.empty-state{text-align:center;padding:44px 20px;color:var(–ink-muted);}
 .empty-state-icon{font-size:3.2rem;margin-bottom:14px;opacity:0.6;}
 
 /* MODAL */
 .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:9000;backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:18px;}
 .modal-overlay.show{display:flex;}
 .modal-box{background:#FFFFFF;border-radius:24px;padding:30px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(155,34,38,0.25);animation:slide-up 0.3s ease;position:relative;}
-.modal-box::before{content:'';position:absolute;top:0;left:0;width:100%;height:5px;background:linear-gradient(90deg,var(--crimson),var(--gold),var(--jade));border-radius:24px 24px 0 0;}
-.modal-title{font-family:'Cormorant Garamond',serif;font-size:1.45rem;font-weight:700;color:var(--crimson);margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid rgba(155,34,38,0.1);}
+.modal-box::before{content:’’;position:absolute;top:0;left:0;width:100%;height:5px;background:linear-gradient(90deg,var(–crimson),var(–gold),var(–jade));border-radius:24px 24px 0 0;}
+.modal-title{font-family:‘Cormorant Garamond’,serif;font-size:1.45rem;font-weight:700;color:var(–crimson);margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid rgba(155,34,38,0.1);}
 .modal-footer{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap;}
-.modal-close{position:absolute;top:14px;right:14px;background:rgba(155,34,38,0.1);border:none;color:var(--crimson);width:34px;height:34px;border-radius:50%;font-size:1rem;cursor:pointer;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all 0.3s ease;}
-.modal-close:hover{background:var(--crimson);color:white;}
+.modal-close{position:absolute;top:14px;right:14px;background:rgba(155,34,38,0.1);border:none;color:var(–crimson);width:34px;height:34px;border-radius:50%;font-size:1rem;cursor:pointer;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all 0.3s ease;}
+.modal-close:hover{background:var(–crimson);color:white;}
 
 /* HISTORY EDIT MODAL */
 .hist-modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.65);z-index:9500;backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:18px;}
@@ -156,31 +157,36 @@ tr:last-child td{border-bottom:none;}
 
 /* EXPORT BAR */
 .export-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
-.export-bar .export-label{font-weight:700;color:var(--crimson);font-size:0.88rem;margin-right:4px;}
+.export-bar .export-label{font-weight:700;color:var(–crimson);font-size:0.88rem;margin-right:4px;}
 
 /* DIVIDER */
-.warm-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(155,34,38,0.15),var(--gold),rgba(155,34,38,0.15),transparent);margin:20px 0;}
+.warm-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(155,34,38,0.15),var(–gold),rgba(155,34,38,0.15),transparent);margin:20px 0;}
 
 /* UTILS */
-.warm-text{color:var(--gold);font-weight:700;}
-.crimson-text{color:var(--crimson);font-weight:700;}
-.footer-note{text-align:center;padding:28px 20px;color:var(--ink-muted);font-size:0.85rem;font-style:italic;}
+.warm-text{color:var(–gold);font-weight:700;}
+.crimson-text{color:var(–crimson);font-weight:700;}
+.footer-note{text-align:center;padding:28px 20px;color:var(–ink-muted);font-size:0.85rem;font-style:italic;}
 
 /* SUMMARY TABLE */
 .summary-section{margin-top:20px;}
 .month-picker{display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap;}
-.month-picker input[type=month]{padding:10px 14px;border:1.5px solid rgba(155,34,38,0.15);border-radius:12px;font-family:'Noto Sans Thai',sans-serif;font-size:0.9rem;background:var(--warm-white);color:var(--ink);}
+.month-picker input[type=month]{padding:10px 14px;border:1.5px solid rgba(155,34,38,0.15);border-radius:12px;font-family:‘Noto Sans Thai’,sans-serif;font-size:0.9rem;background:var(–warm-white);color:var(–ink);}
 
 @media(max-width:768px){
-  .logo{font-size:2rem;}.stats-grid{grid-template-columns:1fr;gap:10px;}
-  .form-row{grid-template-columns:1fr;}.form-row-3{grid-template-columns:1fr;}
-  .nav-tab{font-size:0.72rem;padding:12px 5px;min-width:68px;}
-  .content{padding:14px 12px;}.card{padding:18px;border-radius:16px;}
-  table{font-size:0.76rem;}th,td{padding:9px 6px;}
-  .btn-sm{padding:6px 9px;font-size:0.7rem;}
-  .back-btn{left:52px;font-size:0.7rem;padding:5px 9px;}
+.logo{font-size:2rem;}.stats-grid{grid-template-columns:1fr;gap:10px;}
+.form-row{grid-template-columns:1fr;}.form-row-3{grid-template-columns:1fr;}
+.nav-tab{font-size:0.72rem;padding:12px 5px;min-width:68px;}
+.content{padding:14px 12px;}.card{padding:18px;border-radius:16px;}
+table{font-size:0.76rem;}th,td{padding:9px 6px;}
+.btn-sm{padding:6px 9px;font-size:0.7rem;}
+.back-btn{left:52px;font-size:0.7rem;padding:5px 9px;}
 }
 </style>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+
 </head>
 <body>
 
@@ -207,6 +213,7 @@ tr:last-child td{border-bottom:none;}
 <div class="content">
 
 <!-- DASHBOARD -->
+
 <div id="dashboard" class="tab-content active">
   <div class="stats-grid">
     <div class="stat-card"><h3 id="total-products">0</h3><p data-i18n="stat_total">รายการสินค้า</p></div>
@@ -220,6 +227,7 @@ tr:last-child td{border-bottom:none;}
 </div>
 
 <!-- PRODUCTS -->
+
 <div id="products" class="tab-content">
   <div class="card">
     <div class="card-title" data-i18n="add_product_title">➕ เพิ่มสินค้าใหม่</div>
@@ -259,6 +267,7 @@ tr:last-child td{border-bottom:none;}
 </div>
 
 <!-- STOCK IN -->
+
 <div id="stock-in" class="tab-content">
   <div class="card">
     <div class="card-title" data-i18n="stock_in_title">📥 บันทึกรับสินค้าเข้า</div>
@@ -286,6 +295,7 @@ tr:last-child td{border-bottom:none;}
 </div>
 
 <!-- STOCK OUT -->
+
 <div id="stock-out" class="tab-content">
   <div class="card">
     <div class="card-title" data-i18n="stock_out_title">📤 บันทึกจ่ายสินค้าออก</div>
@@ -313,6 +323,7 @@ tr:last-child td{border-bottom:none;}
 </div>
 
 <!-- HISTORY -->
+
 <div id="history" class="tab-content">
   <div class="card">
     <div class="card-title" data-i18n="history_title">📋 ประวัติการเคลื่อนไหว</div>
@@ -324,6 +335,7 @@ tr:last-child td{border-bottom:none;}
 </div>
 
 <!-- REPORT [6] -->
+
 <div id="report" class="tab-content">
   <div class="card">
     <div class="card-title" data-i18n="report_daily_title">📊 ยอดคงเหลือรายวัน</div>
@@ -352,6 +364,7 @@ tr:last-child td{border-bottom:none;}
 </div><!-- /content -->
 
 <!-- PRODUCT EDIT MODAL -->
+
 <div class="modal-overlay" id="edit-modal">
   <div class="modal-box">
     <button class="modal-close" onclick="closeEditModal()">✕</button>
@@ -387,6 +400,7 @@ tr:last-child td{border-bottom:none;}
 </div>
 
 <!-- HISTORY EDIT MODAL [5] -->
+
 <div class="hist-modal-overlay" id="hist-edit-modal">
   <div class="modal-box">
     <button class="modal-close" onclick="closeHistModal()">✕</button>
@@ -404,6 +418,26 @@ tr:last-child td{border-bottom:none;}
 <div class="footer-note">🏮 Ohoi Kyoza — บ้านหลังที่สองของคุณ 🥟</div>
 
 <script>
+// ===== FIREBASE COMPAT =====
+const _db = (() => {
+  try {
+    if (!firebase.apps.length) {
+      firebase.initializeApp({
+        apiKey:"AIzaSyC650BBAj_y7bObsIA5KpMQkLDNg4FEtmw",
+        authDomain:"ohoi-kyoza.firebaseapp.com",
+        databaseURL:"https://ohoi-kyoza-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId:"ohoi-kyoza",
+        storageBucket:"ohoi-kyoza.firebasestorage.app",
+        messagingSenderId:"311350815436",
+        appId:"1:311350815436:web:5638717dc207f286e5b069"
+      });
+    }
+    return firebase.database();
+  } catch(e) { console.warn('Firebase init:', e); return null; }
+})();
+function fbSet(path, val) { if(_db) _db.ref(path).set(val).catch(e=>console.warn(e)); }
+function fbListen(path, cb) { if(_db) _db.ref(path).on('value', cb); }
+
 // ============================================================
 //  DROPDOWN DATA  (หมวดหมู่ใหม่ครบ 3 ภาษา)
 // ============================================================
@@ -665,8 +699,21 @@ function changeLanguage(lang) {
 
 document.addEventListener('DOMContentLoaded', () => {
   renderDropdowns();
+  fbListen('products', snap => {
+    if (snap && snap.exists()) {
+      products = Object.values(snap.val()).map(p=>({...p,id:Number(p.id)||p.id}));
+      localStorage.setItem('ok_products', JSON.stringify(products));
+    } else { products = []; }
+    buildProductCatFilter(); renderProducts(); updateDashboard();
+  });
+  fbListen('transactions', snap => {
+    if (snap && snap.exists()) {
+      transactions = Object.values(snap.val());
+      localStorage.setItem('ok_transactions', JSON.stringify(transactions));
+    } else { transactions = []; }
+    renderHistory(); renderDailyReport();
+  });
   changeLanguage(currentLang);
-  // Set default month picker to current month
   const now = new Date();
   document.getElementById('month-picker').value = now.toISOString().slice(0,7);
 });
@@ -1156,6 +1203,7 @@ function buildPrintWindow(title, tableHtml) {
       tr:nth-child(even){background:#FAF3E8;}
       @media print{button{display:none;}}
     </style>
+
   </head><body>
     <h2>${title}</h2>
     <p style="color:#888;margin-bottom:12px;">${new Date().toLocaleString('th-TH')}</p>
@@ -1166,40 +1214,41 @@ function buildPrintWindow(title, tableHtml) {
 }
 
 function exportDailyPDF() {
-  const today = new Date().toDateString();
-  const todayTx = transactions.filter(tx=>new Date(tx.date).toDateString()===today);
-  const rows = products.map(p => {
-    const inQty  = todayTx.filter(tx=>tx.productId===p.id&&tx.type==='in').reduce((s,tx)=>s+tx.quantity,0);
-    const outQty = todayTx.filter(tx=>tx.productId===p.id&&tx.type==='out').reduce((s,tx)=>s+tx.quantity,0);
-    return `<tr><td>${p.code}</td><td>${getProductName(p)}</td><td>${getCategoryDisplay(p.category)}</td>
-      <td>${inQty||'—'}</td><td>${outQty||'—'}</td><td><strong>${p.stock}</strong></td><td>${getUnitDisplay(p.unit)}</td></tr>`;
-  }).join('');
-  const html = `<table><thead><tr>
-    <th>${t('col_daily_code')}</th><th>${t('col_daily_name')}</th><th>${t('col_daily_cat')}</th>
-    <th>${t('col_daily_in')}</th><th>${t('col_daily_out')}</th>
-    <th>${t('col_daily_stock')}</th><th>${t('col_daily_unit')}</th>
+const today = new Date().toDateString();
+const todayTx = transactions.filter(tx=>new Date(tx.date).toDateString()===today);
+const rows = products.map(p => {
+const inQty  = todayTx.filter(tx=>tx.productId===p.id&&tx.type===‘in’).reduce((s,tx)=>s+tx.quantity,0);
+const outQty = todayTx.filter(tx=>tx.productId===p.id&&tx.type===‘out’).reduce((s,tx)=>s+tx.quantity,0);
+return `<tr><td>${p.code}</td><td>${getProductName(p)}</td><td>${getCategoryDisplay(p.category)}</td> <td>${inQty||'—'}</td><td>${outQty||'—'}</td><td><strong>${p.stock}</strong></td><td>${getUnitDisplay(p.unit)}</td></tr>`;
+}).join(’’);
+const html = `<table><thead><tr>
+<th>${t(‘col_daily_code’)}</th><th>${t(‘col_daily_name’)}</th><th>${t(‘col_daily_cat’)}</th>
+<th>${t(‘col_daily_in’)}</th><th>${t(‘col_daily_out’)}</th>
+<th>${t(‘col_daily_stock’)}</th><th>${t(‘col_daily_unit’)}</th>
+
   </tr></thead><tbody>${rows}</tbody></table>`;
   buildPrintWindow(t('report_daily_title'), html);
 }
 
 function exportMonthlyPDF() {
-  const ym = document.getElementById('month-picker').value; if (!ym) return;
-  const [yr,mo] = ym.split('-').map(Number);
-  const byDate = {};
-  transactions.filter(tx=>{const d=new Date(tx.date);return d.getFullYear()===yr&&d.getMonth()+1===mo;}).forEach(tx=>{
-    const key=tx.date.slice(0,10);
-    if (!byDate[key]) byDate[key]={inQty:0,outQty:0,inCost:0};
-    if (tx.type==='in')  {byDate[key].inQty+=tx.quantity;byDate[key].inCost+=(tx.total||0);}
-    if (tx.type==='out') {byDate[key].outQty+=tx.quantity;}
-  });
-  let totIn=0,totOut=0,totCost=0;
-  const rows = Object.keys(byDate).sort().map(d=>{
-    const r=byDate[d]; totIn+=r.inQty; totOut+=r.outQty; totCost+=r.inCost;
-    return `<tr><td>${d}</td><td>${r.inQty.toFixed(2)}</td><td>${r.outQty.toFixed(2)}</td><td>${r.inCost.toFixed(2)}</td></tr>`;
-  }).join('');
-  const html = `<table><thead><tr>
-    <th>${t('col_monthly_date')}</th><th>${t('col_monthly_in')}</th>
-    <th>${t('col_monthly_out')}</th><th>${t('col_monthly_cost')}</th>
+const ym = document.getElementById(‘month-picker’).value; if (!ym) return;
+const [yr,mo] = ym.split(’-’).map(Number);
+const byDate = {};
+transactions.filter(tx=>{const d=new Date(tx.date);return d.getFullYear()===yr&&d.getMonth()+1===mo;}).forEach(tx=>{
+const key=tx.date.slice(0,10);
+if (!byDate[key]) byDate[key]={inQty:0,outQty:0,inCost:0};
+if (tx.type===‘in’)  {byDate[key].inQty+=tx.quantity;byDate[key].inCost+=(tx.total||0);}
+if (tx.type===‘out’) {byDate[key].outQty+=tx.quantity;}
+});
+let totIn=0,totOut=0,totCost=0;
+const rows = Object.keys(byDate).sort().map(d=>{
+const r=byDate[d]; totIn+=r.inQty; totOut+=r.outQty; totCost+=r.inCost;
+return `<tr><td>${d}</td><td>${r.inQty.toFixed(2)}</td><td>${r.outQty.toFixed(2)}</td><td>${r.inCost.toFixed(2)}</td></tr>`;
+}).join(’’);
+const html = `<table><thead><tr>
+<th>${t(‘col_monthly_date’)}</th><th>${t(‘col_monthly_in’)}</th>
+<th>${t(‘col_monthly_out’)}</th><th>${t(‘col_monthly_cost’)}</th>
+
   </tr></thead><tbody>${rows}
   <tr style="font-weight:700;background:#F5EBDC;">
     <td>รวม / Total</td><td>${totIn.toFixed(2)}</td><td>${totOut.toFixed(2)}</td><td>${totCost.toFixed(2)}</td>
@@ -1211,68 +1260,71 @@ function exportMonthlyPDF() {
 //  DASHBOARD
 // ============================================================
 function updateDashboard() {
-  document.getElementById('total-products').textContent = products.length;
-  const low     = products.filter(p=>p.stock<=p.minStock);
-  const expSoon = products.filter(p=>{if(!p.expiry)return false;const d=getDaysUntilExpiry(p.expiry);return d<=7&&d>=0;});
-  document.getElementById('low-stock-count').textContent = low.length;
-  document.getElementById('expiring-count').textContent  = expSoon.length;
+document.getElementById(‘total-products’).textContent = products.length;
+const low     = products.filter(p=>p.stock<=p.minStock);
+const expSoon = products.filter(p=>{if(!p.expiry)return false;const d=getDaysUntilExpiry(p.expiry);return d<=7&&d>=0;});
+document.getElementById(‘low-stock-count’).textContent = low.length;
+document.getElementById(‘expiring-count’).textContent  = expSoon.length;
 
-  let html='';
-  if (low.length) {
-    html+=`<div class="alert alert-danger"><strong>${t('alert_low_stock')}</strong><ul style="margin-top:10px;padding-left:20px;">`;
-    low.forEach(p=>html+=`<li>${getProductName(p)} (${p.stock}/${p.minStock} ${getUnitDisplay(p.unit)})</li>`);
-    html+='</ul></div>';
-  }
-  const expired=products.filter(p=>p.expiry&&getDaysUntilExpiry(p.expiry)<0);
-  if (expired.length) {
-    html+=`<div class="alert alert-danger"><strong>${t('alert_expired')}</strong><ul style="margin-top:10px;padding-left:20px;">`;
-    expired.forEach(p=>html+=`<li>${getProductName(p)} (${formatDate(p.expiry)})</li>`);
-    html+='</ul></div>';
-  }
-  if (expSoon.length) {
-    html+=`<div class="alert alert-warning"><strong>${t('alert_expiring')}</strong><ul style="margin-top:10px;padding-left:20px;">`;
-    expSoon.forEach(p=>{const days=getDaysUntilExpiry(p.expiry);html+=`<li>${getProductName(p)} (${t('days_left',{days})} — ${formatDate(p.expiry)})</li>`;});
-    html+='</ul></div>';
-  }
-  if (!html) html=`<div class="alert alert-success"><strong>${t('alert_no_issue')}</strong></div>`;
-  document.getElementById('alerts-container').innerHTML=html;
+let html=’’;
+if (low.length) {
+html+=`<div class="alert alert-danger"><strong>${t('alert_low_stock')}</strong><ul style="margin-top:10px;padding-left:20px;">`;
+low.forEach(p=>html+=`<li>${getProductName(p)} (${p.stock}/${p.minStock} ${getUnitDisplay(p.unit)})</li>`);
+html+=’</ul></div>’;
+}
+const expired=products.filter(p=>p.expiry&&getDaysUntilExpiry(p.expiry)<0);
+if (expired.length) {
+html+=`<div class="alert alert-danger"><strong>${t('alert_expired')}</strong><ul style="margin-top:10px;padding-left:20px;">`;
+expired.forEach(p=>html+=`<li>${getProductName(p)} (${formatDate(p.expiry)})</li>`);
+html+=’</ul></div>’;
+}
+if (expSoon.length) {
+html+=`<div class="alert alert-warning"><strong>${t('alert_expiring')}</strong><ul style="margin-top:10px;padding-left:20px;">`;
+expSoon.forEach(p=>{const days=getDaysUntilExpiry(p.expiry);html+=`<li>${getProductName(p)} (${t('days_left',{days})} — ${formatDate(p.expiry)})</li>`;});
+html+=’</ul></div>’;
+}
+if (!html) html=`<div class="alert alert-success"><strong>${t('alert_no_issue')}</strong></div>`;
+document.getElementById(‘alerts-container’).innerHTML=html;
 }
 
 // ============================================================
 //  UTILITIES
 // ============================================================
 function getStockStatus(p) {
-  if (p.stock<=0)          return {class:'badge-danger', text:t('status_out')};
-  if (p.stock<=p.minStock) return {class:'badge-warning',text:t('status_low')};
-  return {class:'badge-success',text:t('status_normal')};
+if (p.stock<=0)          return {class:‘badge-danger’, text:t(‘status_out’)};
+if (p.stock<=p.minStock) return {class:‘badge-warning’,text:t(‘status_low’)};
+return {class:‘badge-success’,text:t(‘status_normal’)};
 }
 function getExpiryWarning(date) {
-  if (!date) return '';
-  const days=getDaysUntilExpiry(date);
-  if (days<0)  return `<span class="badge badge-danger">${t('status_out')}</span>`;
-  if (days<=3) return `<span class="badge badge-danger">${t('days_left',{days})}</span>`;
-  if (days<=7) return `<span class="badge badge-warning">${t('days_left',{days})}</span>`;
-  return '';
+if (!date) return ‘’;
+const days=getDaysUntilExpiry(date);
+if (days<0)  return `<span class="badge badge-danger">${t('status_out')}</span>`;
+if (days<=3) return `<span class="badge badge-danger">${t('days_left',{days})}</span>`;
+if (days<=7) return `<span class="badge badge-warning">${t('days_left',{days})}</span>`;
+return ‘’;
 }
 function getDaysUntilExpiry(date) {
-  const today=new Date();today.setHours(0,0,0,0);
-  const exp=new Date(date);exp.setHours(0,0,0,0);
-  return Math.ceil((exp-today)/(1000*60*60*24));
+const today=new Date();today.setHours(0,0,0,0);
+const exp=new Date(date);exp.setHours(0,0,0,0);
+return Math.ceil((exp-today)/(1000*60*60*24));
 }
 function formatDate(dateStr) {
-  const d=new Date(dateStr);
-  const locale=currentLang==='zh'?'zh-CN':currentLang==='en'?'en-US':'th-TH';
-  return d.toLocaleDateString(locale,{year:'numeric',month:'short',day:'numeric'});
+const d=new Date(dateStr);
+const locale=currentLang===‘zh’?‘zh-CN’:currentLang===‘en’?‘en-US’:‘th-TH’;
+return d.toLocaleDateString(locale,{year:‘numeric’,month:‘short’,day:‘numeric’});
 }
 function formatDateTime(dateStr) {
-  const d=new Date(dateStr);
-  const locale=currentLang==='zh'?'zh-CN':currentLang==='en'?'en-US':'th-TH';
-  return d.toLocaleString(locale,{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+const d=new Date(dateStr);
+const locale=currentLang===‘zh’?‘zh-CN’:currentLang===‘en’?‘en-US’:‘th-TH’;
+return d.toLocaleString(locale,{month:‘short’,day:‘numeric’,hour:‘2-digit’,minute:‘2-digit’});
 }
 function saveData() {
-  localStorage.setItem('ok_products',    JSON.stringify(products));
-  localStorage.setItem('ok_transactions',JSON.stringify(transactions));
+localStorage.setItem(‘ok_products’,    JSON.stringify(products));
+localStorage.setItem(‘ok_transactions’,JSON.stringify(transactions));
+const po={}; products.forEach(p=>{po[String(p.id)]=p;}); fbSet(‘products’,po);
+const to={}; transactions.forEach(t=>{to[String(t.id)]=t;}); fbSet(‘transactions’,to);
 }
 </script>
+
 </body>
 </html>
