@@ -251,10 +251,10 @@ align-items:center;gap:10px;white-space:nowrap;
 
 <!-- Firebase SDK -->
 
-<script type="module">
-import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, onValue, update, serverTimestamp }
-                            from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+<!-- Firebase Compat SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script>
 
 // ===== FIREBASE =====
 const firebaseConfig = {
@@ -266,8 +266,8 @@ const firebaseConfig = {
   messagingSenderId: "311350815436",
   appId:             "1:311350815436:web:5638717dc207f286e5b069"
 };
-const app = initializeApp(firebaseConfig);
-const db  = getDatabase(app);
+if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+const db  = firebase.database();
 
 // ===== I18N =====
 const i18n = {
@@ -577,14 +577,56 @@ function orderCardHTML(o) {
 }
 
 // ===== UPDATE STATUS → FIREBASE =====
+
+// ===== ตัดสต๊อกอัตโนมัติเมื่อออเดอร์เสร็จ =====
+async function deductStockForOrder(order) {
+  try {
+    // ดึงเมนูจาก Firebase
+    const menuSnap = await db.ref('menus').once('value');
+    const menus = menuSnap.exists() ? menuSnap.val() : {};
+    // ดึง products จาก Firebase
+    const prodSnap = await db.ref('products').once('value');
+    if (!prodSnap.exists()) return;
+    const products = prodSnap.val();
+
+    for (const item of (order.items || [])) {
+      // หาเมนูที่ตรงกัน
+      const menu = Object.values(menus).find(m =>
+        String(m.id) === String(item.menuId) ||
+        m.name_th === item.name_th
+      );
+      if (!menu || !menu.ingredients) continue;
+
+      for (const ing of menu.ingredients) {
+        const prodKey = Object.keys(products).find(k =>
+          String(products[k].id) === String(ing.productId)
+        );
+        if (!prodKey) continue;
+        const prod = products[prodKey];
+        const deduct = ing.quantity * (item.qty || 1);
+        const newStock = Math.max(0, (prod.stock || 0) - deduct);
+        // อัปเดต stock ใน Firebase
+        await db.ref(`products/${prodKey}/stock`).set(newStock);
+      }
+    }
+    console.log('✅ Stock deducted for order:', order.orderId);
+  } catch(e) {
+    console.warn('Stock deduction error:', e);
+  }
+}
+
 window.updateStatus = async function(fbKey, newStatus) {
   const o = allOrders[fbKey]; if (!o) return;
   const shortId = (o.orderId||fbKey).slice(-6);
   try {
-    await update(ref(db, `orders/${fbKey}`), {
+    await db.ref(`orders/${fbKey}`).update({
       status: newStatus,
       [`${newStatus}At`]: new Date().toISOString()
     });
+    // ตัด Stock อัตโนมัติเมื่อกด "เสร็จแล้ว"
+    if (newStatus === 'done') {
+      deductStockForOrder(o);
+    }
     // toast
     const toastKey = newStatus === 'cooking'   ? 'toast_cooking'
                    : newStatus === 'done'       ? 'toast_done'
@@ -601,7 +643,7 @@ window.updateStatus = async function(fbKey, newStatus) {
 // ===== LISTEN TO ORDERS — REALTIME =====
 let prevKeys = new Set();
 
-onValue(ref(db, 'orders'), snap => {
+db.ref('orders').on('value', snap => {
   // Connection OK
   document.getElementById('conn-dot').className   = 'connection-dot online';
   document.getElementById('conn-label').textContent = t('conn_online');
@@ -623,9 +665,6 @@ onValue(ref(db, 'orders'), snap => {
   allOrders = newOrders;
   updateStats();
   renderOrders();
-}, error => {
-  document.getElementById('conn-dot').className    = 'connection-dot offline';
-  document.getElementById('conn-label').textContent = t('conn_offline');
 });
 
 // ===== REFRESH TIMERS EVERY 10s =====

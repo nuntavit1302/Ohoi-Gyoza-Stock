@@ -254,11 +254,10 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--warm-white);color:
   </button>
 </div>
 
-<!-- Firebase SDK -->
-<script type="module">
-import { initializeApp }        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, push, set, onValue }
-                                from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+<!-- Firebase Compat SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script>
 
 // ===== FIREBASE CONFIG =====
 const firebaseConfig = {
@@ -271,8 +270,9 @@ const firebaseConfig = {
   appId:             "1:311350815436:web:5638717dc207f286e5b069"
 };
 
-const app = initializeApp(firebaseConfig);
-const db  = getDatabase(app);
+if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+const app = firebase.app();
+const db  = firebase.database();
 
 // ===== I18N =====
 const i18n = {
@@ -370,7 +370,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 function loadMenusFromFirebase() {
-  onValue(ref(db, 'menus'), snap => {
+  db.ref('menus').on('value', snap => {
     menus = [];
     if (snap.exists()) {
       snap.forEach(child => menus.push({ fbKey: child.key, ...child.val() }));
@@ -381,7 +381,7 @@ function loadMenusFromFirebase() {
 }
 
 function loadProductsFromFirebase() {
-  onValue(ref(db, 'products'), snap => {
+  db.ref('products').on('value', snap => {
     products = [];
     if (snap.exists()) {
       snap.forEach(child => products.push({ fbKey: child.key, ...child.val() }));
@@ -636,7 +636,7 @@ window.confirmOrder = async function() {
   };
 
   try {
-    await push(ref(db, 'orders'), orderData);
+    await db.ref('orders').push(orderData);
 
     document.getElementById('loading-overlay').classList.remove('show');
     closeCart();
