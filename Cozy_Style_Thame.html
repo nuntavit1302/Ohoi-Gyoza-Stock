@@ -687,23 +687,36 @@ function changeLanguage(lang) {
 
 document.addEventListener('DOMContentLoaded', () => {
   renderDropdowns();
+  changeLanguage(currentLang);
+  const now = new Date();
+  document.getElementById('month-picker').value = now.toISOString().slice(0,7);
+
+  // โหลดจาก localStorage ก่อนเสมอ (แสดงผลทันที)
+  buildProductCatFilter(); renderProducts(); updateDashboard(); renderHistory();
+
+  // แล้วค่อย sync จาก Firebase (real-time)
   fbListen('products', snap => {
     if (snap && snap.exists()) {
-      products = Object.values(snap.val()).map(p=>({...p,id:Number(p.id)||p.id}));
-      localStorage.setItem('ok_products', JSON.stringify(products));
-    } else { products = []; }
+      // Firebase มีข้อมูล → ใช้ข้อมูลจาก Firebase
+      const fbProducts = Object.values(snap.val()).map(p=>({...p,id:Number(p.id)||p.id}));
+      if (fbProducts.length > 0) {
+        products = fbProducts;
+        localStorage.setItem('ok_products', JSON.stringify(products));
+      }
+      // ถ้า Firebase ว่าง → ใช้ localStorage ที่โหลดไว้แล้ว (ไม่ต้อง clear)
+    }
     buildProductCatFilter(); renderProducts(); updateDashboard();
   });
   fbListen('transactions', snap => {
     if (snap && snap.exists()) {
-      transactions = Object.values(snap.val());
-      localStorage.setItem('ok_transactions', JSON.stringify(transactions));
-    } else { transactions = []; }
+      const fbTx = Object.values(snap.val());
+      if (fbTx.length > 0) {
+        transactions = fbTx;
+        localStorage.setItem('ok_transactions', JSON.stringify(transactions));
+      }
+    }
     renderHistory(); renderDailyReport();
   });
-  changeLanguage(currentLang);
-  const now = new Date();
-  document.getElementById('month-picker').value = now.toISOString().slice(0,7);
 });
 
 // ============================================================
