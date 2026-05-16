@@ -5,12 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ohoi Kyoza - สั่งอาหาร</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;600;700&family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
+<!-- Firebase Compat -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<!-- QRCode for payment -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{
   --crimson:#9B2226;--crimson-light:#AE2012;--crimson-soft:rgba(155,34,38,0.08);
   --gold:#D4A373;--gold-light:#E9C496;--gold-soft:rgba(212,163,115,0.15);
-  --jade:#588157;--jade-soft:rgba(88,129,87,0.12);
+  --jade:#588157;--jade-soft:rgba(88,129,87,0.12);--jade-light:#6B9B6A;
   --warm-white:#FDF6EC;--cream:#F5EBDC;--paper:#FAF3E8;
   --ink:#3D2B1F;--ink-light:#6B5B4F;--ink-muted:#9B8B7F;
   --shadow-warm:rgba(155,34,38,0.08);
@@ -21,171 +26,174 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--warm-white);color:
 @keyframes warm-pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.03);}}
 @keyframes bounce-in{0%{transform:scale(0.5);opacity:0;}70%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
 @keyframes fade-in{from{opacity:0;}to{opacity:1;}}
+@keyframes spin{to{transform:rotate(360deg);}}
 
 /* HEADER */
-.header{
-  background:linear-gradient(160deg,var(--crimson) 0%,#7B181C 60%,#5A1216 100%);
-  padding:28px 20px 36px; text-align:center; position:relative; overflow:hidden;
-}
+.header{background:linear-gradient(160deg,var(--crimson) 0%,#7B181C 60%,#5A1216 100%);padding:28px 20px 36px;text-align:center;position:relative;overflow:hidden;}
 .header::before{content:'🥟';position:absolute;top:14px;left:18px;font-size:1.8rem;opacity:0.35;animation:warm-pulse 4s ease-in-out infinite;}
 .header::after{content:'🏮';position:absolute;top:14px;right:18px;font-size:1.8rem;opacity:0.35;animation:warm-pulse 4s ease-in-out infinite 2s;}
 .logo{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:700;color:var(--gold-light);letter-spacing:3px;text-shadow:0 2px 10px rgba(0,0,0,0.3);}
 .logo span{color:#FFF8F0;font-weight:400;font-style:italic;}
-.table-badge{
-  display:inline-block; margin-top:10px;
-  background:rgba(255,255,255,0.18); border:1.5px solid rgba(255,255,255,0.35);
-  color:#FFF8F0; padding:7px 22px; border-radius:24px;
-  font-size:1rem; font-weight:700; letter-spacing:1px;
-}
+.table-badge{display:inline-block;margin-top:10px;background:rgba(255,255,255,0.18);border:1.5px solid rgba(255,255,255,0.35);color:#FFF8F0;padding:7px 22px;border-radius:24px;font-size:1rem;font-weight:700;}
 .lang-switcher{display:flex;justify-content:center;gap:8px;margin-top:14px;}
-.lang-btn{padding:6px 14px;border:1.5px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.85);border-radius:20px;cursor:pointer;font-weight:600;font-size:0.78rem;transition:all 0.3s ease;font-family:inherit;}
-.lang-btn:hover{background:rgba(255,255,255,0.22);}
+.lang-btn{padding:6px 14px;border:1.5px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.85);border-radius:20px;cursor:pointer;font-weight:600;font-size:0.78rem;transition:all 0.3s;font-family:inherit;}
 .lang-btn.active{background:var(--gold);border-color:var(--gold);color:var(--crimson);font-weight:700;}
 
 /* CATEGORY TABS */
-.cat-tabs{display:flex;gap:8px;padding:16px 16px 4px;overflow-x:auto;scrollbar-width:none;position:sticky;top:0;z-index:50;background:var(--warm-white);}
+.cat-tabs{display:flex;gap:8px;padding:14px 14px 4px;overflow-x:auto;scrollbar-width:none;position:sticky;top:0;z-index:50;background:var(--warm-white);}
 .cat-tabs::-webkit-scrollbar{display:none;}
-.cat-tab{padding:9px 18px;border:1.5px solid rgba(155,34,38,0.15);background:#FFF;color:var(--ink-muted);border-radius:24px;cursor:pointer;font-weight:600;font-size:0.82rem;white-space:nowrap;transition:all 0.3s ease;font-family:inherit;}
-.cat-tab:hover{border-color:var(--crimson);color:var(--crimson);}
+.cat-tab{padding:8px 16px;border:1.5px solid rgba(155,34,38,0.15);background:#FFF;color:var(--ink-muted);border-radius:22px;cursor:pointer;font-weight:600;font-size:0.8rem;white-space:nowrap;transition:all 0.3s;font-family:inherit;}
 .cat-tab.active{background:linear-gradient(135deg,var(--crimson),var(--crimson-light));color:white;border-color:var(--crimson);box-shadow:0 3px 12px rgba(155,34,38,0.25);}
 
-/* MENU GRID */
-.menu-section{padding:16px;}
-.section-label{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:700;color:var(--crimson);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+/* MENU */
+.menu-section{padding:14px;}
+.section-label{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:700;color:var(--crimson);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
 .section-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(155,34,38,0.2),transparent);}
-.menu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px;}
-
-.menu-card{
-  background:#FFF;border-radius:20px;padding:16px;
-  border:1px solid rgba(155,34,38,0.08);
-  box-shadow:0 2px 10px var(--shadow-warm);
-  transition:all 0.35s ease; position:relative; overflow:hidden;
-  animation:slide-up 0.4s ease;
-}
+.menu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+.menu-card{background:#FFF;border-radius:18px;padding:15px;border:1px solid rgba(155,34,38,0.08);box-shadow:0 2px 10px var(--shadow-warm);transition:all 0.35s;position:relative;overflow:hidden;animation:slide-up 0.4s ease;}
 .menu-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,var(--crimson),var(--gold));opacity:0;transition:opacity 0.3s;}
-.menu-card:hover{transform:translateY(-3px);box-shadow:0 6px 22px rgba(155,34,38,0.12);}
 .menu-card:hover::before{opacity:1;}
 .menu-card.unavailable{opacity:0.45;filter:grayscale(0.5);}
-
-.menu-emoji{font-size:2.4rem;text-align:center;margin-bottom:8px;display:block;}
-.menu-name{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;color:var(--crimson);margin-bottom:3px;line-height:1.3;}
-.menu-name-sub{font-size:0.68rem;color:var(--ink-muted);margin-bottom:7px;line-height:1.4;}
-.menu-price{font-size:1rem;font-weight:700;color:var(--gold);margin-bottom:10px;}
-.menu-avail{font-size:0.7rem;margin-bottom:8px;}
-.avail-ok{color:var(--jade);}
-.avail-no{color:var(--crimson);}
-
-/* QTY CONTROL */
-.qty-row{display:flex;align-items:center;justify-content:center;gap:8px;}
-.qty-btn{width:32px;height:32px;border-radius:10px;border:1.5px solid rgba(155,34,38,0.2);background:var(--warm-white);color:var(--crimson);font-size:1.1rem;font-weight:700;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;}
+.menu-emoji{font-size:2.2rem;text-align:center;margin-bottom:7px;display:block;}
+.menu-name{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:700;color:var(--crimson);margin-bottom:2px;line-height:1.3;}
+.menu-name-sub{font-size:0.66rem;color:var(--ink-muted);margin-bottom:6px;line-height:1.4;}
+.menu-price{font-size:0.95rem;font-weight:700;color:var(--gold);margin-bottom:8px;}
+.menu-avail{font-size:0.68rem;margin-bottom:7px;}
+.avail-ok{color:var(--jade);}.avail-no{color:var(--crimson);}
+.qty-row{display:flex;align-items:center;justify-content:center;gap:7px;}
+.qty-btn{width:30px;height:30px;border-radius:9px;border:1.5px solid rgba(155,34,38,0.2);background:var(--warm-white);color:var(--crimson);font-size:1rem;font-weight:700;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;}
 .qty-btn:hover{background:var(--crimson);color:white;}
-.qty-num{width:34px;text-align:center;font-size:1rem;font-weight:700;color:var(--crimson);}
-.add-btn{width:100%;padding:9px;background:linear-gradient(135deg,var(--jade),#6B9B6A);color:white;border:none;border-radius:12px;font-family:inherit;font-weight:700;font-size:0.85rem;cursor:pointer;margin-top:8px;transition:all 0.3s;}
-.add-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(88,129,87,0.3);}
-.add-btn:disabled{background:#ccc;cursor:not-allowed;transform:none;}
+.qty-num{width:30px;text-align:center;font-size:1rem;font-weight:700;color:var(--crimson);}
+.add-btn{width:100%;padding:8px;background:linear-gradient(135deg,var(--jade),var(--jade-light));color:white;border:none;border-radius:11px;font-family:inherit;font-weight:700;font-size:0.82rem;cursor:pointer;margin-top:7px;transition:all 0.3s;}
+.add-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(88,129,87,0.3);}
+.add-btn:disabled{background:#ccc;cursor:not-allowed;}
 
-/* CART BOTTOM BAR */
-.cart-bar{
-  position:fixed;bottom:0;left:0;right:0;
-  background:linear-gradient(135deg,var(--crimson),var(--crimson-light));
-  padding:16px 20px; display:none;
-  box-shadow:0 -4px 20px rgba(155,34,38,0.3);
-  z-index:200;
-}
+/* CART BAR */
+.cart-bar{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,var(--crimson),var(--crimson-light));padding:14px 18px;display:none;box-shadow:0 -4px 20px rgba(155,34,38,0.3);z-index:200;}
 .cart-bar.show{display:flex;align-items:center;justify-content:space-between;animation:slide-up 0.3s ease;}
 .cart-info{color:white;}
-.cart-count{font-size:0.82rem;opacity:0.85;margin-bottom:2px;}
+.cart-count{font-size:0.78rem;opacity:0.85;}
 .cart-total{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;}
-.cart-btn{background:var(--gold);color:var(--crimson);border:none;padding:13px 24px;border-radius:16px;font-family:inherit;font-weight:700;font-size:0.95rem;cursor:pointer;transition:all 0.3s;}
+.cart-btn{background:var(--gold);color:var(--crimson);border:none;padding:12px 22px;border-radius:14px;font-family:inherit;font-weight:700;font-size:0.9rem;cursor:pointer;transition:all 0.3s;}
 .cart-btn:hover{transform:scale(1.04);}
 
-/* CART MODAL */
+/* OVERLAY */
 .overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:500;backdrop-filter:blur(4px);}
 .overlay.show{display:block;animation:fade-in 0.3s ease;}
-.cart-modal{
-  position:fixed;bottom:0;left:0;right:0;
-  background:var(--paper);border-radius:28px 28px 0 0;
-  max-height:88vh;overflow-y:auto;z-index:501;
-  display:none;padding:24px 20px 40px;
-  box-shadow:0 -8px 40px rgba(155,34,38,0.2);
-}
-.cart-modal.show{display:block;animation:slide-up 0.35s ease;}
-.modal-handle{width:44px;height:4px;background:rgba(155,34,38,0.2);border-radius:4px;margin:0 auto 20px;}
-.modal-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;color:var(--crimson);margin-bottom:18px;text-align:center;}
 
-/* CART ITEMS */
-.cart-item{
-  background:#FFF;border-radius:16px;padding:14px 16px;margin-bottom:10px;
-  display:flex;justify-content:space-between;align-items:center;
-  border:1px solid rgba(155,34,38,0.07);
-  box-shadow:0 2px 8px var(--shadow-warm);
-}
+/* CART MODAL */
+.cart-modal{position:fixed;bottom:0;left:0;right:0;background:var(--paper);border-radius:26px 26px 0 0;max-height:88vh;overflow-y:auto;z-index:501;display:none;padding:22px 18px 36px;box-shadow:0 -8px 40px rgba(155,34,38,0.2);}
+.cart-modal.show{display:block;animation:slide-up 0.35s ease;}
+.modal-handle{width:44px;height:4px;background:rgba(155,34,38,0.2);border-radius:4px;margin:0 auto 18px;}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;color:var(--crimson);margin-bottom:16px;text-align:center;}
+.cart-item{background:#FFF;border-radius:14px;padding:13px 15px;margin-bottom:9px;border:1px solid rgba(155,34,38,0.07);box-shadow:0 2px 8px var(--shadow-warm);display:flex;justify-content:space-between;align-items:center;}
 .cart-item-info{flex:1;}
-.cart-item-name{font-weight:700;color:var(--crimson);font-size:0.95rem;}
-.cart-item-price{font-size:0.8rem;color:var(--ink-muted);margin-top:3px;}
-.cart-item-right{display:flex;align-items:center;gap:10px;}
-.cart-item-total{font-weight:700;color:var(--gold);font-size:1rem;white-space:nowrap;}
-.remove-btn{background:rgba(155,34,38,0.1);border:none;color:var(--crimson);width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.cart-item-name{font-weight:700;color:var(--crimson);font-size:0.92rem;}
+.cart-item-price{font-size:0.78rem;color:var(--ink-muted);margin-top:2px;}
+.cart-item-right{display:flex;align-items:center;gap:8px;}
+.cart-item-total{font-weight:700;color:var(--gold);font-size:0.95rem;white-space:nowrap;}
+.remove-btn{background:rgba(155,34,38,0.1);border:none;color:var(--crimson);width:28px;height:28px;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
 .remove-btn:hover{background:var(--crimson);color:white;}
 
-/* NOTE INPUT */
-.note-group{margin:16px 0;}
-.note-group label{display:block;font-weight:700;color:var(--crimson);font-size:0.88rem;margin-bottom:8px;}
-.note-group textarea{width:100%;padding:12px 16px;background:var(--warm-white);border:1.5px solid rgba(155,34,38,0.15);border-radius:14px;font-family:inherit;font-size:0.95rem;color:var(--ink);resize:none;min-height:70px;transition:all 0.3s;}
+.note-group{margin:14px 0;}
+.note-group label{display:block;font-weight:700;color:var(--crimson);font-size:0.86rem;margin-bottom:7px;}
+.note-group textarea{width:100%;padding:11px 15px;background:var(--warm-white);border:1.5px solid rgba(155,34,38,0.15);border-radius:13px;font-family:inherit;font-size:0.92rem;color:var(--ink);resize:none;min-height:64px;transition:all 0.3s;}
 .note-group textarea:focus{outline:none;border-color:var(--crimson);box-shadow:0 0 0 4px var(--crimson-soft);}
 
-/* SUMMARY */
-.order-summary{background:linear-gradient(135deg,var(--crimson-soft),var(--gold-soft));border-radius:18px;padding:18px;margin:16px 0;}
-.summary-row{display:flex;justify-content:space-between;padding:6px 0;font-size:0.9rem;color:var(--ink-light);}
-.summary-row.total{font-weight:700;font-size:1.1rem;color:var(--crimson);border-top:1px solid rgba(155,34,38,0.15);padding-top:10px;margin-top:4px;}
+.order-summary{background:linear-gradient(135deg,var(--crimson-soft),var(--gold-soft));border-radius:16px;padding:15px;margin:14px 0;}
+.summary-row{display:flex;justify-content:space-between;padding:5px 0;font-size:0.88rem;color:var(--ink-light);}
+.summary-row.total{font-weight:700;font-size:1.08rem;color:var(--crimson);border-top:1px solid rgba(155,34,38,0.15);padding-top:9px;margin-top:4px;}
 
-/* ORDER BTN */
-.order-btn{
-  width:100%;padding:17px;
-  background:linear-gradient(135deg,var(--crimson),var(--crimson-light));
-  color:white;border:none;border-radius:16px;
-  font-family:inherit;font-weight:700;font-size:1.05rem;
-  cursor:pointer;transition:all 0.3s;
-  box-shadow:0 4px 18px rgba(155,34,38,0.3);
-}
-.order-btn:hover{transform:translateY(-2px);box-shadow:0 6px 26px rgba(155,34,38,0.4);}
+.order-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--crimson),var(--crimson-light));color:white;border:none;border-radius:16px;font-family:inherit;font-weight:700;font-size:1rem;cursor:pointer;transition:all 0.3s;box-shadow:0 4px 18px rgba(155,34,38,0.3);}
+.order-btn:hover{transform:translateY(-2px);}
 .order-btn:disabled{background:#ccc;cursor:not-allowed;transform:none;box-shadow:none;}
 
-/* SUCCESS SCREEN */
-.success-screen{
-  display:none;position:fixed;top:0;left:0;right:0;bottom:0;
-  background:linear-gradient(160deg,var(--crimson),#5A1216);
-  z-index:1000;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;padding:30px;
-}
+/* ===== PAYMENT SCREEN ===== */
+.payment-screen{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--warm-white);z-index:800;overflow-y:auto;padding-bottom:40px;}
+.payment-screen.show{display:block;animation:fade-in 0.3s ease;}
+
+.payment-header{background:linear-gradient(135deg,var(--crimson),#5A1216);padding:20px;text-align:center;color:white;}
+.payment-header h2{font-family:'Cormorant Garamond',serif;font-size:1.8rem;margin-bottom:4px;}
+.payment-header p{font-size:0.85rem;opacity:0.8;}
+
+.payment-content{max-width:480px;margin:0 auto;padding:20px;}
+
+/* Order summary before payment */
+.pay-order-summary{background:#FFF;border-radius:18px;padding:18px;margin-bottom:16px;border:1px solid rgba(155,34,38,0.08);box-shadow:0 2px 12px var(--shadow-warm);}
+.pay-order-summary h3{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:700;color:var(--crimson);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(155,34,38,0.1);}
+.pay-item-row{display:flex;justify-content:space-between;padding:6px 0;font-size:0.88rem;color:var(--ink-light);border-bottom:1px solid rgba(155,34,38,0.04);}
+.pay-item-row:last-child{border-bottom:none;}
+.pay-total-row{display:flex;justify-content:space-between;padding:10px 0 0;font-weight:700;font-size:1.05rem;color:var(--crimson);border-top:1px solid rgba(155,34,38,0.1);margin-top:6px;}
+.pay-total-amount{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--crimson);}
+
+/* QR Payment */
+.qr-section{background:#FFF;border-radius:18px;padding:22px;margin-bottom:16px;text-align:center;border:1px solid rgba(155,34,38,0.08);box-shadow:0 2px 12px var(--shadow-warm);}
+.qr-section h3{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:700;color:var(--crimson);margin-bottom:6px;}
+.qr-section p{font-size:0.82rem;color:var(--ink-muted);margin-bottom:16px;}
+.qr-amount{font-family:'Cormorant Garamond',serif;font-size:2.5rem;font-weight:700;color:var(--crimson);margin-bottom:4px;}
+.qr-amount-sub{font-size:0.8rem;color:var(--ink-muted);margin-bottom:16px;}
+.qr-box{display:flex;justify-content:center;margin-bottom:14px;}
+.qr-box canvas,.qr-box img{border-radius:12px;border:4px solid var(--cream);}
+.qr-note{font-size:0.75rem;color:var(--ink-muted);line-height:1.6;}
+.qr-badge{display:inline-block;background:var(--jade-soft);color:var(--jade);padding:4px 14px;border-radius:20px;font-size:0.76rem;font-weight:700;margin-top:8px;border:1px solid rgba(88,129,87,0.3);}
+
+/* Payment actions */
+.pay-btn{width:100%;padding:15px;border:none;border-radius:16px;font-family:inherit;font-weight:700;font-size:0.95rem;cursor:pointer;transition:all 0.3s;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.pay-btn-success{background:linear-gradient(135deg,var(--jade),var(--jade-light));color:white;box-shadow:0 4px 16px rgba(88,129,87,0.3);}
+.pay-btn-success:hover{transform:translateY(-2px);}
+.pay-btn-receipt{background:linear-gradient(135deg,#2980B9,#5DADE2);color:white;box-shadow:0 4px 16px rgba(41,128,185,0.25);}
+.pay-btn-receipt:hover{transform:translateY(-2px);}
+.pay-btn-tax{background:var(--cream);color:var(--crimson);border:1.5px solid rgba(155,34,38,0.2);}
+.pay-btn-tax:hover{background:var(--crimson-soft);}
+
+/* ===== TAX INVOICE FORM ===== */
+.tax-form{background:#FFF;border-radius:18px;padding:20px;margin-bottom:14px;border:1px solid rgba(155,34,38,0.1);box-shadow:0 2px 12px var(--shadow-warm);display:none;}
+.tax-form.show{display:block;animation:slide-up 0.3s ease;}
+.tax-form h3{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:700;color:var(--crimson);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid rgba(155,34,38,0.1);}
+.tax-field{margin-bottom:12px;}
+.tax-field label{display:block;font-weight:600;color:var(--crimson);font-size:0.82rem;margin-bottom:6px;}
+.tax-field input,.tax-field textarea{width:100%;padding:11px 14px;background:var(--warm-white);border:1.5px solid rgba(155,34,38,0.15);border-radius:12px;font-family:inherit;font-size:0.9rem;color:var(--ink);transition:all 0.3s;}
+.tax-field input:focus,.tax-field textarea:focus{outline:none;border-color:var(--crimson);box-shadow:0 0 0 4px var(--crimson-soft);}
+.tax-field textarea{min-height:60px;resize:vertical;}
+
+/* ===== SUCCESS SCREEN ===== */
+.success-screen{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:linear-gradient(160deg,var(--crimson),#5A1216);z-index:1000;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;}
 .success-screen.show{display:flex;}
-.success-icon{font-size:5rem;margin-bottom:20px;animation:bounce-in 0.6s ease;}
-.success-title{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;color:var(--gold-light);margin-bottom:12px;}
-.success-sub{color:rgba(255,248,240,0.75);font-size:1rem;line-height:1.6;margin-bottom:30px;}
-.order-code{
-  background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.3);
-  border-radius:16px;padding:14px 28px;
-  font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;
-  color:var(--gold-light);letter-spacing:3px;margin-bottom:30px;
-}
-.new-order-btn{background:var(--gold);color:var(--crimson);border:none;padding:15px 36px;border-radius:16px;font-family:inherit;font-weight:700;font-size:1rem;cursor:pointer;transition:all 0.3s;}
-.new-order-btn:hover{transform:scale(1.04);}
+.success-icon{font-size:5rem;margin-bottom:18px;animation:bounce-in 0.6s ease;}
+.success-title{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;color:var(--gold-light);margin-bottom:10px;}
+.success-sub{color:rgba(255,248,240,0.75);font-size:0.95rem;line-height:1.7;margin-bottom:24px;white-space:pre-line;}
+.order-code{background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.3);border-radius:16px;padding:12px 28px;font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--gold-light);letter-spacing:3px;margin-bottom:24px;}
+.success-btns{display:flex;flex-direction:column;gap:10px;width:100%;max-width:300px;}
+.success-btn{padding:14px 28px;border:none;border-radius:14px;font-family:inherit;font-weight:700;font-size:0.9rem;cursor:pointer;transition:all 0.3s;}
+.success-btn-more{background:var(--gold);color:var(--crimson);}
+.success-btn-receipt{background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.35);color:white;}
+.success-btn-receipt:hover{background:rgba(255,255,255,0.25);}
 
 /* LOADING */
 .loading-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.7);z-index:2000;align-items:center;justify-content:center;}
 .loading-overlay.show{display:flex;}
-.loading-box{background:white;border-radius:20px;padding:30px 36px;text-align:center;}
-.loading-spinner{font-size:2.5rem;animation:warm-pulse 1s ease-in-out infinite;margin-bottom:12px;}
+.loading-box{background:white;border-radius:20px;padding:28px 34px;text-align:center;}
+.loading-spinner{font-size:2.5rem;animation:warm-pulse 1s ease-in-out infinite;margin-bottom:10px;}
 .loading-text{color:var(--crimson);font-weight:700;}
 
 /* EMPTY */
-.empty-cat{text-align:center;padding:50px 20px;color:var(--ink-muted);}
+.empty-cat{text-align:center;padding:44px 20px;color:var(--ink-muted);}
 .empty-cat-icon{font-size:3rem;margin-bottom:12px;opacity:0.5;}
 
-@media(max-width:400px){
-  .menu-grid{grid-template-columns:1fr;}
-  .logo{font-size:2rem;}
+/* ===== PRINT RECEIPT ===== */
+@media print{
+  body>*:not(#print-receipt){display:none!important;}
+  #print-receipt{display:block!important;}
 }
+#print-receipt{display:none;}
+.receipt-paper{max-width:320px;margin:0 auto;font-family:'Noto Sans Thai',monospace;font-size:12px;line-height:1.8;color:#000;}
+.receipt-center{text-align:center;}
+.receipt-logo{font-size:20px;font-weight:700;letter-spacing:2px;}
+.receipt-divider{border:none;border-top:1px dashed #999;margin:8px 0;}
+.receipt-row{display:flex;justify-content:space-between;}
+.receipt-total{font-size:14px;font-weight:700;}
+
+@media(max-width:400px){.menu-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -203,9 +211,74 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--warm-white);color:
   <div class="success-icon">✅</div>
   <div class="success-title" id="success-title">ส่งออเดอร์เรียบร้อย!</div>
   <div class="success-sub" id="success-sub">ครัวได้รับออเดอร์ของคุณแล้ว<br>กรุณารอสักครู่</div>
-  <div class="order-code" id="success-order-code">#0000</div>
-  <button class="new-order-btn" id="new-order-btn" onclick="resetOrder()">+ สั่งอาหารเพิ่ม</button>
+  <div class="order-code" id="success-order-code">#000000</div>
+  <div class="success-btns">
+    <button class="success-btn success-btn-more" id="btn-order-more" onclick="orderMore()">+ สั่งอาหารเพิ่ม</button>
+    <button class="success-btn success-btn-receipt" id="btn-to-payment" onclick="goToPayment()">💳 ชำระเงิน / ดูใบเสร็จ</button>
+  </div>
 </div>
+
+<!-- PAYMENT SCREEN -->
+<div class="payment-screen" id="payment-screen">
+  <div class="payment-header">
+    <h2 id="pay-header-title">💳 ชำระเงิน</h2>
+    <p id="pay-header-sub">สแกน QR เพื่อชำระเงิน</p>
+  </div>
+  <div class="payment-content">
+
+    <!-- Order Summary -->
+    <div class="pay-order-summary">
+      <h3 id="pay-summary-title">🧾 รายการอาหาร</h3>
+      <div id="pay-items-list"></div>
+      <div class="pay-total-row">
+        <span id="pay-total-label">ยอดรวม</span>
+        <span class="pay-total-amount" id="pay-total-amount">0 ฿</span>
+      </div>
+    </div>
+
+    <!-- QR Payment -->
+    <div class="qr-section">
+      <h3 id="pay-qr-title">📱 QR พร้อมเพย์</h3>
+      <p id="pay-qr-sub">สแกน QR ด้วยแอปธนาคารเพื่อชำระเงิน</p>
+      <div class="qr-amount" id="pay-qr-amount">0</div>
+      <div class="qr-amount-sub" id="pay-qr-currency">บาท (THB)</div>
+      <div class="qr-box" id="pay-qr-box"></div>
+      <div class="qr-note" id="pay-qr-note">PromptPay: 0XX-XXX-XXXX</div>
+      <span class="qr-badge" id="pay-qr-badge">🔒 ชำระผ่าน PromptPay</span>
+    </div>
+
+    <!-- Action Buttons -->
+    <button class="pay-btn pay-btn-success" id="btn-paid-confirm" onclick="confirmPayment()">
+      ✅ <span id="btn-paid-text">ยืนยันชำระเงินเรียบร้อยแล้ว</span>
+    </button>
+    <button class="pay-btn pay-btn-receipt" onclick="downloadReceipt()">
+      📄 <span id="btn-receipt-text">ดาวน์โหลดใบเสร็จ</span>
+    </button>
+    <button class="pay-btn pay-btn-tax" onclick="toggleTaxForm()">
+      🗂️ <span id="btn-tax-text">ขอใบกำกับภาษีแบบเต็ม</span>
+    </button>
+
+    <!-- Tax Invoice Form -->
+    <div class="tax-form" id="tax-form">
+      <h3 id="tax-form-title">🗂️ ข้อมูลใบกำกับภาษี</h3>
+      <div class="tax-field"><label id="tax-label-name">ชื่อผู้ซื้อ / บริษัท</label><input type="text" id="tax-name" placeholder="บริษัท ABC จำกัด"></div>
+      <div class="tax-field"><label id="tax-label-taxid">เลขประจำตัวผู้เสียภาษี (13 หลัก)</label><input type="text" id="tax-taxid" placeholder="0-0000-00000-00-0" maxlength="17"></div>
+      <div class="tax-field"><label id="tax-label-addr">ที่อยู่</label><textarea id="tax-addr" placeholder="123 ถ.สุขุมวิท แขวงคลองเตย เขตคลองเตย กรุงเทพฯ 10110"></textarea></div>
+      <div class="tax-field"><label id="tax-label-branch">สาขา (ถ้ามี)</label><input type="text" id="tax-branch" placeholder="สำนักงานใหญ่ / 00000"></div>
+      <button class="pay-btn pay-btn-receipt" style="margin-top:8px;" onclick="downloadTaxInvoice()">
+        🖨️ <span id="btn-tax-dl-text">พิมพ์ / ดาวน์โหลดใบกำกับภาษี</span>
+      </button>
+    </div>
+
+    <!-- Back to menu -->
+    <button class="pay-btn" style="background:var(--cream);color:var(--crimson);margin-top:6px;" onclick="backToMenu()">
+      🍽️ <span id="btn-back-menu-text">กลับไปสั่งอาหารเพิ่ม</span>
+    </button>
+  </div>
+</div>
+
+<!-- PRINT RECEIPT (hidden, for print only) -->
+<div id="print-receipt"></div>
 
 <!-- HEADER -->
 <div class="header">
@@ -230,7 +303,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--warm-white);color:
     <div class="cart-count" id="cart-count-text">0 รายการ</div>
     <div class="cart-total" id="cart-total-text">0 ฿</div>
   </div>
-  <button class="cart-btn" id="cart-open-btn" onclick="openCart()">🛒 <span id="cart-btn-label">ดูตะกร้า</span></button>
+  <button class="cart-btn" onclick="openCart()">🛒 <span id="cart-btn-label">ดูตะกร้า</span></button>
 </div>
 
 <!-- OVERLAY -->
@@ -241,154 +314,175 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--warm-white);color:
   <div class="modal-handle"></div>
   <div class="modal-title" id="cart-modal-title">🛒 ตะกร้าของคุณ</div>
   <div id="cart-items-container"></div>
-
   <div class="note-group">
     <label id="note-label">📝 หมายเหตุ / แพ้อาหาร</label>
     <textarea id="order-note" rows="2" placeholder="เช่น: ไม่ใส่ผัก, แพ้กุ้ง..."></textarea>
   </div>
-
   <div class="order-summary" id="order-summary"></div>
-
   <button class="order-btn" id="confirm-order-btn" onclick="confirmOrder()">
     🥟 <span id="confirm-btn-text">ยืนยันสั่งอาหาร</span>
   </button>
 </div>
 
-<!-- Firebase Compat SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <script>
+// ===== FIREBASE =====
+const _app = firebase.apps.length ? firebase.app() : firebase.initializeApp({
+  apiKey:"AIzaSyC650BBAj_y7bObsIA5KpMQkLDNg4FEtmw",
+  authDomain:"ohoi-kyoza.firebaseapp.com",
+  databaseURL:"https://ohoi-kyoza-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"ohoi-kyoza",
+  storageBucket:"ohoi-kyoza.firebasestorage.app",
+  messagingSenderId:"311350815436",
+  appId:"1:311350815436:web:5638717dc207f286e5b069"
+});
+const db = firebase.database();
 
-// ===== FIREBASE CONFIG =====
-const firebaseConfig = {
-  apiKey:            "AIzaSyC650BBAj_y7bObsIA5KpMQkLDNg4FEtmw",
-  authDomain:        "ohoi-kyoza.firebaseapp.com",
-  databaseURL:       "https://ohoi-kyoza-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId:         "ohoi-kyoza",
-  storageBucket:     "ohoi-kyoza.firebasestorage.app",
-  messagingSenderId: "311350815436",
-  appId:             "1:311350815436:web:5638717dc207f286e5b069"
-};
-
-if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
-const app = firebase.app();
-const db  = firebase.database();
+// ===== PromptPay Config (แก้เลขที่นี่) =====
+const PROMPTPAY_ID   = '0000000000';   // ← ใส่เบอร์โทร หรือ เลข 13 หลัก
+const SHOP_NAME      = 'Ohoi Kyoza';
+const SHOP_ADDRESS   = '123 ถนนตัวอย่าง กรุงเทพฯ';
+const SHOP_TAX_ID    = '0000000000000';
+const SHOP_BRANCH    = 'สำนักงานใหญ่';
 
 // ===== I18N =====
 const i18n = {
   th:{
     table:'โต๊ะ', cat_all:'🍽️ ทั้งหมด',
-    cart_count:'{n} รายการ', cart_view:'ดูตะกร้า',
-    cart_title:'🛒 ตะกร้าของคุณ',
-    note_label:'📝 หมายเหตุ / แพ้อาหาร',
-    note_ph:'เช่น: ไม่ใส่ผัก, แพ้กุ้ง...',
-    subtotal:'ยอดรวม', tax:'ค่าบริการ (0%)', total:'รวมทั้งสิ้น',
-    confirm_btn:'🥟 ยืนยันสั่งอาหาร',
+    cart_count:'{n} รายการ', cart_view:'ดูตะกร้า', cart_title:'🛒 ตะกร้าของคุณ',
+    note_label:'📝 หมายเหตุ / แพ้อาหาร', note_ph:'เช่น: ไม่ใส่ผัก, แพ้กุ้ง...',
+    subtotal:'ยอดรวม', total:'รวมทั้งสิ้น', confirm_btn:'🥟 ยืนยันสั่งอาหาร',
     avail:'✅ พร้อมเสิร์ฟ', unavail:'❌ หมดชั่วคราว',
     add_btn:'+ เพิ่มในตะกร้า', added_btn:'✓ เพิ่มแล้ว',
-    loading:'กำลังส่งออเดอร์...',
+    loading:'กำลังส่งออเดอร์...', baht:'฿',
     success_title:'ส่งออเดอร์เรียบร้อย!',
     success_sub:'ครัวได้รับออเดอร์ของคุณแล้ว\nกรุณารอสักครู่',
-    new_order:'+ สั่งอาหารเพิ่ม',
-    empty_menu:'ยังไม่มีเมนู — กรุณารอสักครู่',
-    baht:'฿'
+    btn_order_more:'+ สั่งอาหารเพิ่ม',
+    btn_to_payment:'💳 ชำระเงิน / ดูใบเสร็จ',
+    // Payment
+    pay_header_title:'💳 ชำระเงิน',
+    pay_header_sub:'สแกน QR เพื่อชำระเงิน',
+    pay_summary_title:'🧾 รายการอาหาร',
+    pay_total_label:'ยอดรวม',
+    pay_qr_title:'📱 QR พร้อมเพย์',
+    pay_qr_sub:'สแกน QR ด้วยแอปธนาคารเพื่อชำระเงิน',
+    pay_qr_currency:'บาท (THB)',
+    pay_qr_badge:'🔒 ชำระผ่าน PromptPay',
+    btn_paid:'✅ ยืนยันชำระเงินเรียบร้อยแล้ว',
+    btn_receipt:'📄 ดาวน์โหลดใบเสร็จ',
+    btn_tax:'🗂️ ขอใบกำกับภาษีแบบเต็ม',
+    btn_back_menu:'🍽️ กลับไปสั่งอาหารเพิ่ม',
+    tax_form_title:'🗂️ ข้อมูลใบกำกับภาษี',
+    tax_label_name:'ชื่อผู้ซื้อ / บริษัท',
+    tax_label_taxid:'เลขประจำตัวผู้เสียภาษี (13 หลัก)',
+    tax_label_addr:'ที่อยู่',
+    tax_label_branch:'สาขา (ถ้ามี)',
+    btn_tax_dl:'🖨️ พิมพ์ / ดาวน์โหลดใบกำกับภาษี',
+    paid_success_title:'ชำระเงินเรียบร้อย!',
+    paid_success_sub:'ขอบคุณที่ใช้บริการ\nOhoi Kyoza 🥟',
+    empty_menu:'กำลังโหลดเมนู...',
+    receipt_title:'ใบเสร็จรับเงิน', tax_inv_title:'ใบกำกับภาษี',
+    receipt_table:'โต๊ะ', receipt_date:'วันที่',
+    receipt_item:'รายการ', receipt_qty:'จำนวน', receipt_price:'ราคา/จาน', receipt_total:'รวม',
+    receipt_subtotal:'ยอดรวม', receipt_thank:'ขอบคุณที่ใช้บริการ'
   },
   en:{
     table:'Table', cat_all:'🍽️ All',
-    cart_count:'{n} items', cart_view:'View Cart',
-    cart_title:'🛒 Your Cart',
-    note_label:'📝 Special Requests / Allergies',
-    note_ph:'e.g. No vegetables, shrimp allergy...',
-    subtotal:'Subtotal', tax:'Service Charge (0%)', total:'Total',
-    confirm_btn:'🥟 Confirm Order',
+    cart_count:'{n} items', cart_view:'View Cart', cart_title:'🛒 Your Cart',
+    note_label:'📝 Special Requests / Allergies', note_ph:'e.g. No vegetables, shrimp allergy...',
+    subtotal:'Subtotal', total:'Total', confirm_btn:'🥟 Confirm Order',
     avail:'✅ Available', unavail:'❌ Unavailable',
     add_btn:'+ Add to Cart', added_btn:'✓ Added',
-    loading:'Placing your order...',
+    loading:'Placing your order...', baht:'฿',
     success_title:'Order Placed!',
-    success_sub:'The kitchen has received your order.\nPlease wait a moment.',
-    new_order:'+ Order More',
-    empty_menu:'No menus yet — please wait',
-    baht:'฿'
+    success_sub:'The kitchen received your order.\nPlease wait a moment.',
+    btn_order_more:'+ Order More',
+    btn_to_payment:'💳 Pay / View Receipt',
+    pay_header_title:'💳 Payment',
+    pay_header_sub:'Scan QR to pay',
+    pay_summary_title:'🧾 Order Summary',
+    pay_total_label:'Total',
+    pay_qr_title:'📱 PromptPay QR',
+    pay_qr_sub:'Scan with your banking app to pay',
+    pay_qr_currency:'THB',
+    pay_qr_badge:'🔒 Pay via PromptPay',
+    btn_paid:'✅ Confirm Payment Done',
+    btn_receipt:'📄 Download Receipt',
+    btn_tax:'🗂️ Request Tax Invoice',
+    btn_back_menu:'🍽️ Order More Food',
+    tax_form_title:'🗂️ Tax Invoice Information',
+    tax_label_name:'Buyer Name / Company',
+    tax_label_taxid:'Tax ID (13 digits)',
+    tax_label_addr:'Address',
+    tax_label_branch:'Branch (if any)',
+    btn_tax_dl:'🖨️ Print / Download Tax Invoice',
+    paid_success_title:'Payment Complete!',
+    paid_success_sub:'Thank you for dining with us\nOhoi Kyoza 🥟',
+    empty_menu:'Loading menus...',
+    receipt_title:'Receipt', tax_inv_title:'Tax Invoice',
+    receipt_table:'Table', receipt_date:'Date',
+    receipt_item:'Item', receipt_qty:'Qty', receipt_price:'Price', receipt_total:'Amount',
+    receipt_subtotal:'Subtotal', receipt_thank:'Thank you for your visit'
   },
   zh:{
     table:'桌', cat_all:'🍽️ 全部',
-    cart_count:'{n} 件', cart_view:'查看购物车',
-    cart_title:'🛒 您的购物车',
-    note_label:'📝 备注 / 过敏信息',
-    note_ph:'例如：不放蔬菜，虾过敏...',
-    subtotal:'小计', tax:'服务费 (0%)', total:'合计',
-    confirm_btn:'🥟 确认下单',
+    cart_count:'{n} 件', cart_view:'查看购物车', cart_title:'🛒 您的购物车',
+    note_label:'📝 备注 / 过敏信息', note_ph:'例如：不放蔬菜，虾过敏...',
+    subtotal:'小计', total:'合计', confirm_btn:'🥟 确认下单',
     avail:'✅ 可供应', unavail:'❌ 暂时售完',
     add_btn:'+ 加入购物车', added_btn:'✓ 已添加',
-    loading:'正在提交订单...',
+    loading:'正在提交订单...', baht:'฿',
     success_title:'下单成功！',
     success_sub:'厨房已收到您的订单\n请稍候',
-    new_order:'+ 继续点餐',
-    empty_menu:'暂无菜单，请稍候',
-    baht:'฿'
+    btn_order_more:'+ 继续点餐',
+    btn_to_payment:'💳 支付 / 查看收据',
+    pay_header_title:'💳 支付',
+    pay_header_sub:'扫描QR码支付',
+    pay_summary_title:'🧾 订单明细',
+    pay_total_label:'合计',
+    pay_qr_title:'📱 PromptPay 二维码',
+    pay_qr_sub:'使用银行APP扫码支付',
+    pay_qr_currency:'泰铢 (THB)',
+    pay_qr_badge:'🔒 通过PromptPay支付',
+    btn_paid:'✅ 确认已完成支付',
+    btn_receipt:'📄 下载收据',
+    btn_tax:'🗂️ 申请完整税务发票',
+    btn_back_menu:'🍽️ 继续点餐',
+    tax_form_title:'🗂️ 税务发票信息',
+    tax_label_name:'买方姓名 / 公司名称',
+    tax_label_taxid:'纳税人识别号（13位）',
+    tax_label_addr:'地址',
+    tax_label_branch:'分支机构（如有）',
+    btn_tax_dl:'🖨️ 打印 / 下载税务发票',
+    paid_success_title:'支付完成！',
+    paid_success_sub:'感谢您的光临\nOhoi Kyoza 🥟',
+    empty_menu:'正在加载菜单...',
+    receipt_title:'收据', tax_inv_title:'税务发票',
+    receipt_table:'桌号', receipt_date:'日期',
+    receipt_item:'菜品', receipt_qty:'数量', receipt_price:'单价', receipt_total:'金额',
+    receipt_subtotal:'小计', receipt_thank:'感谢您的光临'
   }
 };
 
-// category display names
 const catNames = {
-  gyoza:   {th:'🥟 เกี๊ยวซ่า', en:'🥟 Gyoza',    zh:'🥟 煎饺'},
-  rice:    {th:'🍚 ข้าว',      en:'🍚 Rice',      zh:'🍚 米饭'},
-  noodle:  {th:'🍜 เส้น',      en:'🍜 Noodles',   zh:'🍜 面条'},
-  soup:    {th:'🍲 ซุป',       en:'🍲 Soup',      zh:'🍲 汤'},
-  drink:   {th:'🥤 เครื่องดื่ม',en:'🥤 Drinks',  zh:'🥤 饮料'},
-  dessert: {th:'🍮 ของหวาน',   en:'🍮 Dessert',   zh:'🍮 甜点'},
-  set:     {th:'🍱 เซ็ต',      en:'🍱 Set',       zh:'🍱 套餐'}
+  gyoza:{th:'🥟 เกี๊ยวซ่า',en:'🥟 Gyoza',zh:'🥟 煎饺'},
+  rice:{th:'🍚 ข้าว',en:'🍚 Rice',zh:'🍚 米饭'},
+  noodle:{th:'🍜 เส้น',en:'🍜 Noodles',zh:'🍜 面条'},
+  soup:{th:'🍲 ซุป',en:'🍲 Soup',zh:'🍲 汤'},
+  drink:{th:'🥤 เครื่องดื่ม',en:'🥤 Drinks',zh:'🥤 饮料'},
+  dessert:{th:'🍮 ของหวาน',en:'🍮 Dessert',zh:'🍮 甜点'},
+  set:{th:'🍱 เซ็ต',en:'🍱 Set',zh:'🍱 套餐'}
 };
-
-// menu emoji map
-const menuEmoji = {
-  gyoza:'🥟', rice:'🍚', noodle:'🍜', soup:'🍲',
-  drink:'🥤', dessert:'🍮', set:'🍱'
-};
+const menuEmoji = {gyoza:'🥟',rice:'🍚',noodle:'🍜',soup:'🍲',drink:'🥤',dessert:'🍮',set:'🍱'};
 
 // ===== STATE =====
-let currentLang  = 'th';
+let currentLang  = localStorage.getItem('ok_lang') || 'th';
 let tableNo      = 1;
 let menus        = [];
 let products     = [];
-let cart         = [];  // [{menuId, name_th, name_en, name_zh, price, qty}]
+let cart         = [];
 let currentCat   = 'all';
-
-// ===== READ TABLE FROM URL ?table=N =====
-function getTableFromURL() {
-  const params = new URLSearchParams(window.location.search);
-  return parseInt(params.get('table')) || 1;
-}
-
-// ===== INIT =====
-window.addEventListener('DOMContentLoaded', () => {
-  tableNo = getTableFromURL();
-  renderTableBadge();
-  // Load menus & products from Firebase
-  loadMenusFromFirebase();
-  loadProductsFromFirebase();
-});
-
-function loadMenusFromFirebase() {
-  db.ref('menus').on('value', snap => {
-    menus = [];
-    if (snap.exists()) {
-      snap.forEach(child => menus.push({ fbKey: child.key, ...child.val() }));
-    }
-    renderCatTabs();
-    renderMenus();
-  });
-}
-
-function loadProductsFromFirebase() {
-  db.ref('products').on('value', snap => {
-    products = [];
-    if (snap.exists()) {
-      snap.forEach(child => products.push({ fbKey: child.key, ...child.val() }));
-    }
-    renderMenus(); // re-render stock status
-  });
-}
+let currentOrderId = '';
+let currentTotal   = 0;
 
 // ===== HELPERS =====
 function t(key, params={}) {
@@ -396,292 +490,424 @@ function t(key, params={}) {
   Object.keys(params).forEach(k => { text = text.replace(`{${k}}`, params[k]); });
   return text;
 }
-
 function getMenuName(m) {
   if (currentLang==='en' && m.name_en) return m.name_en;
   if (currentLang==='zh' && m.name_zh) return m.name_zh;
   return m.name_th || m.name || '—';
 }
-
-function getCatLabel(key) {
-  return catNames[key]?.[currentLang] || key;
-}
-
+function getCatLabel(k) { return catNames[k]?.[currentLang] || k; }
 function checkMenuAvail(menu) {
-  if (!menu.ingredients || !menu.ingredients.length) return true;
+  if (!menu.ingredients?.length) return true;
   return menu.ingredients.every(ing => {
-    const p = products.find(x => x.id === ing.productId);
+    const p = products.find(x => String(x.id)===String(ing.productId));
     return p && p.stock >= ing.quantity;
   });
 }
+function formatDate(date=new Date()) {
+  const locale = currentLang==='zh'?'zh-CN':currentLang==='en'?'en-US':'th-TH';
+  return date.toLocaleDateString(locale, {year:'numeric',month:'long',day:'numeric'});
+}
+function formatTime(date=new Date()) {
+  return date.toLocaleTimeString('th-TH', {hour:'2-digit',minute:'2-digit'});
+}
+
+// ===== INIT =====
+window.addEventListener('DOMContentLoaded', () => {
+  tableNo = parseInt(new URLSearchParams(window.location.search).get('table')) || 1;
+  renderTableBadge();
+  setLang(currentLang);
+
+  db.ref('menus').on('value', snap => {
+    menus = [];
+    if (snap.exists()) snap.forEach(c => menus.push({fbKey:c.key,...c.val()}));
+    renderCatTabs(); renderMenus();
+  });
+  db.ref('products').on('value', snap => {
+    products = [];
+    if (snap.exists()) snap.forEach(c => products.push({fbKey:c.key,...c.val()}));
+    renderMenus();
+  });
+});
 
 // ===== RENDER TABLE BADGE =====
 function renderTableBadge() {
-  document.getElementById('table-badge').textContent =
-    `🪑 ${t('table')} ${tableNo}`;
+  document.getElementById('table-badge').textContent = `🪑 ${t('table')} ${tableNo}`;
 }
 
-// ===== RENDER CATEGORY TABS =====
+// ===== RENDER CAT TABS =====
 function renderCatTabs() {
-  const cats = ['all', ...new Set(menus.map(m => m.category).filter(Boolean))];
+  const cats = ['all', ...new Set(menus.map(m=>m.category).filter(Boolean))];
   document.getElementById('cat-tabs').innerHTML = cats.map(c =>
-    `<button class="cat-tab ${currentCat===c?'active':''}"
-       onclick="filterCat('${c}')">${c==='all'?t('cat_all'):getCatLabel(c)}</button>`
+    `<button class="cat-tab ${currentCat===c?'active':''}" onclick="filterCat('${c}')">${c==='all'?t('cat_all'):getCatLabel(c)}</button>`
   ).join('');
 }
-
-// ===== FILTER CATEGORY =====
-window.filterCat = function(cat) {
-  currentCat = cat;
-  renderCatTabs();
-  renderMenus();
-};
+function filterCat(cat) { currentCat=cat; renderCatTabs(); renderMenus(); }
 
 // ===== RENDER MENUS =====
 function renderMenus() {
-  const filtered = currentCat==='all'
-    ? menus
-    : menus.filter(m => m.category===currentCat);
-
-  const section = document.getElementById('menu-section');
-  if (!filtered.length) {
-    section.innerHTML = `<div class="empty-cat">
-      <div class="empty-cat-icon">🍽️</div>
-      <p>${t('empty_menu')}</p></div>`;
-    return;
-  }
-
-  // Group by category for "all" view
-  if (currentCat === 'all') {
-    const groups = {};
-    filtered.forEach(m => {
-      const c = m.category || 'other';
-      if (!groups[c]) groups[c] = [];
-      groups[c].push(m);
-    });
-    section.innerHTML = Object.entries(groups).map(([cat, items]) =>
-      `<div>
-        <div class="section-label">${getCatLabel(cat)}</div>
-        <div class="menu-grid">${items.map(m => menuCardHTML(m)).join('')}</div>
-      </div>`
+  const filtered = currentCat==='all' ? menus : menus.filter(m=>m.category===currentCat);
+  const sec = document.getElementById('menu-section');
+  if (!filtered.length) { sec.innerHTML=`<div class="empty-cat"><div class="empty-cat-icon">🍽️</div><p>${t('empty_menu')}</p></div>`; return; }
+  if (currentCat==='all') {
+    const groups={};
+    filtered.forEach(m=>{const c=m.category||'other';if(!groups[c])groups[c]=[];groups[c].push(m);});
+    sec.innerHTML=Object.entries(groups).map(([cat,items])=>
+      `<div><div class="section-label">${getCatLabel(cat)}</div><div class="menu-grid">${items.map(menuCardHTML).join('')}</div></div>`
     ).join('');
   } else {
-    section.innerHTML = `<div class="menu-grid">${filtered.map(m => menuCardHTML(m)).join('')}</div>`;
+    sec.innerHTML=`<div class="menu-grid">${filtered.map(menuCardHTML).join('')}</div>`;
   }
 }
 
 function menuCardHTML(m) {
-  const avail  = checkMenuAvail(m);
-  const emoji  = menuEmoji[m.category] || '🍽️';
-  const inCart = cart.find(c => c.menuId === (m.id || m.fbKey));
-  const subNames = [
-    m.name_en && currentLang!=='en' ? m.name_en : '',
-    m.name_zh && currentLang!=='zh' ? m.name_zh : ''
-  ].filter(Boolean).join(' · ');
-
-  return `
-    <div class="menu-card ${!avail?'unavailable':''}">
-      <span class="menu-emoji">${emoji}</span>
-      <div class="menu-name">${getMenuName(m)}</div>
-      ${subNames?`<div class="menu-name-sub">${subNames}</div>`:''}
-      <div class="menu-price">${m.price} ${t('baht')}</div>
-      <div class="menu-avail ${avail?'avail-ok':'avail-no'}">${avail?t('avail'):t('unavail')}</div>
-      ${avail ? `
-        <div class="qty-row">
-          <button class="qty-btn" onclick="changeQty('${m.id||m.fbKey}',-1)">−</button>
-          <span class="qty-num" id="qty-${m.id||m.fbKey}">${inCart?inCart.qty:0}</span>
-          <button class="qty-btn" onclick="changeQty('${m.id||m.fbKey}',1)">+</button>
-        </div>
-        <button class="add-btn" id="add-${m.id||m.fbKey}" onclick="addToCart('${m.id||m.fbKey}')">
-          ${inCart ? t('added_btn') : t('add_btn')}
-        </button>
-      ` : `<button class="add-btn" disabled>${t('unavail')}</button>`}
-    </div>`;
+  const avail=checkMenuAvail(m);
+  const emoji=menuEmoji[m.category]||'🍽️';
+  const mid=String(m.id||m.fbKey);
+  const inCart=cart.find(c=>c.menuId===mid);
+  const subNames=[m.name_en&&currentLang!=='en'?m.name_en:'',m.name_zh&&currentLang!=='zh'?m.name_zh:''].filter(Boolean).join(' · ');
+  return `<div class="menu-card ${!avail?'unavailable':''}">
+    <span class="menu-emoji">${emoji}</span>
+    <div class="menu-name">${getMenuName(m)}</div>
+    ${subNames?`<div class="menu-name-sub">${subNames}</div>`:''}
+    <div class="menu-price">${m.price} ${t('baht')}</div>
+    <div class="menu-avail ${avail?'avail-ok':'avail-no'}">${avail?t('avail'):t('unavail')}</div>
+    ${avail?`
+      <div class="qty-row">
+        <button class="qty-btn" onclick="changeQty('${mid}',-1)">−</button>
+        <span class="qty-num" id="qty-${mid}">${inCart?inCart.qty:0}</span>
+        <button class="qty-btn" onclick="changeQty('${mid}',1)">+</button>
+      </div>
+      <button class="add-btn" onclick="addToCart('${mid}')">${inCart?t('added_btn'):t('add_btn')}</button>
+    `:`<button class="add-btn" disabled>${t('unavail')}</button>`}
+  </div>`;
 }
 
-// ===== QTY =====
-window.changeQty = function(menuId, delta) {
-  const el = document.getElementById(`qty-${menuId}`);
-  if (!el) return;
-  let v = parseInt(el.textContent) + delta;
-  v = Math.max(0, Math.min(20, v));
-  el.textContent = v;
-};
-
-// ===== ADD TO CART =====
-window.addToCart = function(menuId) {
-  const menu = menus.find(m => (m.id||m.fbKey) === menuId);
-  if (!menu) return;
-  const qtyEl = document.getElementById(`qty-${menuId}`);
-  const qty   = parseInt(qtyEl?.textContent) || 1;
-  if (qty === 0) { if(qtyEl) qtyEl.textContent='1'; return; }
-
-  const existing = cart.find(c => c.menuId === menuId);
-  if (existing) {
-    existing.qty += qty;
-  } else {
-    cart.push({
-      menuId,
-      name_th: menu.name_th || menu.name,
-      name_en: menu.name_en || menu.name,
-      name_zh: menu.name_zh || menu.name,
-      price: menu.price,
-      qty
-    });
-  }
-
-  // Reset qty display
-  if (qtyEl) qtyEl.textContent = '0';
-
-  updateCartBar();
-  renderMenus(); // refresh add btn state
-};
-
-// ===== UPDATE CART BAR =====
+// ===== CART =====
+function changeQty(menuId, delta) {
+  const el=document.getElementById(`qty-${menuId}`); if(!el) return;
+  el.textContent=Math.max(0,Math.min(20,parseInt(el.textContent)+delta));
+}
+function addToCart(menuId) {
+  const menu=menus.find(m=>String(m.id||m.fbKey)===menuId); if(!menu) return;
+  const qty=parseInt(document.getElementById(`qty-${menuId}`)?.textContent)||1;
+  if (qty===0) { document.getElementById(`qty-${menuId}`).textContent='1'; return; }
+  const ex=cart.find(c=>c.menuId===menuId);
+  if (ex) ex.qty+=qty;
+  else cart.push({menuId,name_th:menu.name_th||menu.name,name_en:menu.name_en||menu.name,name_zh:menu.name_zh||menu.name,price:menu.price,qty});
+  document.getElementById(`qty-${menuId}`).textContent='0';
+  updateCartBar(); renderMenus();
+}
 function updateCartBar() {
-  const total = cart.reduce((s,c) => s + c.price*c.qty, 0);
-  const count = cart.reduce((s,c) => s + c.qty, 0);
-  const bar   = document.getElementById('cart-bar');
-
-  if (!cart.length) { bar.classList.remove('show'); return; }
-
+  const total=cart.reduce((s,c)=>s+c.price*c.qty,0);
+  const count=cart.reduce((s,c)=>s+c.qty,0);
+  const bar=document.getElementById('cart-bar');
+  if (!cart.length){bar.classList.remove('show');return;}
   bar.classList.add('show');
-  document.getElementById('cart-count-text').textContent = t('cart_count',{n:count});
-  document.getElementById('cart-total-text').textContent = `${total} ${t('baht')}`;
-  document.getElementById('cart-btn-label').textContent  = t('cart_view');
+  document.getElementById('cart-count-text').textContent=t('cart_count',{n:count});
+  document.getElementById('cart-total-text').textContent=`${total} ${t('baht')}`;
+  document.getElementById('cart-btn-label').textContent=t('cart_view');
 }
+function openCart() { renderCartModal(); document.getElementById('cart-modal').classList.add('show'); document.getElementById('overlay').classList.add('show'); document.body.style.overflow='hidden'; }
+function closeCart() { document.getElementById('cart-modal').classList.remove('show'); document.getElementById('overlay').classList.remove('show'); document.body.style.overflow=''; }
+function removeFromCart(idx) { cart.splice(idx,1); renderCartModal(); updateCartBar(); if(!cart.length) closeCart(); }
 
-// ===== OPEN / CLOSE CART =====
-window.openCart = function() {
-  renderCartModal();
-  document.getElementById('cart-modal').classList.add('show');
-  document.getElementById('overlay').classList.add('show');
-  document.body.style.overflow = 'hidden';
-};
-window.closeCart = function() {
-  document.getElementById('cart-modal').classList.remove('show');
-  document.getElementById('overlay').classList.remove('show');
-  document.body.style.overflow = '';
-};
-
-// ===== RENDER CART MODAL =====
 function renderCartModal() {
-  document.getElementById('cart-modal-title').textContent = t('cart_title');
-  document.getElementById('note-label').textContent       = t('note_label');
-  document.getElementById('order-note').placeholder       = t('note_ph');
-  document.getElementById('confirm-btn-text').textContent = t('confirm_btn').replace('🥟 ','');
-
-  const container = document.getElementById('cart-items-container');
-  container.innerHTML = cart.map((item,i) => {
-    const name = currentLang==='en'&&item.name_en ? item.name_en
-                : currentLang==='zh'&&item.name_zh ? item.name_zh
-                : item.name_th;
-    return `
-      <div class="cart-item">
-        <div class="cart-item-info">
-          <div class="cart-item-name">${name}</div>
-          <div class="cart-item-price">${item.price} ${t('baht')} × ${item.qty}</div>
-        </div>
-        <div class="cart-item-right">
-          <div class="cart-item-total">${item.price*item.qty} ${t('baht')}</div>
-          <button class="remove-btn" onclick="removeFromCart(${i})">✕</button>
-        </div>
-      </div>`;
+  document.getElementById('cart-modal-title').textContent=t('cart_title');
+  document.getElementById('note-label').textContent=t('note_label');
+  document.getElementById('order-note').placeholder=t('note_ph');
+  document.getElementById('confirm-btn-text').textContent=t('confirm_btn').replace('🥟 ','');
+  const cont=document.getElementById('cart-items-container');
+  cont.innerHTML=cart.map((item,i)=>{
+    const name=currentLang==='en'&&item.name_en?item.name_en:currentLang==='zh'&&item.name_zh?item.name_zh:item.name_th;
+    return `<div class="cart-item">
+      <div class="cart-item-info"><div class="cart-item-name">${name}</div><div class="cart-item-price">${item.price} ${t('baht')} × ${item.qty}</div></div>
+      <div class="cart-item-right"><div class="cart-item-total">${item.price*item.qty} ${t('baht')}</div><button class="remove-btn" onclick="removeFromCart(${i})">✕</button></div>
+    </div>`;
   }).join('');
-
-  const subtotal = cart.reduce((s,c)=>s+c.price*c.qty,0);
-  document.getElementById('order-summary').innerHTML = `
-    <div class="summary-row"><span>${t('subtotal')}</span><span>${subtotal} ${t('baht')}</span></div>
-    <div class="summary-row total"><span>${t('total')}</span><span>${subtotal} ${t('baht')}</span></div>`;
+  const sub=cart.reduce((s,c)=>s+c.price*c.qty,0);
+  document.getElementById('order-summary').innerHTML=`
+    <div class="summary-row"><span>${t('subtotal')}</span><span>${sub} ${t('baht')}</span></div>
+    <div class="summary-row total"><span>${t('total')}</span><span>${sub} ${t('baht')}</span></div>`;
 }
-
-window.removeFromCart = function(idx) {
-  cart.splice(idx,1);
-  renderCartModal();
-  updateCartBar();
-  if (!cart.length) closeCart();
-};
 
 // ===== CONFIRM ORDER → FIREBASE =====
 window.confirmOrder = async function() {
   if (!cart.length) return;
-
-  const btn = document.getElementById('confirm-order-btn');
-  btn.disabled = true;
-
-  document.getElementById('loading-text').textContent = t('loading');
+  const btn=document.getElementById('confirm-order-btn'); btn.disabled=true;
+  document.getElementById('loading-text').textContent=t('loading');
   document.getElementById('loading-overlay').classList.add('show');
-
-  const note    = document.getElementById('order-note').value.trim();
-  const orderId = 'ORD-' + Date.now().toString().slice(-6);
-  const total   = cart.reduce((s,c)=>s+c.price*c.qty,0);
-
-  const orderData = {
-    orderId,
-    tableNo,
-    status:    'pending',   // pending | cooking | done | cancelled
-    items:     cart.map(c=>({
-      menuId:   c.menuId,
-      name_th:  c.name_th,
-      name_en:  c.name_en,
-      name_zh:  c.name_zh,
-      price:    c.price,
-      qty:      c.qty,
-      subtotal: c.price*c.qty
-    })),
-    note,
-    total,
-    createdAt: new Date().toISOString(),
-    lang:      currentLang
+  const note=document.getElementById('order-note').value.trim();
+  const orderId='ORD-'+Date.now().toString().slice(-6);
+  const total=cart.reduce((s,c)=>s+c.price*c.qty,0);
+  currentOrderId=orderId; currentTotal=total;
+  const orderData={
+    orderId, tableNo, status:'pending',
+    items:cart.map(c=>({menuId:c.menuId,name_th:c.name_th,name_en:c.name_en,name_zh:c.name_zh,price:c.price,qty:c.qty,subtotal:c.price*c.qty})),
+    note, total, createdAt:new Date().toISOString(), lang:currentLang
   };
-
   try {
     await db.ref('orders').push(orderData);
-
     document.getElementById('loading-overlay').classList.remove('show');
     closeCart();
-
     // Show success
-    document.getElementById('success-title').textContent = t('success_title');
-    document.getElementById('success-sub').textContent   = t('success_sub').replace('\\n','\n');
-    document.getElementById('success-order-code').textContent = `#${orderId.split('-')[1]}`;
-    document.getElementById('new-order-btn').textContent  = t('new_order');
+    document.getElementById('success-title').textContent=t('success_title');
+    document.getElementById('success-sub').textContent=t('success_sub');
+    document.getElementById('success-order-code').textContent=`#${orderId.split('-')[1]}`;
+    document.getElementById('btn-order-more').textContent=t('btn_order_more');
+    document.getElementById('btn-to-payment').textContent=t('btn_to_payment');
     document.getElementById('success-screen').classList.add('show');
-
   } catch(err) {
     document.getElementById('loading-overlay').classList.remove('show');
-    alert('เกิดข้อผิดพลาด กรุณาลองใหม่\nError: ' + err.message);
-    btn.disabled = false;
+    alert('เกิดข้อผิดพลาด: '+err.message);
+    btn.disabled=false;
   }
 };
 
-// ===== RESET ORDER =====
-window.resetOrder = function() {
-  cart = [];
+// ===== ORDER MORE =====
+function orderMore() {
   document.getElementById('success-screen').classList.remove('show');
-  document.getElementById('order-note').value = '';
-  updateCartBar();
-  renderMenus();
-};
-
-// ===== SET LANG =====
-window.setLang = function(lang) {
-  currentLang = lang;
-  localStorage.setItem('ok_lang', lang);
-  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang===lang));
-  renderTableBadge();
-  renderCatTabs();
-  renderMenus();
-  updateCartBar();
-};
-
-// Restore lang from localStorage
-const savedLang = localStorage.getItem('ok_lang');
-if (savedLang && i18n[savedLang]) {
-  currentLang = savedLang;
-  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang===savedLang));
+  document.getElementById('order-note').value='';
+  updateCartBar(); renderMenus();
 }
 
+// ===== GO TO PAYMENT =====
+function goToPayment() {
+  document.getElementById('success-screen').classList.remove('show');
+  showPaymentScreen();
+}
+
+// ===== SHOW PAYMENT SCREEN =====
+function showPaymentScreen() {
+  // Update texts
+  document.getElementById('pay-header-title').textContent=t('pay_header_title');
+  document.getElementById('pay-header-sub').textContent=t('pay_header_sub');
+  document.getElementById('pay-summary-title').textContent=t('pay_summary_title');
+  document.getElementById('pay-total-label').textContent=t('pay_total_label');
+  document.getElementById('pay-qr-title').textContent=t('pay_qr_title');
+  document.getElementById('pay-qr-sub').textContent=t('pay_qr_sub');
+  document.getElementById('pay-qr-currency').textContent=t('pay_qr_currency');
+  document.getElementById('pay-qr-badge').textContent=t('pay_qr_badge');
+  document.getElementById('btn-paid-text').textContent=t('btn_paid').replace('✅ ','');
+  document.getElementById('btn-receipt-text').textContent=t('btn_receipt').replace('📄 ','');
+  document.getElementById('btn-tax-text').textContent=t('btn_tax').replace('🗂️ ','');
+  document.getElementById('btn-back-menu-text').textContent=t('btn_back_menu').replace('🍽️ ','');
+  document.getElementById('tax-form-title').textContent=t('tax_form_title');
+  document.getElementById('tax-label-name').textContent=t('tax_label_name');
+  document.getElementById('tax-label-taxid').textContent=t('tax_label_taxid');
+  document.getElementById('tax-label-addr').textContent=t('tax_label_addr');
+  document.getElementById('tax-label-branch').textContent=t('tax_label_branch');
+  document.getElementById('btn-tax-dl-text').textContent=t('btn_tax_dl').replace('🖨️ ','');
+
+  // Order items list
+  const total=cart.reduce((s,c)=>s+c.price*c.qty,0);
+  currentTotal=total;
+  document.getElementById('pay-items-list').innerHTML=cart.map(item=>{
+    const name=currentLang==='en'&&item.name_en?item.name_en:currentLang==='zh'&&item.name_zh?item.name_zh:item.name_th;
+    return `<div class="pay-item-row"><span>${name} × ${item.qty}</span><span>${item.price*item.qty} ฿</span></div>`;
+  }).join('');
+  document.getElementById('pay-total-amount').textContent=`${total} ฿`;
+  document.getElementById('pay-qr-amount').textContent=total.toLocaleString();
+
+  // Generate PromptPay QR
+  generatePromptPayQR(total);
+
+  document.getElementById('payment-screen').classList.add('show');
+  window.scrollTo(0,0);
+}
+
+// ===== PROMPTPAY QR =====
+function generatePromptPayQR(amount) {
+  const qrBox=document.getElementById('pay-qr-box');
+  qrBox.innerHTML='';
+
+  // สร้าง PromptPay QR payload (EMVCo format)
+  const payload = buildPromptPayPayload(PROMPTPAY_ID, amount);
+  const qrNote = document.getElementById('pay-qr-note');
+  qrNote.textContent = `PromptPay: ${PROMPTPAY_ID.replace(/(\d{3})(\d{3})(\d{4})/,'$1-$2-$3')}`;
+
+  try {
+    new QRCode(qrBox, {
+      text:         payload,
+      width:        200, height:200,
+      colorDark:    '#9B2226',
+      colorLight:   '#FDF6EC',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  } catch(e) {
+    qrBox.innerHTML=`<div style="padding:20px;text-align:center;color:var(--crimson);">⚠️ QR Code ไม่สามารถแสดงได้<br>กรุณาโอนผ่านเลขบัญชี</div>`;
+  }
+}
+
+// PromptPay EMVCo payload builder
+function buildPromptPayPayload(id, amount) {
+  const isPhone = /^\d{10}$/.test(id.replace(/-/g,''));
+  const isNatId = /^\d{13}$/.test(id.replace(/-/g,''));
+  let aid = id.replace(/-/g,'');
+  // Phone: format to 66XXXXXXXXX
+  if (isPhone) aid = '0066' + aid.slice(1);
+  // Merchant ID tag
+  const merchant = isNatId ? '0213' : '0113';
+  const tag29 = '0002' + 'A000000677010111' + merchant + String(aid.length).padStart(2,'0') + aid;
+  const tag29Full = '29' + String(tag29.length).padStart(2,'0') + tag29;
+  // Amount tag 54
+  const amtStr = amount.toFixed(2);
+  const tag54 = '54' + String(amtStr.length).padStart(2,'0') + amtStr;
+  // Build full payload (without CRC first)
+  const partial = '000201' + tag29Full + '5303764' + tag54 + '5802TH6304';
+  // CRC16
+  const crc = crc16(partial).toString(16).toUpperCase().padStart(4,'0');
+  return partial + crc;
+}
+
+function crc16(str) {
+  let crc=0xFFFF;
+  for (let i=0;i<str.length;i++) {
+    crc^=str.charCodeAt(i)<<8;
+    for(let j=0;j<8;j++) crc=crc&0x8000?(crc<<1)^0x1021:(crc<<1);
+  }
+  return crc&0xFFFF;
+}
+
+// ===== CONFIRM PAYMENT =====
+function confirmPayment() {
+  // แสดง paid success screen
+  document.getElementById('payment-screen').classList.remove('show');
+  document.getElementById('success-screen').classList.add('show');
+  document.getElementById('success-icon').style.display='block';
+  document.getElementById('success-title').textContent=t('paid_success_title');
+  document.getElementById('success-sub').textContent=t('paid_success_sub');
+  document.getElementById('success-order-code').textContent=`#${currentOrderId.split('-')[1]||'------'}`;
+  document.getElementById('btn-order-more').style.display='none';
+  document.getElementById('btn-to-payment').textContent='📄 ' + t('btn_receipt').replace('📄 ','');
+  document.getElementById('btn-to-payment').onclick = downloadReceipt;
+  // reset cart
+  cart=[];
+  updateCartBar();
+  renderMenus();
+}
+
+function backToMenu() {
+  document.getElementById('payment-screen').classList.remove('show');
+  document.getElementById('success-screen').classList.remove('show');
+}
+
+// ===== TOGGLE TAX FORM =====
+function toggleTaxForm() {
+  document.getElementById('tax-form').classList.toggle('show');
+}
+
+// ===== DOWNLOAD RECEIPT =====
+function downloadReceipt() {
+  const now=new Date();
+  const html=buildReceiptHTML(false, now);
+  printOrDownload(html, 'receipt');
+}
+
+// ===== DOWNLOAD TAX INVOICE =====
+function downloadTaxInvoice() {
+  const buyerName  = document.getElementById('tax-name').value.trim();
+  const buyerTaxId = document.getElementById('tax-taxid').value.trim();
+  const buyerAddr  = document.getElementById('tax-addr').value.trim();
+  const buyerBranch= document.getElementById('tax-branch').value.trim();
+  if (!buyerName || !buyerTaxId) {
+    alert(currentLang==='en'?'Please fill in company name and tax ID':currentLang==='zh'?'请填写公司名称和纳税人识别号':'กรุณากรอกชื่อบริษัทและเลขประจำตัวผู้เสียภาษี');
+    return;
+  }
+  const now=new Date();
+  const html=buildReceiptHTML(true, now, {name:buyerName, taxId:buyerTaxId, addr:buyerAddr, branch:buyerBranch});
+  printOrDownload(html, 'tax-invoice');
+}
+
+function buildReceiptHTML(isTax, date, buyer={}) {
+  const title = isTax ? t('tax_inv_title') : t('receipt_title');
+  const itemsHTML = cart.length ? cart.map(item=>{
+    const name=currentLang==='en'&&item.name_en?item.name_en:currentLang==='zh'&&item.name_zh?item.name_zh:item.name_th;
+    return `<tr>
+      <td>${name}</td>
+      <td align="center">${item.qty}</td>
+      <td align="right">${item.price.toFixed(2)}</td>
+      <td align="right">${(item.price*item.qty).toFixed(2)}</td>
+    </tr>`;
+  }).join('') : '<tr><td colspan="4" align="center">—</td></tr>';
+
+  const subtotal = currentTotal;
+
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <title>${title}</title>
+  <style>
+    body{font-family:'Noto Sans Thai',Arial,sans-serif;max-width:380px;margin:0 auto;padding:20px;font-size:13px;color:#000;}
+    h1{text-align:center;font-size:18px;margin-bottom:4px;}
+    .center{text-align:center;} .sub{font-size:11px;color:#555;margin-bottom:3px;}
+    hr{border:none;border-top:1px dashed #999;margin:10px 0;}
+    table{width:100%;border-collapse:collapse;}
+    th{background:#f5f5f5;padding:6px 4px;font-size:11px;border-bottom:1px solid #ddd;}
+    td{padding:5px 4px;vertical-align:top;}
+    tr:nth-child(even){background:#fafafa;}
+    .total-row{font-weight:700;font-size:14px;border-top:2px solid #333;}
+    .badge{background:#9B2226;color:white;padding:2px 10px;border-radius:20px;font-size:11px;}
+    @media print{button{display:none!important;}}
+  </style></head><body>
+  <h1>🥟 ${SHOP_NAME}</h1>
+  <div class="center sub">${SHOP_ADDRESS}</div>
+  ${isTax?`<div class="center sub">เลขประจำตัวผู้เสียภาษี: ${SHOP_TAX_ID} (${SHOP_BRANCH})</div>`:''}
+  <hr>
+  <div class="center" style="font-size:15px;font-weight:700;">${title}</div>
+  <div class="center sub">📋 ${currentOrderId} &nbsp;|&nbsp; 🪑 ${t('receipt_table')} ${tableNo}</div>
+  <div class="center sub">📅 ${formatDate(date)} ${formatTime(date)}</div>
+  <hr>
+  ${isTax?`<div style="font-size:12px;margin-bottom:8px;">
+    <strong>${t('tax_label_name')}:</strong> ${buyer.name}<br>
+    <strong>${t('tax_label_taxid')}:</strong> ${buyer.taxId}<br>
+    <strong>${t('tax_label_addr')}:</strong> ${buyer.addr}<br>
+    ${buyer.branch?`<strong>${t('tax_label_branch')}:</strong> ${buyer.branch}`:''}
+  </div><hr>`:''}
+  <table>
+    <thead><tr>
+      <th align="left">${t('receipt_item')}</th>
+      <th align="center">${t('receipt_qty')}</th>
+      <th align="right">${t('receipt_price')}</th>
+      <th align="right">${t('receipt_total')}</th>
+    </tr></thead>
+    <tbody>${itemsHTML}</tbody>
+    <tfoot>
+      <tr class="total-row">
+        <td colspan="3">${t('receipt_subtotal')}</td>
+        <td align="right">${subtotal.toFixed(2)} ฿</td>
+      </tr>
+      ${isTax?`<tr><td colspan="3">VAT 0%</td><td align="right">0.00 ฿</td></tr>
+      <tr class="total-row"><td colspan="3">NET TOTAL</td><td align="right">${subtotal.toFixed(2)} ฿</td></tr>`:''}
+    </tfoot>
+  </table>
+  <hr>
+  <div class="center" style="margin-top:10px;">
+    <span class="badge">PromptPay: ${PROMPTPAY_ID}</span>
+  </div>
+  <div class="center sub" style="margin-top:10px;">${t('receipt_thank')} 🙏</div>
+  <br>
+  <button onclick="window.print()" style="width:100%;padding:12px;background:#9B2226;color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer;">🖨️ พิมพ์</button>
+  </body></html>`;
+}
+
+function printOrDownload(html, type) {
+  const w = window.open('','_blank');
+  if (w) { w.document.write(html); w.document.close(); }
+  else {
+    // Fallback: download as HTML file
+    const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url; a.download=`${type}-${currentOrderId}.html`; a.click();
+    URL.revokeObjectURL(url);
+  }
+}
+
+// ===== SET LANG =====
+function setLang(lang) {
+  currentLang=lang;
+  localStorage.setItem('ok_lang',lang);
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));
+  renderTableBadge(); renderCatTabs(); renderMenus(); updateCartBar();
+}
 </script>
 </body>
 </html>
