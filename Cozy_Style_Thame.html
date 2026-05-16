@@ -281,7 +281,14 @@ tr:last-child td{border-bottom:none;}
         <div class="form-group"><label data-i18n="label_price">ราคาต้นทุน/หน่วย (บาท)</label><input type="number" id="in-price" min="0" step="0.01" placeholder="45.50"></div>
         <div class="form-group"><label data-i18n="label_expiry_new">วันหมดอายุใหม่ (ถ้ามี)</label><input type="date" id="in-expiry"></div>
       </div>
-      <div class="form-group"><label data-i18n="label_note">หมายเหตุ</label><input type="text" id="in-note" placeholder="ซื้อจากตลาดสด"></div>
+      <div class="form-row">
+        <div class="form-group">
+          <label data-i18n="label_tx_date">วันที่ทำรายการ</label>
+          <input type="date" id="in-date">
+          <small style="color:var(--ink-muted);font-size:0.75rem;display:block;margin-top:4px;" data-i18n="label_use_today">(ปล่อยว่างเพื่อใช้วันนี้)</small>
+        </div>
+        <div class="form-group"><label data-i18n="label_note">หมายเหตุ</label><input type="text" id="in-note" placeholder="ซื้อจากตลาดสด"></div>
+      </div>
       <button type="submit" class="btn btn-success" data-i18n="btn_stock_in">✅ บันทึกรับเข้า</button>
     </form>
   </div>
@@ -308,7 +315,14 @@ tr:last-child td{border-bottom:none;}
         <div class="form-group"><label data-i18n="label_out_type">ประเภทการจ่ายออก</label><select id="out-type" required></select></div>
         <div class="form-group"><label data-i18n="label_reason">เมนู/เหตุผล</label><input type="text" id="out-reason" placeholder="ข้าวหมูตุ๋น"></div>
       </div>
-      <div class="form-group"><label data-i18n="label_note_extra">หมายเหตุเพิ่มเติม</label><input type="text" id="out-note" placeholder="รายละเอียดเพิ่มเติม"></div>
+      <div class="form-row">
+        <div class="form-group">
+          <label data-i18n="label_tx_date">วันที่ทำรายการ</label>
+          <input type="date" id="out-date">
+          <small style="color:var(--ink-muted);font-size:0.75rem;display:block;margin-top:4px;" data-i18n="label_use_today">(ปล่อยว่างเพื่อใช้วันนี้)</small>
+        </div>
+        <div class="form-group"><label data-i18n="label_note_extra">หมายเหตุเพิ่มเติม</label><input type="text" id="out-note" placeholder="รายละเอียดเพิ่มเติม"></div>
+      </div>
       <button type="submit" class="btn btn-danger" data-i18n="btn_stock_out">📤 บันทึกจ่ายออก</button>
     </form>
   </div>
@@ -492,6 +506,7 @@ const translations = {
     label_quantity_out:'จำนวนที่จ่ายออก', label_quantity_hist:'จำนวน',
     label_price:'ราคาต้นทุน/หน่วย (บาท)', label_expiry_new:'วันหมดอายุใหม่ (ถ้ามี)',
     label_note:'หมายเหตุ', label_note_extra:'หมายเหตุเพิ่มเติม',
+    label_tx_date:'วันที่ทำรายการ', label_use_today:'(ปล่อยว่างเพื่อใช้วันนี้)',
     label_out_type:'ประเภทการจ่ายออก', label_reason:'เมนู/เหตุผล',
     label_export:'ส่งออก:',
     btn_save_product:'💾 บันทึกสินค้า', btn_stock_in:'✅ บันทึกรับเข้า',
@@ -547,6 +562,7 @@ const translations = {
     label_quantity_out:'Quantity Out', label_quantity_hist:'Quantity',
     label_price:'Cost per Unit (THB)', label_expiry_new:'New Expiry Date (if any)',
     label_note:'Note', label_note_extra:'Additional Note',
+    label_tx_date:'Transaction Date', label_use_today:'(leave blank for today)',
     label_out_type:'Out Type', label_reason:'Menu / Reason',
     label_export:'Export:',
     btn_save_product:'💾 Save Product', btn_stock_in:'✅ Save Stock In',
@@ -602,6 +618,7 @@ const translations = {
     label_quantity_out:'出库数量', label_quantity_hist:'数量',
     label_price:'单价（泰铢）', label_expiry_new:'新保质期（如有）',
     label_note:'备注', label_note_extra:'补充备注',
+    label_tx_date:'交易日期', label_use_today:'（留空则使用今天）',
     label_out_type:'出库类型', label_reason:'菜单/原因',
     label_export:'导出:',
     btn_save_product:'💾 保存商品', btn_stock_in:'✅ 保存入库',
@@ -904,7 +921,9 @@ function addStockIn(e) {
   const product  = products.find(p => p.id===productId); if (!product) return;
   product.stock += quantity;
   if (expiry) product.expiry = expiry;
-  transactions.push({ id:Date.now(), type:'in', productId, productName:product.name_th||product.name, productCode:product.code, quantity, price, total:price*quantity, unit:product.unit, note, date:new Date().toISOString() });
+  const inDateVal = document.getElementById('in-date').value;
+  const inDate    = inDateVal ? new Date(inDateVal + 'T12:00:00').toISOString() : new Date().toISOString();
+  transactions.push({ id:Date.now(), type:'in', productId, productName:product.name_th||product.name, productCode:product.code, quantity, price, total:price*quantity, unit:product.unit, note, date:inDate });
   saveData();
   document.getElementById('stock-in-form').reset();
   document.getElementById('in-product').value='';
@@ -927,7 +946,9 @@ function addStockOut(e) {
   const product  = products.find(p => p.id===productId); if (!product) return;
   if (product.stock < quantity) { alert(t('msg_stock_low',{stock:product.stock,unit:getUnitDisplay(product.unit)})); return; }
   product.stock -= quantity;
-  transactions.push({ id:Date.now(), type:'out', productId, productName:product.name_th||product.name, productCode:product.code, quantity, outType:type, unit:product.unit, reason, note, date:new Date().toISOString() });
+  const outDateVal = document.getElementById('out-date').value;
+  const outDate    = outDateVal ? new Date(outDateVal + 'T12:00:00').toISOString() : new Date().toISOString();
+  transactions.push({ id:Date.now(), type:'out', productId, productName:product.name_th||product.name, productCode:product.code, quantity, outType:type, unit:product.unit, reason, note, date:outDate });
   saveData();
   document.getElementById('stock-out-form').reset();
   document.getElementById('out-product').value='';
