@@ -1,631 +1,753 @@
 <!DOCTYPE html>
-<html>
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title></title>
-</head>
-
-<body>
-  
-</body>
-
-</html>
-<!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ohoi Kyoza - สำรองและกู้คืนข้อมูล</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;600;700&family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        :root {
-            --crimson: #9B2226;
-            --crimson-light: #AE2012;
-            --crimson-soft: rgba(155, 34, 38, 0.08);
-            --gold: #D4A373;
-            --gold-light: #E9C496;
-            --gold-soft: rgba(212, 163, 115, 0.15);
-            --jade: #588157;
-            --jade-soft: rgba(88, 129, 87, 0.12);
-            --warm-white: #FDF6EC;
-            --cream: #F5EBDC;
-            --paper: #FAF3E8;
-            --ink: #3D2B1F;
-            --ink-light: #6B5B4F;
-            --ink-muted: #9B8B7F;
-            --shadow-warm: rgba(155, 34, 38, 0.08);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ohoi Kyoza - Firebase & Backup</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;600;700&family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --crimson:#9B2226;--crimson-light:#AE2012;--crimson-soft:rgba(155,34,38,0.08);
+  --gold:#D4A373;--gold-light:#E9C496;--gold-soft:rgba(212,163,115,0.15);
+  --jade:#588157;--jade-soft:rgba(88,129,87,0.12);--jade-light:#6B9B6A;
+  --warm-white:#FDF6EC;--cream:#F5EBDC;--paper:#FAF3E8;
+  --ink:#3D2B1F;--ink-light:#6B5B4F;--ink-muted:#9B8B7F;
+  --shadow-warm:rgba(155,34,38,0.08);
+  --orange:#E65100;
+}
+body{font-family:'Noto Sans Thai',sans-serif;background:var(--warm-white);color:var(--ink);min-height:100vh;padding-bottom:40px;}
+body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background-image:url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:1000;opacity:0.6;}
 
-        body {
-            font-family: 'Noto Sans Thai', sans-serif;
-            background: var(--warm-white);
-            color: var(--ink);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+@keyframes slide-up{from{transform:translateY(20px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+@keyframes warm-pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.03);}}
+@keyframes spin{to{transform:rotate(360deg);}}
 
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-            pointer-events: none;
-            z-index: 1000;
-            opacity: 0.6;
-        }
+/* HEADER */
+.header{background:linear-gradient(160deg,var(--crimson) 0%,#7B181C 60%,#5A1216 100%);padding:30px 20px 38px;text-align:center;position:relative;overflow:hidden;}
+.header::before{content:'☁️';position:absolute;top:15px;left:20px;font-size:2rem;opacity:0.35;animation:warm-pulse 4s ease-in-out infinite;}
+.header::after{content:'💾';position:absolute;top:15px;right:20px;font-size:2rem;opacity:0.35;animation:warm-pulse 4s ease-in-out infinite 2s;}
+.back-btn{position:absolute;top:15px;left:55px;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.3);color:rgba(255,248,240,0.9);padding:7px 14px;border-radius:20px;font-size:0.8rem;font-weight:600;font-family:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:all 0.3s;}
+.back-btn:hover{background:rgba(255,255,255,0.25);}
+.logo{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:700;color:var(--gold-light);letter-spacing:3px;}
+.logo span{color:#FFF8F0;font-weight:400;font-style:italic;}
+.subtitle{color:rgba(255,248,240,0.7);font-size:0.9rem;margin-top:8px;}
+.lang-switcher{display:flex;justify-content:center;gap:8px;margin-top:14px;position:relative;z-index:1;}
+.lang-btn{padding:6px 14px;border:1.5px solid rgba(212,163,115,0.4);background:rgba(255,255,255,0.08);color:rgba(255,248,240,0.8);border-radius:20px;cursor:pointer;font-weight:600;font-size:0.8rem;transition:all 0.4s;font-family:inherit;}
+.lang-btn:hover{background:rgba(212,163,115,0.2);}
+.lang-btn.active{background:rgba(212,163,115,0.25);border-color:var(--gold-light);color:var(--gold-light);}
 
-        @keyframes slide-up {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
+/* NAV */
+.nav-tabs{display:flex;background:var(--cream);border-bottom:1px solid rgba(155,34,38,0.1);overflow-x:auto;scrollbar-width:none;padding:0 10px;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px);}
+.nav-tabs::-webkit-scrollbar{display:none;}
+.nav-tab{flex:1;min-width:100px;padding:15px 8px;border:none;background:none;color:var(--ink-muted);font-family:inherit;font-weight:600;font-size:0.85rem;cursor:pointer;transition:all 0.4s;position:relative;white-space:nowrap;border-radius:12px 12px 0 0;margin:0 2px;}
+.nav-tab:hover{color:var(--crimson);background:rgba(155,34,38,0.05);}
+.nav-tab.active{color:var(--crimson);background:var(--paper);font-weight:700;}
+.nav-tab.active::after{content:'';position:absolute;bottom:0;left:20%;width:60%;height:3px;background:linear-gradient(90deg,transparent,var(--crimson),var(--gold),var(--crimson),transparent);border-radius:3px;}
 
-        @keyframes warm-pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-        }
+/* CONTENT */
+.content{max-width:820px;margin:0 auto;padding:24px 18px;}
+.tab-content{display:none;animation:slide-up 0.4s ease;}
+.tab-content.active{display:block;}
 
-        .header {
-            background: linear-gradient(160deg, var(--crimson) 0%, #7B181C 60%, #5A1216 100%);
-            padding: 35px 20px 40px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
+/* CARD */
+.card{background:#FFF;border-radius:20px;padding:24px;margin-bottom:18px;border:1px solid rgba(155,34,38,0.08);box-shadow:0 2px 12px var(--shadow-warm);position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;width:100%;height:4px;background:linear-gradient(90deg,var(--crimson),var(--gold),var(--jade));opacity:0.7;}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:700;color:var(--crimson);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
 
-        .header::before {
-            content: '💾';
-            position: absolute;
-            top: 15px;
-            left: 20px;
-            font-size: 2rem;
-            opacity: 0.4;
-            animation: warm-pulse 4s ease-in-out infinite;
-        }
+/* STATUS BAR */
+.status-bar{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:14px;font-weight:700;font-size:0.9rem;margin-bottom:16px;}
+.status-bar.offline{background:#FFF0F0;color:var(--crimson);border:1px solid rgba(155,34,38,0.2);}
+.status-bar.online{background:#F0FBF0;color:var(--jade);border:1px solid rgba(88,129,87,0.2);}
+.status-bar.syncing{background:var(--gold-soft);color:#8B6914;border:1px solid rgba(212,163,115,0.3);}
+.status-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.online .status-dot{background:var(--jade);}
+.offline .status-dot{background:var(--crimson);}
+.syncing .status-dot{background:var(--gold);animation:warm-pulse 1s infinite;}
 
-        .header::after {
-            content: '☁️';
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 2rem;
-            opacity: 0.4;
-            animation: warm-pulse 4s ease-in-out infinite 2s;
-        }
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px;}
+.stat-chip{background:var(--warm-white);border-radius:14px;padding:14px;text-align:center;border:1px solid rgba(155,34,38,0.08);}
+.stat-chip-val{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--crimson);}
+.stat-chip-val.fb{color:var(--orange);}
+.stat-chip-label{font-size:0.75rem;color:var(--ink-muted);margin-top:2px;}
+.stats-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;}
 
-        .logo {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 2.4rem;
-            font-weight: 700;
-            color: var(--gold-light);
-            letter-spacing: 3px;
-            position: relative;
-            z-index: 1;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
+/* BUTTONS */
+.btn{width:100%;padding:14px;border:none;border-radius:14px;font-family:inherit;font-weight:700;font-size:0.95rem;cursor:pointer;transition:all 0.3s;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn:last-child{margin-bottom:0;}
+.btn:hover{transform:translateY(-2px);}
+.btn:disabled{opacity:0.45;cursor:not-allowed;transform:none!important;}
+.btn-upload{background:linear-gradient(135deg,var(--crimson),var(--crimson-light));color:white;box-shadow:0 4px 15px rgba(155,34,38,0.25);}
+.btn-download{background:linear-gradient(135deg,var(--jade),var(--jade-light));color:white;box-shadow:0 4px 15px rgba(88,129,87,0.25);}
+.btn-backup{background:linear-gradient(135deg,#2980B9,#5DADE2);color:white;box-shadow:0 4px 15px rgba(41,128,185,0.25);}
+.btn-restore{background:linear-gradient(135deg,var(--jade),var(--jade-light));color:white;}
+.btn-danger{background:linear-gradient(135deg,#C0392B,#E74C3C);color:white;}
+.btn-clipboard{background:linear-gradient(135deg,#8E44AD,#A569BD);color:white;}
+.btn-outline{background:var(--cream);color:var(--ink);border:1.5px solid rgba(155,34,38,0.15);}
 
-        .logo span {
-            color: #FFF8F0;
-            font-weight: 400;
-            font-style: italic;
-        }
+/* PROGRESS */
+.progress-wrap{background:var(--cream);border-radius:10px;height:10px;margin:10px 0;overflow:hidden;display:none;}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--crimson),var(--gold));border-radius:10px;width:0%;transition:width 0.5s ease;}
 
-        .subtitle {
-            color: rgba(255, 248, 240, 0.7);
-            font-size: 0.9rem;
-            margin-top: 8px;
-            font-weight: 300;
-        }
+/* LOG */
+.sync-log{background:#1a1a2e;border-radius:14px;padding:14px;max-height:180px;overflow-y:auto;font-family:monospace;font-size:0.78rem;line-height:1.7;color:#a8d8ea;margin-top:14px;}
+.log-ok{color:#6B9B6A;}.log-err{color:#E74C3C;}.log-info{color:#D4A373;}.log-time{color:#6B9B6A;}
 
-        .content {
-            padding: 25px 20px;
-            max-width: 800px;
-            margin: 0 auto;
-            background: var(--paper);
-            min-height: calc(100vh - 180px);
-        }
+/* ALERTS */
+.alert{padding:14px 18px;border-radius:14px;margin-bottom:14px;border:1px solid;font-weight:600;font-size:0.9rem;animation:slide-up 0.3s ease;}
+.alert-success{border-color:rgba(88,129,87,0.3);background:linear-gradient(135deg,#F5FBF5,#FFF);color:var(--jade);}
+.alert-danger{border-color:rgba(155,34,38,0.2);background:linear-gradient(135deg,#FFF5F5,#FFF);color:var(--crimson);}
+.alert-warning{border-color:rgba(212,163,115,0.3);background:linear-gradient(135deg,#FFFBF5,#FFF);color:#8B6914;}
 
-        .card {
-            background: #FFFFFF;
-            border-radius: 20px;
-            padding: 28px;
-            margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.4s ease;
-            border: 1px solid rgba(155, 34, 38, 0.06);
-            box-shadow: 0 2px 8px var(--shadow-warm), 0 8px 32px rgba(155, 34, 38, 0.04);
-            animation: slide-up 0.4s ease;
-        }
+/* INFO BOX */
+.info-box{background:var(--warm-white);border-radius:14px;padding:15px;margin-bottom:16px;border:1px solid rgba(155,34,38,0.08);font-size:0.86rem;line-height:1.8;color:var(--ink-light);}
+.info-box strong{color:var(--crimson);}
+.info-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px;}
+.info-row:last-child{margin-bottom:0;}
+.info-num{background:var(--crimson);color:white;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0;margin-top:2px;}
 
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 4px;
-            background: linear-gradient(90deg, var(--crimson), var(--gold), var(--jade), var(--gold), var(--crimson));
-            opacity: 0.6;
-        }
+/* FILE INPUT */
+.file-input-wrapper{position:relative;margin-bottom:14px;}
+.file-input-wrapper input[type=file]{position:absolute;opacity:0;width:100%;height:100%;cursor:pointer;}
+.file-input-label{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;background:var(--warm-white);border:2px dashed rgba(155,34,38,0.3);border-radius:14px;color:var(--crimson);font-weight:700;cursor:pointer;font-size:0.9rem;transition:all 0.3s;}
+.file-input-label:hover{background:var(--crimson-soft);border-color:var(--crimson);}
 
-        .card-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--crimson);
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+/* DATA PREVIEW */
+.data-preview{background:#1a1a2e;border-radius:14px;padding:14px;margin-top:12px;max-height:180px;overflow-y:auto;}
+.data-preview pre{color:#a8d8ea;font-size:0.76rem;font-family:monospace;line-height:1.6;white-space:pre-wrap;word-break:break-all;}
 
-        .info-box {
-            background: var(--warm-white);
-            border-radius: 14px;
-            padding: 16px 20px;
-            margin-bottom: 20px;
-            border-left: 4px solid var(--gold);
-        }
+/* SPINNER */
+.spinner{width:18px;height:18px;border:2.5px solid rgba(255,255,255,0.4);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite;}
 
-        .info-box p {
-            color: var(--ink-light);
-            font-size: 0.9rem;
-            line-height: 1.7;
-        }
+/* FOOTER */
+.footer-note{text-align:center;padding:28px 20px;color:var(--ink-muted);font-size:0.85rem;font-style:italic;}
 
-        .info-box strong {
-            color: var(--crimson);
-        }
-
-        .data-preview {
-            background: #1a1a2e;
-            border-radius: 14px;
-            padding: 16px;
-            margin: 16px 0;
-            overflow-x: auto;
-        }
-
-        .data-preview pre {
-            color: #a8d8ea;
-            font-family: 'Monaco', 'Consolas', monospace;
-            font-size: 0.75rem;
-            line-height: 1.6;
-            white-space: pre-wrap;
-            word-break: break-all;
-        }
-
-        .btn {
-            padding: 14px 28px;
-            border: none;
-            border-radius: 14px;
-            font-family: 'Noto Sans Thai', sans-serif;
-            font-weight: 700;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            letter-spacing: 0.5px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            width: 100%;
-            justify-content: center;
-            margin-bottom: 10px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--crimson), var(--crimson-light));
-            color: #FFF8F0;
-            box-shadow: 0 4px 15px rgba(155, 34, 38, 0.25);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(155, 34, 38, 0.35);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, var(--jade), #6B9B6A);
-            color: #FFF8F0;
-            box-shadow: 0 4px 15px rgba(88, 129, 87, 0.25);
-        }
-
-        .btn-success:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(88, 129, 87, 0.35);
-        }
-
-        .btn-warning {
-            background: linear-gradient(135deg, #D4A373, #C9956C);
-            color: #FFF8F0;
-            box-shadow: 0 4px 15px rgba(212, 163, 115, 0.25);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #C0392B, #E74C3C);
-            color: #FFF8F0;
-            box-shadow: 0 4px 15px rgba(192, 57, 43, 0.25);
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 2px solid var(--crimson);
-            color: var(--crimson);
-        }
-
-        .btn-outline:hover {
-            background: var(--crimson);
-            color: white;
-        }
-
-        .file-input-wrapper {
-            position: relative;
-            overflow: hidden;
-            display: inline-block;
-            width: 100%;
-        }
-
-        .file-input-wrapper input[type=file] {
-            position: absolute;
-            left: -9999px;
-        }
-
-        .file-input-label {
-            display: block;
-            padding: 14px 28px;
-            background: var(--warm-white);
-            border: 2px dashed var(--gold);
-            border-radius: 14px;
-            color: var(--gold);
-            font-weight: 700;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .file-input-label:hover {
-            background: var(--gold-soft);
-            border-style: solid;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .stat-item {
-            background: var(--warm-white);
-            border-radius: 14px;
-            padding: 16px;
-            text-align: center;
-            border: 1px solid rgba(155, 34, 38, 0.08);
-        }
-
-        .stat-item-value {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--crimson);
-        }
-
-        .stat-item-label {
-            font-size: 0.8rem;
-            color: var(--ink-muted);
-            margin-top: 4px;
-        }
-
-        .alert {
-            padding: 16px 20px;
-            border-radius: 14px;
-            margin-bottom: 16px;
-            border: 1px solid;
-            position: relative;
-            animation: slide-up 0.3s ease;
-        }
-
-        .alert-success {
-            border-color: rgba(88, 129, 87, 0.2);
-            background: linear-gradient(135deg, #F5FBF5 0%, #FFFFFF 100%);
-            color: var(--jade);
-        }
-
-        .alert-danger {
-            border-color: rgba(155, 34, 38, 0.2);
-            background: linear-gradient(135deg, #FFF5F5 0%, #FFFFFF 100%);
-            color: var(--crimson);
-        }
-
-        .alert-warning {
-            border-color: rgba(212, 163, 115, 0.3);
-            background: linear-gradient(135deg, #FFFBF5 0%, #FFFFFF 100%);
-            color: #8B6914;
-        }
-
-        .hidden { display: none !important; }
-
-        .footer-note {
-            text-align: center;
-            padding: 30px 20px;
-            color: var(--ink-muted);
-            font-size: 0.85rem;
-            font-style: italic;
-        }
-
-        @media (max-width: 768px) {
-            .logo { font-size: 2rem; }
-            .stats-grid { grid-template-columns: 1fr; }
-            .content { padding: 18px 15px; }
-            .card { padding: 20px; }
-        }
-    </style>
+@media(max-width:600px){
+  .logo{font-size:1.9rem;}
+  .stats-grid{grid-template-columns:1fr;}
+  .stats-4{grid-template-columns:repeat(2,1fr);}
+  .nav-tab{font-size:0.78rem;padding:13px 6px;}
+  .back-btn{left:50px;font-size:0.72rem;padding:5px 10px;}
+}
+</style>
 </head>
 <body>
 
-    <div class="header">
-        <div class="logo">Ohoi <span>Kyoza</span></div>
-        <div class="subtitle">💾 สำรองและกู้คืนข้อมูล — ป้องกันข้อมูลสูญหาย</div>
+<div id="alert-area" style="position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:3000;min-width:280px;max-width:90%;"></div>
+
+<div class="header">
+  <a href="index.html" class="back-btn">← <span data-i18n="btn_back">หน้าหลัก</span></a>
+  <div class="logo">Ohoi <span>Kyoza</span></div>
+  <div class="subtitle" data-i18n="header_subtitle">☁️ Firebase Sync & 💾 สำรองข้อมูล</div>
+  <div class="lang-switcher">
+    <button class="lang-btn active" onclick="changeLang('th')" data-lang="th">🇹🇭 ไทย</button>
+    <button class="lang-btn" onclick="changeLang('en')" data-lang="en">🇬🇧 EN</button>
+    <button class="lang-btn" onclick="changeLang('zh')" data-lang="zh">🇨🇳 中文</button>
+  </div>
+</div>
+
+<div class="nav-tabs">
+  <button class="nav-tab active" onclick="showTab('firebase',this)" data-i18n="tab_firebase">🔥 Firebase Sync</button>
+  <button class="nav-tab" onclick="showTab('backup',this)" data-i18n="tab_backup">💾 สำรองข้อมูล</button>
+</div>
+
+<div class="content">
+
+<!-- ===== TAB FIREBASE ===== -->
+<div id="firebase" class="tab-content active">
+
+  <div class="card">
+    <div class="card-title" data-i18n="card_status_title">📡 สถานะการเชื่อมต่อ</div>
+    <div class="status-bar offline" id="status-bar">
+      <div class="status-dot"></div>
+      <span id="status-text" data-i18n="status_connecting">กำลังเชื่อมต่อ...</span>
     </div>
-
-    <div class="content">
-        
-        <!-- DATA STATS -->
-        <div class="card">
-            <div class="card-title">📊 ข้อมูลปัจจุบัน</div>
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <div class="stat-item-value" id="stat-products">0</div>
-                    <div class="stat-item-label">สินค้าในสต๊อก</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-item-value" id="stat-menus">0</div>
-                    <div class="stat-item-label">เมนูอาหาร</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-item-value" id="stat-transactions">0</div>
-                    <div class="stat-item-label">รายการเคลื่อนไหว</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-item-value" id="stat-orders">0</div>
-                    <div class="stat-item-label">ออเดอร์ทั้งหมด</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- BACKUP -->
-        <div class="card">
-            <div class="card-title">💾 สำรองข้อมูล (Backup)</div>
-            <div class="info-box">
-                <p>📥 กดปุ่มด้านล่างเพื่อ <strong>ดาวน์โหลดไฟล์ JSON</strong> เก็บไว้ในเครื่อง หรือส่งไปเก็บใน Google Drive / iCloud / Email</p>
-                <p style="margin-top:8px; font-size:0.8rem; color:var(--ink-muted);">💡 แนะนำสำรองทุกวันหลังปิดร้าน</p>
-            </div>
-            <button class="btn btn-primary" onclick="backupData()">
-                📥 ดาวน์โหลดไฟล์สำรอง
-            </button>
-            <div id="backup-preview" class="data-preview hidden">
-                <pre id="backup-json"></pre>
-            </div>
-        </div>
-
-        <!-- RESTORE -->
-        <div class="card">
-            <div class="card-title">📤 กู้คืนข้อมูล (Restore)</div>
-            <div class="info-box">
-                <p>📤 เลือกไฟล์ JSON ที่เคยสำรองไว้ เพื่อ <strong>นำข้อมูลกลับมาใช้</strong></p>
-                <p style="margin-top:8px; color:var(--crimson);">⚠️ ข้อมูลปัจจุบันจะถูกแทนที่ด้วยข้อมูลในไฟล์!</p>
-            </div>
-            <div class="file-input-wrapper">
-                <input type="file" id="restore-file" accept=".json" onchange="previewRestore(this)">
-                <label for="restore-file" class="file-input-label">
-                    📁 เลือกไฟล์ JSON ที่จะกู้คืน
-                </label>
-            </div>
-            <div id="restore-preview" class="hidden">
-                <div class="data-preview">
-                    <pre id="restore-json"></pre>
-                </div>
-                <button class="btn btn-success" onclick="restoreData()">
-                    ✅ ยืนยันกู้คืนข้อมูล
-                </button>
-                <button class="btn btn-outline" onclick="cancelRestore()">
-                    ❌ ยกเลิก
-                </button>
-            </div>
-        </div>
-
-        <!-- RESET -->
-        <div class="card">
-            <div class="card-title">🗑️ ล้างข้อมูลทั้งหมด</div>
-            <div class="info-box" style="border-left-color:var(--crimson);">
-                <p>🚨 <strong>ระวัง!</strong> การล้างข้อมูลจะลบทุกอย่างและไม่สามารถกู้คืนได้ (ยกเว้นมีไฟล์สำรอง)</p>
-            </div>
-            <button class="btn btn-danger" onclick="resetAllData()">
-                🗑️ ล้างข้อมูลทั้งหมด
-            </button>
-        </div>
-
-        <!-- AUTO BACKUP -->
-        <div class="card">
-            <div class="card-title">⚙️ ตั้งค่าสำรองอัตโนมัติ</div>
-            <div class="info-box">
-                <p>🔄 ระบบจะแจ้งเตือนให้สำรองข้อมูลทุกครั้งที่มีการเปลี่ยนแปลงสำคัญ</p>
-            </div>
-            <button class="btn btn-warning" onclick="exportToClipboard()">
-                📋 คัดลอกข้อมูลไป Clipboard
-            </button>
-        </div>
-
+    <div class="stats-grid">
+      <div class="stat-chip"><div class="stat-chip-val" id="local-products">—</div><div class="stat-chip-label" data-i18n="stat_local_products">สินค้า (Local)</div></div>
+      <div class="stat-chip"><div class="stat-chip-val fb" id="fb-products">—</div><div class="stat-chip-label" data-i18n="stat_fb_products">สินค้า (Firebase)</div></div>
+      <div class="stat-chip"><div class="stat-chip-val" id="local-menus">—</div><div class="stat-chip-label" data-i18n="stat_local_menus">เมนู (Local)</div></div>
+      <div class="stat-chip"><div class="stat-chip-val fb" id="fb-menus">—</div><div class="stat-chip-label" data-i18n="stat_fb_menus">เมนู (Firebase)</div></div>
     </div>
+  </div>
 
-    <div class="footer-note">
-        💾 Ohoi Kyoza — ข้อมูลของคุณ คือสมบัติของคุณ 🏮
+  <div class="card">
+    <div class="card-title" data-i18n="card_upload_title">⬆️ อัปโหลด Local → Firebase</div>
+    <div class="info-box">
+      <div class="info-row"><span class="info-num">!</span><span data-i18n="upload_info1">ใช้เมื่อ: <strong>เพิ่งเพิ่มข้อมูลใหม่</strong> และต้องการให้ทุกเครื่องเห็นข้อมูลเดียวกัน</span></div>
+      <div class="info-row"><span class="info-num">!</span><span data-i18n="upload_info2">ข้อมูลที่ส่งขึ้น: <strong>สินค้า, เมนู, ประวัติ</strong></span></div>
     </div>
+    <div class="progress-wrap" id="upload-progress-wrap"><div class="progress-bar" id="upload-progress"></div></div>
+    <button class="btn btn-upload" id="btn-upload" onclick="uploadAll()" disabled>
+      ⬆️ <span data-i18n="btn_upload">อัปโหลดข้อมูลทั้งหมดขึ้น Firebase</span>
+    </button>
+  </div>
 
-    <script>
-        // ===== LOAD STATS =====
-        function loadStats() {
-            const products = JSON.parse(localStorage.getItem('ok_products')) || [];
-            const menus = JSON.parse(localStorage.getItem('ok_menus')) || [];
-            const transactions = JSON.parse(localStorage.getItem('ok_transactions')) || [];
-            const cookHistory = JSON.parse(localStorage.getItem('ok_cook_history')) || [];
-            
-            document.getElementById('stat-products').textContent = products.length;
-            document.getElementById('stat-menus').textContent = menus.length;
-            document.getElementById('stat-transactions').textContent = transactions.length;
-            document.getElementById('stat-orders').textContent = cookHistory.reduce((sum, h) => sum + h.servings, 0);
-        }
+  <div class="card">
+    <div class="card-title" data-i18n="card_download_title">⬇️ ดาวน์โหลด Firebase → Local</div>
+    <div class="info-box">
+      <div class="info-row"><span class="info-num">!</span><span data-i18n="download_info1">ใช้เมื่อ: <strong>เปิดเครื่องใหม่</strong> หรือต้องการดึงข้อมูลล่าสุดจาก Cloud</span></div>
+      <div class="info-row"><span class="info-num">⚠</span><span data-i18n="download_info2">ข้อมูล Local ปัจจุบันจะ<strong>ถูกแทนที่</strong>ด้วยข้อมูลจาก Firebase</span></div>
+    </div>
+    <div class="progress-wrap" id="download-progress-wrap"><div class="progress-bar" id="download-progress"></div></div>
+    <button class="btn btn-download" id="btn-download" onclick="downloadAll()" disabled>
+      ⬇️ <span data-i18n="btn_download">ดาวน์โหลดข้อมูลจาก Firebase</span>
+    </button>
+  </div>
 
-        // ===== BACKUP =====
-        function backupData() {
-            const data = {
-                version: '1.0',
-                exportedAt: new Date().toISOString(),
-                app: 'Ohoi Kyoza Stock System',
-                ok_products: JSON.parse(localStorage.getItem('ok_products')) || [],
-                ok_menus: JSON.parse(localStorage.getItem('ok_menus')) || [],
-                ok_transactions: JSON.parse(localStorage.getItem('ok_transactions')) || [],
-                ok_cook_history: JSON.parse(localStorage.getItem('ok_cook_history')) || [],
-                ok_lang: localStorage.getItem('ok_lang') || 'th'
-            };
+  <div class="card">
+    <div class="card-title" data-i18n="card_log_title">📋 บันทึกการทำงาน</div>
+    <div class="sync-log" id="sync-log">
+      <span class="log-info" data-i18n="log_ready">ระบบพร้อมทำงาน — กำลังเชื่อมต่อ Firebase...</span>
+    </div>
+  </div>
 
-            const jsonStr = JSON.stringify(data, null, 2);
-            const blob = new Blob([jsonStr], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `ohoi-kyoza-backup-${new Date().toISOString().split('T')[0]}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+</div>
 
-            // Show preview
-            document.getElementById('backup-json').textContent = jsonStr.substring(0, 2000) + '...';
-            document.getElementById('backup-preview').classList.remove('hidden');
-            
-            showAlert('✅ สำรองข้อมูลสำเร็จ! ไฟล์ถูกดาวน์โหลดแล้ว', 'success');
-        }
+<!-- ===== TAB BACKUP ===== -->
+<div id="backup" class="tab-content">
 
-        // ===== RESTORE PREVIEW =====
-        let restoreDataObj = null;
+  <div class="card">
+    <div class="card-title" data-i18n="card_stats_title">📊 ข้อมูลปัจจุบัน</div>
+    <div class="stats-4">
+      <div class="stat-chip"><div class="stat-chip-val" id="stat-products">0</div><div class="stat-chip-label" data-i18n="stat_products_label">สินค้า</div></div>
+      <div class="stat-chip"><div class="stat-chip-val" id="stat-menus">0</div><div class="stat-chip-label" data-i18n="stat_menus_label">เมนู</div></div>
+      <div class="stat-chip"><div class="stat-chip-val" id="stat-transactions">0</div><div class="stat-chip-label" data-i18n="stat_tx_label">ประวัติ</div></div>
+      <div class="stat-chip"><div class="stat-chip-val" id="stat-orders">0</div><div class="stat-chip-label" data-i18n="stat_orders_label">ออเดอร์</div></div>
+    </div>
+  </div>
 
-        function previewRestore(input) {
-            const file = input.files[0];
-            if (!file) return;
+  <div class="card">
+    <div class="card-title" data-i18n="card_backup_title">💾 สำรองข้อมูล (Backup)</div>
+    <div class="info-box">
+      <div class="info-row"><span class="info-num">!</span><span data-i18n="backup_info1">กด <strong>ดาวน์โหลดไฟล์ JSON</strong> เก็บไว้ในเครื่อง หรือส่งไปเก็บใน Google Drive / iCloud</span></div>
+      <div class="info-row"><span class="info-num">💡</span><span data-i18n="backup_info2">แนะนำสำรองทุกวันหลังปิดร้าน</span></div>
+    </div>
+    <button class="btn btn-backup" onclick="backupData()">
+      📥 <span data-i18n="btn_backup_dl">ดาวน์โหลดไฟล์สำรอง (.json)</span>
+    </button>
+    <button class="btn btn-clipboard" onclick="exportToClipboard()">
+      📋 <span data-i18n="btn_clipboard">คัดลอกข้อมูลไป Clipboard</span>
+    </button>
+    <div id="backup-preview" style="display:none;">
+      <div class="data-preview"><pre id="backup-json"></pre></div>
+    </div>
+  </div>
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    
-                    // Validate
-                    if (!data.ok_products || !data.ok_menus) {
-                        throw new Error('ไฟล์ไม่ถูกต้อง');
-                    }
+  <div class="card">
+    <div class="card-title" data-i18n="card_restore_title">📤 กู้คืนข้อมูล (Restore)</div>
+    <div class="info-box">
+      <div class="info-row"><span class="info-num">!</span><span data-i18n="restore_info1">เลือกไฟล์ JSON ที่เคยสำรองไว้ เพื่อ <strong>นำข้อมูลกลับมาใช้</strong></span></div>
+      <div class="info-row"><span class="info-num">⚠</span><span data-i18n="restore_info2" style="color:var(--crimson);">ข้อมูลปัจจุบันจะถูกแทนที่ด้วยข้อมูลในไฟล์!</span></div>
+    </div>
+    <div class="file-input-wrapper">
+      <input type="file" id="restore-file" accept=".json" onchange="previewRestore(this)">
+      <label for="restore-file" class="file-input-label">
+        📁 <span data-i18n="btn_select_file">เลือกไฟล์ JSON ที่จะกู้คืน</span>
+      </label>
+    </div>
+    <div id="restore-preview" style="display:none;">
+      <div class="data-preview"><pre id="restore-json"></pre></div>
+      <div style="margin-top:12px;">
+        <button class="btn btn-restore" onclick="restoreData()">✅ <span data-i18n="btn_confirm_restore">ยืนยันกู้คืนข้อมูล</span></button>
+        <button class="btn btn-outline" onclick="cancelRestore()">❌ <span data-i18n="btn_cancel">ยกเลิก</span></button>
+      </div>
+    </div>
+  </div>
 
-                    restoreDataObj = data;
-                    
-                    const preview = {
-                        version: data.version,
-                        exportedAt: data.exportedAt,
-                        products: (data.ok_products || []).length,
-                        menus: (data.ok_menus || []).length,
-                        transactions: (data.ok_transactions || []).length,
-                        orders: (data.ok_cook_history || []).reduce((s, h) => s + (h.servings || 0), 0)
-                    };
+  <div class="card">
+    <div class="card-title" data-i18n="card_reset_title">🗑️ ล้างข้อมูลทั้งหมด</div>
+    <div class="info-box" style="border-left:4px solid var(--crimson);">
+      <div class="info-row"><span class="info-num">🚨</span><span data-i18n="reset_info"><strong>ระวัง!</strong> การล้างข้อมูลจะลบทุกอย่างและไม่สามารถกู้คืนได้ (ยกเว้นมีไฟล์สำรอง)</span></div>
+    </div>
+    <button class="btn btn-danger" onclick="resetAllData()">
+      🗑️ <span data-i18n="btn_reset">ล้างข้อมูลทั้งหมด</span>
+    </button>
+  </div>
 
-                    document.getElementById('restore-json').textContent = JSON.stringify(preview, null, 2);
-                    document.getElementById('restore-preview').classList.remove('hidden');
-                } catch (err) {
-                    showAlert('❌ ไฟล์ไม่ถูกต้อง กรุณาเลือกไฟล์สำรองของ Ohoi Kyoza', 'danger');
-                    input.value = '';
-                }
-            };
-            reader.readAsText(file);
-        }
+</div>
 
-        function cancelRestore() {
-            restoreDataObj = null;
-            document.getElementById('restore-file').value = '';
-            document.getElementById('restore-preview').classList.add('hidden');
-        }
+</div><!-- /content -->
 
-        // ===== RESTORE =====
-        function restoreData() {
-            if (!restoreDataObj) return;
-            
-            if (!confirm('⚠️ ข้อมูลปัจจุบันจะถูกแทนที่\\n\\nยืนยันกู้คืนข้อมูล?')) {
-                return;
-            }
+<div class="footer-note" data-i18n="footer_note">💾 Ohoi Kyoza — ข้อมูลของคุณ คือสมบัติของคุณ 🏮</div>
 
-            localStorage.setItem('ok_products', JSON.stringify(restoreDataObj.ok_products || []));
-            localStorage.setItem('ok_menus', JSON.stringify(restoreDataObj.ok_menus || []));
-            localStorage.setItem('ok_transactions', JSON.stringify(restoreDataObj.ok_transactions || []));
-            localStorage.setItem('ok_cook_history', JSON.stringify(restoreDataObj.ok_cook_history || []));
-            if (restoreDataObj.ok_lang) {
-                localStorage.setItem('ok_lang', restoreDataObj.ok_lang);
-            }
+<script>
+// ===== TRANSLATIONS =====
+const TL = {
+  th:{
+    btn_back:'หน้าหลัก',
+    header_subtitle:'☁️ Firebase Sync & 💾 สำรองข้อมูล',
+    tab_firebase:'🔥 Firebase Sync',
+    tab_backup:'💾 สำรองข้อมูล',
+    card_status_title:'📡 สถานะการเชื่อมต่อ',
+    status_connecting:'กำลังเชื่อมต่อ...',
+    status_online:'✅ เชื่อมต่อ Firebase สำเร็จ',
+    status_offline:'❌ ขาดการเชื่อมต่อ — ตรวจสอบอินเทอร์เน็ต',
+    stat_local_products:'สินค้า (Local)', stat_fb_products:'สินค้า (Firebase)',
+    stat_local_menus:'เมนู (Local)', stat_fb_menus:'เมนู (Firebase)',
+    card_upload_title:'⬆️ อัปโหลด Local → Firebase',
+    upload_info1:'ใช้เมื่อ: เพิ่งเพิ่มข้อมูลใหม่ และต้องการให้ทุกเครื่องเห็นข้อมูลเดียวกัน',
+    upload_info2:'ข้อมูลที่ส่งขึ้น: สินค้า, เมนู, ประวัติ',
+    btn_upload:'อัปโหลดข้อมูลทั้งหมดขึ้น Firebase',
+    btn_uploading:'กำลังอัปโหลด...',
+    card_download_title:'⬇️ ดาวน์โหลด Firebase → Local',
+    download_info1:'ใช้เมื่อ: เปิดเครื่องใหม่ หรือต้องการดึงข้อมูลล่าสุดจาก Cloud',
+    download_info2:'ข้อมูล Local ปัจจุบันจะถูกแทนที่ด้วยข้อมูลจาก Firebase',
+    btn_download:'ดาวน์โหลดข้อมูลจาก Firebase',
+    btn_downloading:'กำลังดาวน์โหลด...',
+    card_log_title:'📋 บันทึกการทำงาน',
+    log_ready:'ระบบพร้อมทำงาน — กำลังเชื่อมต่อ Firebase...',
+    card_stats_title:'📊 ข้อมูลปัจจุบัน',
+    stat_products_label:'สินค้า', stat_menus_label:'เมนู',
+    stat_tx_label:'ประวัติ', stat_orders_label:'ออเดอร์',
+    card_backup_title:'💾 สำรองข้อมูล (Backup)',
+    backup_info1:'กด ดาวน์โหลดไฟล์ JSON เก็บไว้ในเครื่อง หรือส่งไปเก็บใน Google Drive / iCloud',
+    backup_info2:'แนะนำสำรองทุกวันหลังปิดร้าน',
+    btn_backup_dl:'ดาวน์โหลดไฟล์สำรอง (.json)',
+    btn_clipboard:'คัดลอกข้อมูลไป Clipboard',
+    card_restore_title:'📤 กู้คืนข้อมูล (Restore)',
+    restore_info1:'เลือกไฟล์ JSON ที่เคยสำรองไว้ เพื่อนำข้อมูลกลับมาใช้',
+    restore_info2:'ข้อมูลปัจจุบันจะถูกแทนที่ด้วยข้อมูลในไฟล์!',
+    btn_select_file:'เลือกไฟล์ JSON ที่จะกู้คืน',
+    btn_confirm_restore:'ยืนยันกู้คืนข้อมูล',
+    btn_cancel:'ยกเลิก',
+    card_reset_title:'🗑️ ล้างข้อมูลทั้งหมด',
+    reset_info:'ระวัง! การล้างข้อมูลจะลบทุกอย่างและไม่สามารถกู้คืนได้ (ยกเว้นมีไฟล์สำรอง)',
+    btn_reset:'ล้างข้อมูลทั้งหมด',
+    footer_note:'💾 Ohoi Kyoza — ข้อมูลของคุณ คือสมบัติของคุณ 🏮',
+    // alerts
+    alert_upload_ok:'✅ อัปโหลดสำเร็จ! สินค้า {p} รายการ, เมนู {m} รายการ',
+    alert_download_ok:'✅ ดาวน์โหลดสำเร็จ! สินค้า {p} รายการ, เมนู {m} รายการ',
+    alert_upload_err:'❌ อัปโหลดล้มเหลว: {msg}',
+    alert_download_err:'❌ ดาวน์โหลดล้มเหลว: {msg}',
+    alert_backup_ok:'✅ สำรองข้อมูลสำเร็จ! ไฟล์ถูกดาวน์โหลดแล้ว',
+    alert_restore_ok:'✅ กู้คืนข้อมูลสำเร็จ!',
+    alert_restore_err:'❌ ไฟล์ไม่ถูกต้อง กรุณาเลือกไฟล์สำรองของ Ohoi Kyoza',
+    alert_reset_done:'🗑️ ล้างข้อมูลทั้งหมดแล้ว',
+    alert_reset_cancel:'❌ ยกเลิกการล้างข้อมูล',
+    alert_clipboard_ok:'✅ คัดลอกข้อมูลไป Clipboard แล้ว! วางในแชท/ไลน์ได้เลย',
+    alert_clipboard_err:'❌ ไม่สามารถคัดลอกได้ กรุณาใช้วิธีดาวน์โหลดไฟล์',
+    confirm_restore:'⚠️ ข้อมูลปัจจุบันจะถูกแทนที่\n\nยืนยันกู้คืนข้อมูล?',
+    confirm_reset:'พิมพ์ "DELETE" เพื่อยืนยันการล้างข้อมูลทั้งหมด:',
+  },
+  en:{
+    btn_back:'Home',
+    header_subtitle:'☁️ Firebase Sync & 💾 Data Backup',
+    tab_firebase:'🔥 Firebase Sync',
+    tab_backup:'💾 Backup',
+    card_status_title:'📡 Connection Status',
+    status_connecting:'Connecting...',
+    status_online:'✅ Connected to Firebase',
+    status_offline:'❌ Disconnected — Check internet',
+    stat_local_products:'Products (Local)', stat_fb_products:'Products (Firebase)',
+    stat_local_menus:'Menus (Local)', stat_fb_menus:'Menus (Firebase)',
+    card_upload_title:'⬆️ Upload Local → Firebase',
+    upload_info1:'Use when: Just added new data and want all devices to see the same data.',
+    upload_info2:'Data uploaded: Products, Menus, History',
+    btn_upload:'Upload All Data to Firebase',
+    btn_uploading:'Uploading...',
+    card_download_title:'⬇️ Download Firebase → Local',
+    download_info1:'Use when: Opening a new device or want the latest data from Cloud.',
+    download_info2:'Current local data will be replaced by Firebase data.',
+    btn_download:'Download Data from Firebase',
+    btn_downloading:'Downloading...',
+    card_log_title:'📋 Activity Log',
+    log_ready:'System ready — Connecting to Firebase...',
+    card_stats_title:'📊 Current Data',
+    stat_products_label:'Products', stat_menus_label:'Menus',
+    stat_tx_label:'Transactions', stat_orders_label:'Orders',
+    card_backup_title:'💾 Backup Data',
+    backup_info1:'Download JSON file to keep on device or store in Google Drive / iCloud.',
+    backup_info2:'Recommended: Backup daily after closing.',
+    btn_backup_dl:'Download Backup File (.json)',
+    btn_clipboard:'Copy Data to Clipboard',
+    card_restore_title:'📤 Restore Data',
+    restore_info1:'Select a previously saved JSON file to restore your data.',
+    restore_info2:'Current data will be replaced by the file content!',
+    btn_select_file:'Select JSON Backup File',
+    btn_confirm_restore:'Confirm Restore',
+    btn_cancel:'Cancel',
+    card_reset_title:'🗑️ Reset All Data',
+    reset_info:'Warning! This will delete everything and cannot be undone (unless you have a backup).',
+    btn_reset:'Reset All Data',
+    footer_note:'💾 Ohoi Kyoza — Your data is your treasure 🏮',
+    alert_upload_ok:'✅ Upload successful! {p} products, {m} menus',
+    alert_download_ok:'✅ Download successful! {p} products, {m} menus',
+    alert_upload_err:'❌ Upload failed: {msg}',
+    alert_download_err:'❌ Download failed: {msg}',
+    alert_backup_ok:'✅ Backup successful! File downloaded.',
+    alert_restore_ok:'✅ Restore successful!',
+    alert_restore_err:'❌ Invalid file. Please select an Ohoi Kyoza backup file.',
+    alert_reset_done:'🗑️ All data has been reset.',
+    alert_reset_cancel:'❌ Reset cancelled.',
+    alert_clipboard_ok:'✅ Data copied to clipboard!',
+    alert_clipboard_err:'❌ Cannot copy. Please use download instead.',
+    confirm_restore:'⚠️ Current data will be replaced.\n\nConfirm restore?',
+    confirm_reset:'Type "DELETE" to confirm resetting all data:',
+  },
+  zh:{
+    btn_back:'首页',
+    header_subtitle:'☁️ Firebase 同步 & 💾 数据备份',
+    tab_firebase:'🔥 Firebase 同步',
+    tab_backup:'💾 数据备份',
+    card_status_title:'📡 连接状态',
+    status_connecting:'正在连接...',
+    status_online:'✅ Firebase 连接成功',
+    status_offline:'❌ 连接断开 — 请检查网络',
+    stat_local_products:'商品（本地）', stat_fb_products:'商品（Firebase）',
+    stat_local_menus:'菜单（本地）', stat_fb_menus:'菜单（Firebase）',
+    card_upload_title:'⬆️ 上传 本地 → Firebase',
+    upload_info1:'使用时机：刚添加了新数据，希望所有设备看到相同数据。',
+    upload_info2:'上传内容：商品、菜单、历史记录',
+    btn_upload:'将所有数据上传到Firebase',
+    btn_uploading:'正在上传...',
+    card_download_title:'⬇️ 下载 Firebase → 本地',
+    download_info1:'使用时机：打开新设备或需要从云端获取最新数据。',
+    download_info2:'当前本地数据将被Firebase数据替换。',
+    btn_download:'从Firebase下载数据',
+    btn_downloading:'正在下载...',
+    card_log_title:'📋 操作日志',
+    log_ready:'系统就绪 — 正在连接Firebase...',
+    card_stats_title:'📊 当前数据',
+    stat_products_label:'商品', stat_menus_label:'菜单',
+    stat_tx_label:'交易记录', stat_orders_label:'订单',
+    card_backup_title:'💾 数据备份',
+    backup_info1:'下载JSON文件保存到设备，或存储在Google Drive / iCloud中。',
+    backup_info2:'建议：每天打烊后备份。',
+    btn_backup_dl:'下载备份文件（.json）',
+    btn_clipboard:'复制数据到剪贴板',
+    card_restore_title:'📤 恢复数据',
+    restore_info1:'选择之前保存的JSON文件以恢复数据。',
+    restore_info2:'当前数据将被文件中的数据替换！',
+    btn_select_file:'选择JSON备份文件',
+    btn_confirm_restore:'确认恢复',
+    btn_cancel:'取消',
+    card_reset_title:'🗑️ 重置所有数据',
+    reset_info:'警告！这将删除所有数据且无法恢复（除非有备份文件）。',
+    btn_reset:'重置所有数据',
+    footer_note:'💾 Ohoi Kyoza — 您的数据是您的宝藏 🏮',
+    alert_upload_ok:'✅ 上传成功！{p}种商品，{m}个菜单',
+    alert_download_ok:'✅ 下载成功！{p}种商品，{m}个菜单',
+    alert_upload_err:'❌ 上传失败：{msg}',
+    alert_download_err:'❌ 下载失败：{msg}',
+    alert_backup_ok:'✅ 备份成功！文件已下载。',
+    alert_restore_ok:'✅ 恢复成功！',
+    alert_restore_err:'❌ 文件无效，请选择Ohoi Kyoza备份文件。',
+    alert_reset_done:'🗑️ 所有数据已重置。',
+    alert_reset_cancel:'❌ 已取消重置。',
+    alert_clipboard_ok:'✅ 数据已复制到剪贴板！',
+    alert_clipboard_err:'❌ 无法复制，请使用下载方式。',
+    confirm_restore:'⚠️ 当前数据将被替换。\n\n确认恢复？',
+    confirm_reset:'输入"DELETE"以确认重置所有数据：',
+  }
+};
 
-            loadStats();
-            cancelRestore();
-            showAlert('✅ กู้คืนข้อมูลสำเร็จ!', 'success');
-        }
+// ===== STATE =====
+let currentLang = localStorage.getItem('ok_lang') || 'th';
+let db = null;
+let restoreDataObj = null;
 
-        // ===== RESET =====
-        function resetAllData() {
-            const confirmText = prompt('พิมพ์ "DELETE" เพื่อยืนยันการล้างข้อมูลทั้งหมด:');
-            if (confirmText !== 'DELETE') {
-                showAlert('❌ ยกเลิกการล้างข้อมูล', 'warning');
-                return;
-            }
+// ===== TRANSLATE =====
+function t(key, params={}) {
+  let text = TL[currentLang][key] || key;
+  Object.keys(params).forEach(k => { text = text.replace(`{${k}}`, params[k]); });
+  return text;
+}
 
-            localStorage.removeItem('ok_products');
-            localStorage.removeItem('ok_menus');
-            localStorage.removeItem('ok_transactions');
-            localStorage.removeItem('ok_cook_history');
-            localStorage.removeItem('ok_lang');
+// ===== LANGUAGE =====
+function changeLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('ok_lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang===lang));
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.dataset.i18n;
+    if (TL[lang][k]) el.textContent = TL[lang][k];
+  });
+}
 
-            loadStats();
-            showAlert('🗑️ ล้างข้อมูลทั้งหมดแล้ว', 'danger');
-        }
+// ===== TABS =====
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (id === 'backup') loadStats();
+}
 
-        // ===== CLIPBOARD =====
-        async function exportToClipboard() {
-            const data = {
-                version: '1.0',
-                exportedAt: new Date().toISOString(),
-                ok_products: JSON.parse(localStorage.getItem('ok_products')) || [],
-                ok_menus: JSON.parse(localStorage.getItem('ok_menus')) || [],
-                ok_transactions: JSON.parse(localStorage.getItem('ok_transactions')) || [],
-                ok_cook_history: JSON.parse(localStorage.getItem('ok_cook_history')) || []
-            };
+// ===== FIREBASE INIT =====
+function initFirebase() {
+  try {
+    if (!firebase.apps.length) {
+      firebase.initializeApp({
+        apiKey:"AIzaSyC650BBAj_y7bObsIA5KpMQkLDNg4FEtmw",
+        authDomain:"ohoi-kyoza.firebaseapp.com",
+        databaseURL:"https://ohoi-kyoza-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId:"ohoi-kyoza",
+        storageBucket:"ohoi-kyoza.firebasestorage.app",
+        messagingSenderId:"311350815436",
+        appId:"1:311350815436:web:5638717dc207f286e5b069"
+      });
+    }
+    db = firebase.database();
+    db.ref('.info/connected').on('value', snap => {
+      if (snap.val()) {
+        setStatus('online', t('status_online'));
+        addLog(t('status_online'), 'ok');
+        loadFbStats();
+        document.getElementById('btn-upload').disabled   = false;
+        document.getElementById('btn-download').disabled = false;
+      } else {
+        setStatus('offline', t('status_offline'));
+        addLog(t('status_offline'), 'err');
+      }
+    });
+  } catch(e) {
+    setStatus('offline', '❌ ' + e.message);
+    addLog('Error: '+e.message, 'err');
+  }
+}
 
-            try {
-                await navigator.clipboard.writeText(JSON.stringify(data));
-                showAlert('✅ คัดลอกข้อมูลไป Clipboard แล้ว! วางในแชท/ไลน์ได้เลย', 'success');
-            } catch (err) {
-                showAlert('❌ ไม่สามารถคัดลอกได้ กรุณาใช้วิธีดาวน์โหลดไฟล์', 'danger');
-            }
-        }
+function setStatus(type, text) {
+  const bar=document.getElementById('status-bar');
+  const span=document.getElementById('status-text');
+  bar.className='status-bar '+type;
+  span.textContent=text;
+}
 
-        // ===== ALERT =====
-        function showAlert(message, type) {
-            const existing = document.querySelector('.alert');
-            if (existing) existing.remove();
+function addLog(msg, type='info') {
+  const log=document.getElementById('sync-log');
+  const time=new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const cls=type==='ok'?'log-ok':type==='err'?'log-err':'log-info';
+  log.innerHTML+=`<div><span class="log-time">[${time}]</span> <span class="${cls}">${msg}</span></div>`;
+  log.scrollTop=log.scrollHeight;
+}
 
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type}`;
-            alert.textContent = message;
-            document.querySelector('.content').insertBefore(alert, document.querySelector('.content').firstChild);
+async function loadFbStats() {
+  // Local stats
+  const lp=JSON.parse(localStorage.getItem('ok_products')||'[]').length;
+  const lm=JSON.parse(localStorage.getItem('ok_menus')||'[]').length;
+  document.getElementById('local-products').textContent=lp;
+  document.getElementById('local-menus').textContent=lm;
+  // Firebase stats
+  try {
+    const ps=await db.ref('products').once('value');
+    const ms=await db.ref('menus').once('value');
+    document.getElementById('fb-products').textContent=ps.exists()?Object.keys(ps.val()).length:0;
+    document.getElementById('fb-menus').textContent=ms.exists()?Object.keys(ms.val()).length:0;
+  } catch(e) {
+    document.getElementById('fb-products').textContent='?';
+    document.getElementById('fb-menus').textContent='?';
+  }
+}
 
-            setTimeout(() => alert.remove(), 5000);
-        }
+// ===== UPLOAD LOCAL → FIREBASE =====
+async function uploadAll() {
+  if (!db) return;
+  const btn=document.getElementById('btn-upload');
+  btn.disabled=true;
+  btn.innerHTML=`<div class="spinner"></div> ${t('btn_uploading')}`;
+  document.getElementById('upload-progress-wrap').style.display='block';
+  setStatus('syncing','กำลังอัปโหลด...');
+  addLog('เริ่มอัปโหลด...','info');
+  try {
+    const products   = JSON.parse(localStorage.getItem('ok_products')||'[]');
+    const menus      = JSON.parse(localStorage.getItem('ok_menus')||'[]');
+    const tx         = JSON.parse(localStorage.getItem('ok_transactions')||'[]');
+    const ch         = JSON.parse(localStorage.getItem('ok_cook_history')||'[]');
+    setProgress('upload',20);
+    if (products.length) { const o={}; products.forEach(p=>{o[String(p.id)]=p;}); await db.ref('products').set(o); }
+    addLog(`✅ สินค้า ${products.length} รายการ`,'ok');
+    setProgress('upload',45);
+    if (menus.length) { const o={}; menus.forEach(m=>{o[String(m.id)]=m;}); await db.ref('menus').set(o); }
+    addLog(`✅ เมนู ${menus.length} รายการ`,'ok');
+    setProgress('upload',65);
+    if (tx.length) { const o={}; tx.forEach(t=>{o[String(t.id)]=t;}); await db.ref('transactions').set(o); }
+    addLog(`✅ ประวัติ ${tx.length} รายการ`,'ok');
+    setProgress('upload',85);
+    if (ch.length) { const o={}; ch.forEach(h=>{o[String(h.id)]=h;}); await db.ref('cook_history').set(o); }
+    addLog(`✅ ประวัติทำอาหาร ${ch.length} รายการ`,'ok');
+    setProgress('upload',100);
+    setStatus('online',t('status_online'));
+    addLog('🎉 อัปโหลดเสร็จสิ้น!','ok');
+    showAlert(t('alert_upload_ok',{p:products.length,m:menus.length}),'success');
+    loadFbStats();
+  } catch(e) {
+    setStatus('offline','❌ อัปโหลดล้มเหลว');
+    addLog('❌ '+e.message,'err');
+    showAlert(t('alert_upload_err',{msg:e.message}),'danger');
+  }
+  btn.disabled=false;
+  btn.innerHTML=`⬆️ ${t('btn_upload')}`;
+}
 
-        // Init
-        loadStats();
-    </script>
+// ===== DOWNLOAD FIREBASE → LOCAL =====
+async function downloadAll() {
+  if (!db) return;
+  const btn=document.getElementById('btn-download');
+  btn.disabled=true;
+  btn.innerHTML=`<div class="spinner"></div> ${t('btn_downloading')}`;
+  document.getElementById('download-progress-wrap').style.display='block';
+  setStatus('syncing','กำลังดาวน์โหลด...');
+  addLog('เริ่มดาวน์โหลด...','info');
+  try {
+    setProgress('download',20);
+    const ps=await db.ref('products').once('value');
+    let prods=[];
+    if (ps.exists()) { prods=Object.values(ps.val()).map(p=>({...p,id:Number(p.id)||p.id})); localStorage.setItem('ok_products',JSON.stringify(prods)); }
+    addLog(`✅ สินค้า ${prods.length} รายการ`,'ok');
+    setProgress('download',45);
+    const ms=await db.ref('menus').once('value');
+    let mArr=[];
+    if (ms.exists()) { mArr=Object.values(ms.val()).map(m=>({...m,id:Number(m.id)||m.id})); localStorage.setItem('ok_menus',JSON.stringify(mArr)); }
+    addLog(`✅ เมนู ${mArr.length} รายการ`,'ok');
+    setProgress('download',65);
+    const ts=await db.ref('transactions').once('value');
+    if (ts.exists()) { localStorage.setItem('ok_transactions',JSON.stringify(Object.values(ts.val()))); }
+    setProgress('download',85);
+    const cs=await db.ref('cook_history').once('value');
+    if (cs.exists()) { localStorage.setItem('ok_cook_history',JSON.stringify(Object.values(cs.val()))); }
+    setProgress('download',100);
+    setStatus('online',t('status_online'));
+    addLog('🎉 ดาวน์โหลดเสร็จสิ้น!','ok');
+    showAlert(t('alert_download_ok',{p:prods.length,m:mArr.length}),'success');
+    loadFbStats(); loadStats();
+  } catch(e) {
+    setStatus('offline','❌ ดาวน์โหลดล้มเหลว');
+    addLog('❌ '+e.message,'err');
+    showAlert(t('alert_download_err',{msg:e.message}),'danger');
+  }
+  btn.disabled=false;
+  btn.innerHTML=`⬇️ ${t('btn_download')}`;
+}
+
+function setProgress(type, pct) {
+  document.getElementById(`${type}-progress`).style.width=pct+'%';
+}
+
+// ===== BACKUP STATS =====
+function loadStats() {
+  const products=JSON.parse(localStorage.getItem('ok_products')||'[]');
+  const menus=JSON.parse(localStorage.getItem('ok_menus')||'[]');
+  const tx=JSON.parse(localStorage.getItem('ok_transactions')||'[]');
+  const ch=JSON.parse(localStorage.getItem('ok_cook_history')||'[]');
+  document.getElementById('stat-products').textContent=products.length;
+  document.getElementById('stat-menus').textContent=menus.length;
+  document.getElementById('stat-transactions').textContent=tx.length;
+  document.getElementById('stat-orders').textContent=ch.reduce((s,h)=>s+(h.servings||0),0);
+}
+
+// ===== BACKUP =====
+function backupData() {
+  const data={
+    version:'1.0', exportedAt:new Date().toISOString(), app:'Ohoi Kyoza',
+    ok_products: JSON.parse(localStorage.getItem('ok_products')||'[]'),
+    ok_menus:    JSON.parse(localStorage.getItem('ok_menus')||'[]'),
+    ok_transactions: JSON.parse(localStorage.getItem('ok_transactions')||'[]'),
+    ok_cook_history: JSON.parse(localStorage.getItem('ok_cook_history')||'[]'),
+    ok_lang: localStorage.getItem('ok_lang')||'th'
+  };
+  const jsonStr=JSON.stringify(data,null,2);
+  const blob=new Blob([jsonStr],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`ohoi-kyoza-backup-${new Date().toISOString().split('T')[0]}.json`;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+  document.getElementById('backup-json').textContent=jsonStr.substring(0,2000)+'...';
+  document.getElementById('backup-preview').style.display='block';
+  showAlert(t('alert_backup_ok'),'success');
+}
+
+// ===== CLIPBOARD =====
+async function exportToClipboard() {
+  const data={
+    version:'1.0', exportedAt:new Date().toISOString(),
+    ok_products: JSON.parse(localStorage.getItem('ok_products')||'[]'),
+    ok_menus:    JSON.parse(localStorage.getItem('ok_menus')||'[]'),
+    ok_transactions: JSON.parse(localStorage.getItem('ok_transactions')||'[]'),
+    ok_cook_history: JSON.parse(localStorage.getItem('ok_cook_history')||'[]')
+  };
+  try {
+    await navigator.clipboard.writeText(JSON.stringify(data));
+    showAlert(t('alert_clipboard_ok'),'success');
+  } catch(e) {
+    showAlert(t('alert_clipboard_err'),'danger');
+  }
+}
+
+// ===== RESTORE PREVIEW =====
+function previewRestore(input) {
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try {
+      const data=JSON.parse(e.target.result);
+      if (!data.ok_products&&!data.ok_menus) throw new Error('invalid');
+      restoreDataObj=data;
+      const preview={
+        version:data.version, exportedAt:data.exportedAt,
+        products:(data.ok_products||[]).length,
+        menus:(data.ok_menus||[]).length,
+        transactions:(data.ok_transactions||[]).length,
+        orders:(data.ok_cook_history||[]).reduce((s,h)=>s+(h.servings||0),0)
+      };
+      document.getElementById('restore-json').textContent=JSON.stringify(preview,null,2);
+      document.getElementById('restore-preview').style.display='block';
+    } catch(err) {
+      showAlert(t('alert_restore_err'),'danger');
+      input.value='';
+    }
+  };
+  reader.readAsText(file);
+}
+
+function cancelRestore() {
+  restoreDataObj=null;
+  document.getElementById('restore-file').value='';
+  document.getElementById('restore-preview').style.display='none';
+}
+
+function restoreData() {
+  if (!restoreDataObj) return;
+  if (!confirm(t('confirm_restore'))) return;
+  localStorage.setItem('ok_products',    JSON.stringify(restoreDataObj.ok_products||[]));
+  localStorage.setItem('ok_menus',       JSON.stringify(restoreDataObj.ok_menus||[]));
+  localStorage.setItem('ok_transactions',JSON.stringify(restoreDataObj.ok_transactions||[]));
+  localStorage.setItem('ok_cook_history',JSON.stringify(restoreDataObj.ok_cook_history||[]));
+  if (restoreDataObj.ok_lang) localStorage.setItem('ok_lang',restoreDataObj.ok_lang);
+  loadStats(); cancelRestore();
+  showAlert(t('alert_restore_ok'),'success');
+}
+
+// ===== RESET =====
+function resetAllData() {
+  const confirmText=prompt(t('confirm_reset'));
+  if (confirmText!=='DELETE') { showAlert(t('alert_reset_cancel'),'warning'); return; }
+  ['ok_products','ok_menus','ok_transactions','ok_cook_history','ok_lang'].forEach(k=>localStorage.removeItem(k));
+  loadStats();
+  showAlert(t('alert_reset_done'),'danger');
+}
+
+// ===== SHOW ALERT =====
+function showAlert(msg, type='success') {
+  const area=document.getElementById('alert-area');
+  const div=document.createElement('div');
+  div.className=`alert alert-${type}`;
+  div.textContent=msg;
+  div.style.cssText='animation:slide-up 0.3s ease;box-shadow:0 4px 20px rgba(0,0,0,0.15);';
+  area.innerHTML=''; area.appendChild(div);
+  setTimeout(()=>area.innerHTML='',5000);
+}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+  changeLang(currentLang);
+  loadStats();
+  initFirebase();
+});
+</script>
 </body>
 </html>
