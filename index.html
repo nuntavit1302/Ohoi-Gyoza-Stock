@@ -130,6 +130,8 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background-
   .lang-btn{padding:6px 12px;font-size:0.76rem;}
 }
 </style>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
@@ -367,6 +369,45 @@ function renderDate(lang) {
   } else {
     el.textContent = now.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
   }
+}
+
+// ===== FIREBASE INIT =====
+let _db = null;
+function initFirebase() {
+  try {
+    if (!firebase.apps.length) {
+      firebase.initializeApp({
+        apiKey:"AIzaSyC650BBAj_y7bObsIA5KpMQkLDNg4FEtmw",
+        authDomain:"ohoi-kyoza.firebaseapp.com",
+        databaseURL:"https://ohoi-kyoza-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId:"ohoi-kyoza",
+        storageBucket:"ohoi-kyoza.firebasestorage.app",
+        messagingSenderId:"311350815436",
+        appId:"1:311350815436:web:5638717dc207f286e5b069"
+      });
+    }
+    _db = firebase.database();
+    _db.ref('products').on('value', snap => {
+      if (snap && snap.exists()) {
+        const arr = Object.values(snap.val()).map(p => ({...p, id: Number(p.id)||p.id}));
+        localStorage.setItem('ok_products', JSON.stringify(arr));
+      }
+      loadStats();
+    });
+    _db.ref('menus').on('value', snap => {
+      if (snap && snap.exists()) {
+        const arr = Object.values(snap.val()).map(m => ({...m, id: Number(m.id)||m.id}));
+        localStorage.setItem('ok_menus', JSON.stringify(arr));
+      }
+      loadStats();
+    });
+    _db.ref('cook_history').on('value', snap => {
+      if (snap && snap.exists()) {
+        localStorage.setItem('ok_cook_history', JSON.stringify(Object.values(snap.val())));
+      }
+      loadStats();
+    });
+  } catch(e) { console.warn('Firebase init error:', e); }
 }
 
 // ===== STATS + ALERTS =====
