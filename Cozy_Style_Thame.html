@@ -1213,7 +1213,8 @@ function exportMonthlyExcel() {
 // ============================================================
 function buildPrintWindow(title, tableHtml) {
   const w = window.open('','_blank');
-  w.document.write(`<!DOCTYPE html><html><head>
+  w.document.write(`
+<head>
     <meta charset="UTF-8">
     <title>${title}</title>
     <style>

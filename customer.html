@@ -832,7 +832,8 @@ function buildReceiptHTML(isTax, date, buyer={}) {
 
   const subtotal = currentTotal;
 
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8">
+  return `
+<head><meta charset="UTF-8">
   <title>${title}</title>
   <style>
     body{font-family:'Noto Sans Thai',Arial,sans-serif;max-width:380px;margin:0 auto;padding:20px;font-size:13px;color:#000;}
