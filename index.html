@@ -1,33 +1,34 @@
 <!DOCTYPE html>
+
 <html lang="th">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ohoi Kyoza - ระบบร้านอาหาร</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;600;700&family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box;}
-:root{
-  --crimson:#9B2226;--crimson-light:#AE2012;--crimson-soft:rgba(155,34,38,0.08);
-  --gold:#D4A373;--gold-light:#E9C496;--gold-soft:rgba(212,163,115,0.15);
-  --jade:#588157;--jade-soft:rgba(88,129,87,0.12);--jade-light:#6B9B6A;
-  --warm-white:#FDF6EC;--cream:#F5EBDC;--paper:#FAF3E8;
-  --ink:#3D2B1F;--ink-light:#6B5B4F;--ink-muted:#9B8B7F;
-  --shadow-warm:rgba(155,34,38,0.08);
-  --orange:#E67E22;--blue:#2980B9;--purple:#6B5B95;
-}
-body{font-family:'Noto Sans Thai',sans-serif;background:var(--warm-white);color:var(--ink);min-height:100vh;overflow-x:hidden;padding-bottom:40px;}
-body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background-image:url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:1000;opacity:0.6;}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ohoi Kyoza - ระบบร้านอาหาร</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;600;700&family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;}
+        :root{
+            --crimson:#9B2226;--crimson-light:#AE2012;--crimson-soft:rgba(155,34,38,0.08);
+            --gold:#D4A373;--gold-light:#E9C496;--gold-soft:rgba(212,163,115,0.15);
+            --jade:#588157;--jade-soft:rgba(88,129,87,0.12);
+            --warm-white:#FDF6EC;--cream:#F5EBDC;--paper:#FAF3E8;
+            --ink:#3D2B1F;--ink-light:#6B5B4F;--ink-muted:#9B8B7F;
+            --shadow-warm:rgba(155,34,38,0.08);
+            --orange:#E67E22;--purple:#6B5B95;--blue:#2980B9;
+        }
+        body{font-family:'Noto Sans Thai',sans-serif;background:var(--warm-white);color:var(--ink);min-height:100vh;overflow-x:hidden;padding-bottom:40px;}
+        body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background-image:url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:1000;opacity:0.6;}
 
 @keyframes slide-up{from{transform:translateY(28px);opacity:0;}to{transform:translateY(0);opacity:1;}}
 @keyframes warm-pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.03);}}
 @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-7px);}}
-@keyframes glow{0%,100%{box-shadow:0 4px 20px rgba(155,34,38,0.1);}50%{box-shadow:0 6px 28px rgba(155,34,38,0.2);}}
+@keyframes glow-pulse{0%,100%{box-shadow:0 4px 20px rgba(155,34,38,0.1);}50%{box-shadow:0 6px 28px rgba(155,34,38,0.2);}}
 
-/* ===== HERO ===== */
+/* HERO */
 .hero{background:linear-gradient(160deg,var(--crimson) 0%,#7B181C 50%,#5A1216 100%);padding:44px 20px 65px;text-align:center;position:relative;overflow:hidden;}
-.hero::before{content:'🏮';position:absolute;top:20px;left:28px;font-size:2.5rem;opacity:0.3;animation:warm-pulse 5s ease-in-out infinite;}
-.hero::after{content:'🥟';position:absolute;top:20px;right:28px;font-size:2.5rem;opacity:0.3;animation:warm-pulse 5s ease-in-out infinite 2.5s;}
+.hero::before{content:'🏮';position:absolute;top:20px;left:30px;font-size:2.5rem;opacity:0.3;animation:warm-pulse 5s ease-in-out infinite;}
+.hero::after{content:'🥟';position:absolute;top:20px;right:30px;font-size:2.5rem;opacity:0.3;animation:warm-pulse 5s ease-in-out infinite 2.5s;}
 .hero-logo{font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:700;color:var(--gold-light);letter-spacing:4px;position:relative;z-index:1;text-shadow:0 2px 15px rgba(0,0,0,0.4);animation:slide-up 0.6s ease;}
 .hero-logo span{color:#FFF8F0;font-weight:400;font-style:italic;}
 .hero-subtitle{color:rgba(255,248,240,0.7);font-size:1rem;margin-top:10px;font-weight:300;letter-spacing:2px;animation:slide-up 0.6s ease 0.1s both;}
@@ -35,432 +36,438 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background-
 
 /* LANG */
 .lang-switcher{display:flex;justify-content:center;gap:8px;margin-top:18px;position:relative;z-index:1;animation:slide-up 0.6s ease 0.3s both;}
-.lang-btn{padding:7px 18px;border:1.5px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.85);border-radius:24px;cursor:pointer;font-weight:600;font-size:0.82rem;transition:all 0.35s;font-family:inherit;}
+.lang-btn{padding:7px 18px;border:1.5px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.85);border-radius:24px;cursor:pointer;font-weight:600;font-size:0.82rem;transition:all 0.35s ease;font-family:'Noto Sans Thai',sans-serif;}
 .lang-btn:hover{background:rgba(255,255,255,0.22);transform:translateY(-1px);}
 .lang-btn.active{background:var(--gold);border-color:var(--gold);color:var(--crimson);font-weight:700;box-shadow:0 3px 14px rgba(212,163,115,0.45);}
 
-/* ===== STATS ===== */
+/* STATS */
 .stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:820px;margin:-30px auto 0;padding:0 20px;position:relative;z-index:10;}
-.stat-box{background:#FFFFFF;border-radius:20px;padding:18px 10px;text-align:center;border:1px solid rgba(155,34,38,0.08);box-shadow:0 4px 20px rgba(155,34,38,0.1);transition:all 0.3s;}
-.stat-box:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(155,34,38,0.15);}
+.stat-box{background:#FFFFFF;border-radius:20px;padding:18px 10px;text-align:center;border:1px solid rgba(155,34,38,0.08);box-shadow:0 4px 20px rgba(155,34,38,0.1);animation:slide-up 0.5s ease 0.3s both;transition:all 0.3s ease;}
+.stat-box:hover{transform:translateY(-4px);box-shadow:0 8px 30px rgba(155,34,38,0.15);}
 .stat-box:nth-child(1){border-top:3px solid var(--crimson);}
-.stat-box:nth-child(2){border-top:3px solid var(--gold);}
-.stat-box:nth-child(3){border-top:3px solid var(--jade);}
-.stat-box:nth-child(4){border-top:3px solid var(--purple);}
+.stat-box:nth-child(2){border-top:3px solid var(--gold);animation-delay:0.4s;}
+.stat-box:nth-child(3){border-top:3px solid var(--jade);animation-delay:0.5s;}
+.stat-box:nth-child(4){border-top:3px solid var(--purple,#6B5B95);animation-delay:0.6s;}
 .stat-value{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;margin-bottom:4px;}
 .stat-box:nth-child(1) .stat-value{color:var(--crimson);}
 .stat-box:nth-child(2) .stat-value{color:var(--gold);}
 .stat-box:nth-child(3) .stat-value{color:var(--jade);}
-.stat-box:nth-child(4) .stat-value{color:var(--purple);}
+.stat-box:nth-child(4) .stat-value{color:#6B5B95;}
 .stat-label{font-size:0.72rem;color:var(--ink-muted);font-weight:600;}
 
-/* ===== ALERTS ===== */
-.alerts-section{max-width:820px;margin:0 auto;padding:24px 20px 0;}
-.alert-card{background:#FFFFFF;border-radius:16px;padding:13px 18px;margin-bottom:10px;border:1px solid;position:relative;display:flex;align-items:center;gap:12px;animation:slide-up 0.4s ease;}
+/* ALERTS */
+.alerts-section{max-width:820px;margin:0 auto;padding:26px 20px 0;}
+.alert-card{background:#FFFFFF;border-radius:16px;padding:14px 18px;margin-bottom:10px;border:1px solid;position:relative;animation:slide-up 0.4s ease;display:flex;align-items:center;gap:12px;}
 .alert-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:16px 0 0 16px;}
-.alert-danger{border-color:rgba(155,34,38,0.2);background:linear-gradient(135deg,#FFF5F5,#FFF);color:var(--crimson);}
+.alert-danger{border-color:rgba(155,34,38,0.2);background:linear-gradient(135deg,#FFF5F5,#FFFFFF);color:var(--crimson);}
 .alert-danger::before{background:linear-gradient(180deg,var(--crimson),var(--crimson-light));}
-.alert-warning{border-color:rgba(212,163,115,0.3);background:linear-gradient(135deg,#FFFBF5,#FFF);color:#8B6914;}
+.alert-warning{border-color:rgba(212,163,115,0.3);background:linear-gradient(135deg,#FFFBF5,#FFFFFF);color:#8B6914;}
 .alert-warning::before{background:linear-gradient(180deg,var(--gold),var(--gold-light));}
-.alert-success{border-color:rgba(88,129,87,0.2);background:linear-gradient(135deg,#F5FBF5,#FFF);color:var(--jade);}
-.alert-success::before{background:linear-gradient(180deg,var(--jade),var(--jade-light));}
-.alert-icon{font-size:1.2rem;flex-shrink:0;}
-.alert-text{font-size:0.85rem;font-weight:600;}
+.alert-success{border-color:rgba(88,129,87,0.2);background:linear-gradient(135deg,#F5FBF5,#FFFFFF);color:var(--jade);}
+.alert-success::before{background:linear-gradient(180deg,var(--jade),#6B9B6A);}
+.alert-icon{font-size:1.3rem;flex-shrink:0;}
+.alert-text{font-size:0.86rem;font-weight:600;}
 
-/* ===== MENU SECTION ===== */
-.menu-section{max-width:820px;margin:0 auto;padding:28px 20px 0;}
+/* SECTION */
+.menu-section{max-width:820px;margin:0 auto;padding:30px 20px 0;}
 .section-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:700;color:var(--crimson);margin-bottom:16px;text-align:center;display:flex;align-items:center;justify-content:center;gap:10px;}
 .section-title::before,.section-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);max-width:80px;}
 
 /* SUB LABEL */
-.sub-label{font-size:0.74rem;font-weight:700;color:var(--ink-muted);text-transform:uppercase;letter-spacing:1px;margin:24px 0 12px;display:flex;align-items:center;gap:8px;}
+.sub-label{font-size:0.74rem;font-weight:700;color:var(--ink-muted);text-transform:uppercase;letter-spacing:1px;margin:26px 0 12px;display:flex;align-items:center;gap:8px;}
 .sub-label::after{content:'';flex:1;height:1px;background:rgba(155,34,38,0.1);}
 
-/* ===== GRIDS ===== */
-.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+/* GRIDS */
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:4px;}
+.grid-3-qr{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:4px;}
 .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
-.grid-1-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 
-/* ===== APP CARD ===== */
-.app-card{background:#FFFFFF;border-radius:22px;padding:24px 16px;text-align:center;border:1px solid rgba(155,34,38,0.08);box-shadow:0 4px 16px var(--shadow-warm);transition:all 0.4s;cursor:pointer;text-decoration:none;color:inherit;display:block;position:relative;overflow:hidden;animation:glow 5s ease-in-out infinite;}
-.app-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,var(--crimson),var(--gold));opacity:0;transition:opacity 0.4s;}
+/* APP CARD BASE */
+.app-card{background:#FFFFFF;border-radius:22px;padding:22px 16px;text-align:center;border:1px solid rgba(155,34,38,0.08);box-shadow:0 4px 16px var(--shadow-warm);transition:all 0.4s ease;cursor:pointer;text-decoration:none;color:inherit;display:block;position:relative;overflow:hidden;animation:glow-pulse 5s ease-in-out infinite;}
+.app-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,var(--crimson),var(--gold));opacity:0;transition:opacity 0.4s ease;}
 .app-card:hover{transform:translateY(-6px);box-shadow:0 12px 36px rgba(155,34,38,0.15);}
 .app-card:hover::before{opacity:1;}
 
-/* card sizes */
-.app-card.lg .app-icon{font-size:2.8rem;}
-.app-card.lg .app-name{font-size:1.2rem;}
-.app-card.md .app-icon{font-size:2.2rem;}
-.app-card.md .app-name{font-size:1.05rem;}
-.app-card.md .app-desc{font-size:0.72rem;}
-.app-card.md{padding:20px 14px;}
+/* MAIN cards (larger) */
+.app-card.main{padding:26px 18px;}
+.app-card.main .app-icon{font-size:2.8rem;animation:float 3s ease-in-out infinite;}
+.app-card.main .app-name{font-size:1.2rem;}
 
-/* card colors */
-.app-card.c-stock::before    {background:linear-gradient(90deg,var(--crimson),var(--gold));}
-.app-card.c-menu::before     {background:linear-gradient(90deg,var(--gold),var(--jade));}
-.app-card.c-customer::before {background:linear-gradient(90deg,var(--jade),var(--jade-light));}
-.app-card.c-customer .app-name{color:var(--jade);}
-.app-card.c-customer .app-badge{background:rgba(88,129,87,0.1);color:var(--jade);}
-.app-card.c-kitchen::before  {background:linear-gradient(90deg,var(--orange),#F39C12);}
-.app-card.c-kitchen .app-name{color:var(--orange);}
-.app-card.c-kitchen .app-badge{background:rgba(230,126,34,0.12);color:var(--orange);}
-.app-card.c-qr::before       {background:linear-gradient(90deg,var(--purple),#8E7DBE);}
-.app-card.c-qr .app-name     {color:var(--purple);}
-.app-card.c-qr .app-badge    {background:rgba(107,91,149,0.12);color:var(--purple);}
-.app-card.c-tool::before     {background:linear-gradient(90deg,var(--blue),#5DADE2);}
-.app-card.c-tool .app-name   {color:#1A5276;}
-.app-card.c-tool .app-badge  {background:rgba(26,82,118,0.1);color:#1A5276;}
+/* TOOL cards (smaller) */
+.app-card.tool{padding:18px 14px;}
+.app-card.tool .app-icon{font-size:2rem;animation:float 3s ease-in-out infinite;}
+.app-card.tool .app-name{font-size:1rem;}
+.app-card.tool .app-desc{font-size:0.72rem;}
 
-.app-icon{display:block;margin-bottom:10px;animation:float 3s ease-in-out infinite;}
-.app-name{font-family:'Cormorant Garamond',serif;font-weight:700;color:var(--crimson);margin-bottom:5px;font-size:1.2rem;}
+/* QR SYSTEM cards */
+.app-card.qr-card{padding:18px 14px;}
+.app-card.qr-card .app-icon{font-size:2.2rem;animation:float 3.5s ease-in-out infinite;}
+.app-card.qr-card .app-name{font-size:1rem;}
+.app-card.qr-card .app-desc{font-size:0.72rem;}
+
+/* Colors per card type */
+.app-card.customer-card::before{background:linear-gradient(90deg,var(--jade),#6B9B6A);}
+.app-card.customer-card .app-name{color:var(--jade);}
+.app-card.customer-card .app-badge{background:rgba(88,129,87,0.1);color:var(--jade);}
+
+.app-card.kitchen-card::before{background:linear-gradient(90deg,var(--orange),#F39C12);}
+.app-card.kitchen-card .app-name{color:var(--orange);}
+.app-card.kitchen-card .app-badge{background:rgba(230,126,34,0.12);color:var(--orange);}
+
+.app-card.qr-gen-card::before{background:linear-gradient(90deg,var(--purple,#6B5B95),#8E7DBE);}
+.app-card.qr-gen-card .app-name{color:#6B5B95;}
+.app-card.qr-gen-card .app-badge{background:rgba(107,91,149,0.12);color:#6B5B95;}
+
+.app-card.firebase-card::before{background:linear-gradient(90deg,#F5820D,#FFA630);}
+.app-card.firebase-card .app-name{color:#E65100;}
+.app-card.firebase-card .app-badge{background:rgba(230,81,0,0.1);color:#E65100;}
+
+.app-card.backup-card::before{background:linear-gradient(90deg,var(--blue,#2980B9),#5DADE2);}
+.app-card.backup-card .app-name{color:#1A5276;}
+.app-card.backup-card .app-badge{background:rgba(26,82,118,0.1);color:#1A5276;}
+
+.app-icon{display:block;margin-bottom:10px;}
+.app-name{font-family:'Cormorant Garamond',serif;font-weight:700;color:var(--crimson);margin-bottom:5px;}
 .app-desc{font-size:0.75rem;color:var(--ink-muted);line-height:1.55;margin-bottom:8px;}
 .app-badge{display:inline-block;padding:3px 10px;background:var(--crimson-soft);color:var(--crimson);border-radius:20px;font-size:0.66rem;font-weight:700;letter-spacing:0.5px;}
 
-/* ===== FOOTER ===== */
+/* FOOTER */
 .footer{text-align:center;padding:28px 20px 20px;color:var(--ink-muted);font-size:0.85rem;}
 .footer strong{color:var(--crimson);}
 
-/* ===== RESPONSIVE ===== */
+/* RESPONSIVE */
 @media(max-width:600px){
-  .hero-logo{font-size:2.2rem;}
-  .stats-bar{grid-template-columns:repeat(2,1fr);}
-  .grid-3{grid-template-columns:1fr;}
-  .grid-2,.grid-1-2{grid-template-columns:1fr;}
-  .stat-value{font-size:1.7rem;}
-  .lang-btn{padding:6px 12px;font-size:0.76rem;}
+    .hero-logo{font-size:2.2rem;}
+    .stats-bar{grid-template-columns:repeat(2,1fr);}
+    .grid-3,.grid-3-qr{grid-template-columns:1fr;}
+    .grid-2{grid-template-columns:1fr;}
+    .stat-value{font-size:1.7rem;}
+    .lang-btn{padding:6px 12px;font-size:0.76rem;}
 }
+
 </style>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+
 </head>
 <body>
 
 <!-- HERO -->
+
 <div class="hero">
-  <div class="hero-logo">Ohoi <span>Kyoza</span></div>
-  <div class="hero-subtitle" id="hero-subtitle">ระบบจัดการร้านอาหาร — เกี๊ยวซ่าไต้หวัน</div>
-  <div class="hero-date" id="current-date"></div>
-  <div class="lang-switcher">
-    <button class="lang-btn active" onclick="setLang('th')" data-lang="th">🇹🇭 ไทย</button>
-    <button class="lang-btn" onclick="setLang('en')" data-lang="en">🇬🇧 EN</button>
-    <button class="lang-btn" onclick="setLang('zh')" data-lang="zh">🇨🇳 中文</button>
-  </div>
+    <div class="hero-logo">Ohoi <span>Kyoza</span></div>
+    <div class="hero-subtitle" id="hero-subtitle">ระบบจัดการร้านอาหาร — เกี๊ยวซ่าไต้หวัน</div>
+    <div class="hero-date" id="current-date"></div>
+    <div class="lang-switcher">
+        <button class="lang-btn active" onclick="setLang('th')" data-lang="th">🇹🇭 ไทย</button>
+        <button class="lang-btn" onclick="setLang('en')" data-lang="en">🇬🇧 EN</button>
+        <button class="lang-btn" onclick="setLang('zh')" data-lang="zh">🇨🇳 中文</button>
+    </div>
 </div>
 
 <!-- STATS -->
+
 <div class="stats-bar">
-  <div class="stat-box"><div class="stat-value" id="stat-products">0</div><div class="stat-label" id="lbl-products">รายการสินค้า</div></div>
-  <div class="stat-box"><div class="stat-value" id="stat-menus">0</div><div class="stat-label" id="lbl-menus">เมนูอาหาร</div></div>
-  <div class="stat-box"><div class="stat-value" id="stat-orders">0</div><div class="stat-label" id="lbl-orders">ออเดอร์วันนี้</div></div>
-  <div class="stat-box"><div class="stat-value" id="stat-revenue">0</div><div class="stat-label" id="lbl-revenue">รายได้วันนี้ (฿)</div></div>
+    <div class="stat-box"><div class="stat-value" id="stat-products">0</div><div class="stat-label" data-i18n="stat_products">รายการสินค้า</div></div>
+    <div class="stat-box"><div class="stat-value" id="stat-menus">0</div><div class="stat-label" data-i18n="stat_menus">เมนูอาหาร</div></div>
+    <div class="stat-box"><div class="stat-value" id="stat-orders">0</div><div class="stat-label" data-i18n="stat_orders">ออเดอร์วันนี้</div></div>
+    <div class="stat-box"><div class="stat-value" id="stat-revenue">0</div><div class="stat-label" data-i18n="stat_revenue">รายได้วันนี้</div></div>
 </div>
 
 <!-- ALERTS -->
+
 <div class="alerts-section" id="alerts-section"></div>
 
-<!-- APP CARDS -->
+<!-- CONTENT -->
+
 <div class="menu-section">
 
-  <!-- ===== ระบบหลัก ===== -->
-  <div class="section-title" id="section-main">เลือกระบบ</div>
-  <div class="grid-3">
-    <a href="Cozy_Style_Thame.html" class="app-card lg c-stock">
-      <span class="app-icon">📦</span>
-      <div class="app-name" id="card-stock-name">จัดการสต๊อก</div>
-      <div class="app-desc" id="card-stock-desc">เพิ่มสินค้า รับเข้า จ่ายออก ตรวจสอบวัตถุดิบ</div>
-      <span class="app-badge">STOCK</span>
-    </a>
-    <a href="Ohoi-Kyoza-Menu-Recipe-Cook-Order.html" class="app-card lg c-menu">
-      <span class="app-icon">🍽️</span>
-      <div class="app-name" id="card-menu-name">เมนู & ครัว</div>
-      <div class="app-desc" id="card-menu-desc">เมนูอาหาร สูตร ทำอาหาร รับออเดอร์ครัว</div>
-      <span class="app-badge">MENU & KITCHEN</span>
-    </a>
-    <a href="kitchen.html" class="app-card lg c-kitchen">
-      <span class="app-icon">🔥</span>
-      <div class="app-name" id="card-kitchen-name">หน้าครัว</div>
-      <div class="app-desc" id="card-kitchen-desc">รับออเดอร์ Real-time แจ้งเตือนทันที</div>
-      <span class="app-badge">KITCHEN</span>
-    </a>
-  </div>
+<!-- ===== กลุ่ม 1: ระบบหลัก ===== -->
 
-  <!-- ===== ระบบ QR Order ===== -->
-  <div class="sub-label" id="section-qr">📱 ระบบรับออเดอร์ผ่าน QR Code</div>
-  <div class="grid-2">
-    <a href="customer.html" class="app-card md c-customer">
-      <span class="app-icon">🛒</span>
-      <div class="app-name" id="card-customer-name">หน้าลูกค้า</div>
-      <div class="app-desc" id="card-customer-desc">สั่งอาหาร ชำระเงิน QR / ใบเสร็จ / ใบกำกับภาษี</div>
-      <span class="app-badge">ORDER & PAY</span>
+<div class="section-title" id="section-title-main">เลือกระบบ</div>
+<div class="grid-3">
+    <a href="Cozy_Style_Thame.html" class="app-card main">
+        <span class="app-icon">📦</span>
+        <div class="app-name" data-i18n="card_stock_name">จัดการสต๊อก</div>
+        <div class="app-desc" data-i18n="card_stock_desc">เพิ่มสินค้า รับเข้า จ่ายออก ตรวจสอบวัตถุดิบ</div>
+        <span class="app-badge">STOCK</span>
     </a>
-    <a href="qr-table.html" class="app-card md c-qr">
-      <span class="app-icon">📱</span>
-      <div class="app-name" id="card-qr-name">สร้าง QR Code</div>
-      <div class="app-desc" id="card-qr-desc">Generate QR ทุกโต๊ะ พิมพ์ติดโต๊ะได้เลย</div>
-      <span class="app-badge">QR</span>
+    <a href="Ohoi-Kyoza-Menu-Recipe-Cook-Order.html" class="app-card main">
+        <span class="app-icon">🍽️</span>
+        <div class="app-name" data-i18n="card_menu_name">เมนูและสูตร</div>
+        <div class="app-desc" data-i18n="card_menu_desc">เพิ่มเมนูอาหาร กำหนดวัตถุดิบในสูตร</div>
+        <span class="app-badge">MENU</span>
     </a>
-  </div>
+    <a href="Ohoi-Kyoza-Cook-Order.html" class="app-card main">
+        <span class="app-icon">👨‍🍳</span>
+        <div class="app-name" data-i18n="card_cook_name">ทำอาหาร</div>
+        <div class="app-desc" data-i18n="card_cook_desc">กดทำอาหาร ตัดสต๊อกอัตโนมัติ ดูออเดอร์</div>
+        <span class="app-badge">COOK</span>
+    </a>
+</div>
 
-  <!-- ===== จัดการข้อมูล ===== -->
-  <div class="sub-label" id="section-tools">⚙️ จัดการข้อมูล</div>
-  <div class="grid-1-2">
-    <a href="Ohoi-Kyoza-Backup.html" class="app-card md c-tool">
-      <span class="app-icon">☁️</span>
-      <div class="app-name" id="card-tool-name">Firebase & Backup</div>
-      <div class="app-desc" id="card-tool-desc">Sync ข้อมูลกับ Cloud / สำรอง / กู้คืนข้อมูล</div>
-      <span class="app-badge">SYNC & BACKUP</span>
+<!-- ===== กลุ่ม 2: ระบบ QR Order ===== -->
+
+<div class="sub-label" data-i18n="section_qr">📱 ระบบรับออเดอร์ผ่าน QR Code</div>
+<div class="grid-3-qr">
+    <a href="customer.html" class="app-card qr-card customer-card">
+        <span class="app-icon">🛒</span>
+        <div class="app-name" data-i18n="card_customer_name">หน้าลูกค้า</div>
+        <div class="app-desc" data-i18n="card_customer_desc">ลูกค้าสแกน QR เลือกเมนู สั่งอาหารได้เลย</div>
+        <span class="app-badge">ORDER</span>
     </a>
-    <!-- พื้นที่ว่างเผื่อเพิ่มในอนาคต -->
-    <div style="display:flex;align-items:center;justify-content:center;background:rgba(155,34,38,0.03);border:2px dashed rgba(155,34,38,0.15);border-radius:22px;color:var(--ink-muted);font-size:0.82rem;font-weight:600;min-height:140px;" id="card-coming">
-      ✨ เพิ่มเร็วๆ นี้
-    </div>
-  </div>
+    <a href="kitchen.html" class="app-card qr-card kitchen-card">
+        <span class="app-icon">🔥</span>
+        <div class="app-name" data-i18n="card_kitchen_name">หน้าครัว</div>
+        <div class="app-desc" data-i18n="card_kitchen_desc">รับออเดอร์ Real-time แจ้งเตือนทันที จัดการสถานะ</div>
+        <span class="app-badge">KITCHEN</span>
+    </a>
+
+</div>
+
+<!-- ===== กลุ่ม 3: จัดการข้อมูล ===== -->
+
+<div class="sub-label" data-i18n="section_tools">⚙️ ระบบจัดการข้อมูล</div>
+<div class="grid-3">
+    <a href="report.html" class="app-card tool report-card">
+        <span class="app-icon">📊</span>
+        <div class="app-name" id="card-report-name" data-i18n="card_report_name">รายงานรายได้</div>
+        <div class="app-desc" id="card-report-desc" data-i18n="card_report_desc">รายวัน รายเดือน รายปี สรุป VAT 7% ยื่น ภ.พ.30</div>
+        <span class="app-badge">REPORT</span>
+    </a>
+    <a href="Ohoi-Kyoza-Backup.html" class="app-card tool firebase-card">
+        <span class="app-icon">☁️</span>
+        <div class="app-name" data-i18n="card_firebase_name">Firebase & Backup</div>
+        <div class="app-desc" data-i18n="card_firebase_desc">Sync Cloud สำรองข้อมูล กู้คืน ทุกเครื่องเห็นเหมือนกัน</div>
+        <span class="app-badge">SYNC</span>
+    </a>
+    <a href="qr-table.html" class="app-card tool backup-card">
+        <span class="app-icon">📱</span>
+        <div class="app-name" data-i18n="card_qr_name">สร้าง QR Code</div>
+        <div class="app-desc" data-i18n="card_qr_desc">Generate QR ทุกโต๊ะ พิมพ์ติดโต๊ะได้เลย</div>
+        <span class="app-badge">QR</span>
+    </a>
+</div>
 
 </div>
 
 <!-- FOOTER -->
+
 <div class="footer">
-  🏮 <strong>Ohoi Kyoza</strong> — <span id="footer-tagline">บ้านหลังที่สองของคุณ</span> 🥟<br>
-  <span style="font-size:0.75rem;opacity:0.7;" id="footer-note">ระบบทำงานแบบ Offline + Firebase Cloud</span>
+    🏮 <strong>Ohoi Kyoza</strong> — <span data-i18n="footer_tagline">บ้านหลังที่สองของคุณ</span> 🥟<br>
+    <span style="font-size:0.75rem;opacity:0.7;" data-i18n="footer_note">ระบบทำงานแบบ Offline + Firebase Cloud</span>
 </div>
 
 <script>
-// ===== I18N =====
+// ============================================================
+//  I18N
+// ============================================================
 const i18n = {
-  th:{
-    hero_subtitle:     'ระบบจัดการร้านอาหาร — เกี๊ยวซ่าไต้หวัน',
-    lbl_products:      'รายการสินค้า',
-    lbl_menus:         'เมนูอาหาร',
-    lbl_orders:        'ออเดอร์วันนี้',
-    lbl_revenue:       'รายได้วันนี้ (฿)',
-    section_main:      'เลือกระบบ',
-    section_qr:        '📱 ระบบรับออเดอร์ผ่าน QR Code',
-    section_tools:     '⚙️ จัดการข้อมูล',
-    card_stock_name:   'จัดการสต๊อก',
-    card_stock_desc:   'เพิ่มสินค้า รับเข้า จ่ายออก ตรวจสอบวัตถุดิบ',
-    card_menu_name:    'เมนู & ครัว',
-    card_menu_desc:    'เมนูอาหาร สูตร ทำอาหาร รับออเดอร์ครัว',
-    card_kitchen_name: 'หน้าครัว',
-    card_kitchen_desc: 'รับออเดอร์ Real-time แจ้งเตือนทันที',
-    card_customer_name:'หน้าลูกค้า',
-    card_customer_desc:'สั่งอาหาร ชำระเงิน QR / ใบเสร็จ / ใบกำกับภาษี',
-    card_qr_name:      'สร้าง QR Code',
-    card_qr_desc:      'Generate QR ทุกโต๊ะ พิมพ์ติดโต๊ะได้เลย',
-    card_tool_name:    'Firebase & Backup',
-    card_tool_desc:    'Sync ข้อมูลกับ Cloud / สำรอง / กู้คืนข้อมูล',
-    card_coming:       '✨ เพิ่มเร็วๆ นี้',
-    footer_tagline:    'บ้านหลังที่สองของคุณ',
-    footer_note:       'ระบบทำงานแบบ Offline + Firebase Cloud',
-    alert_low:         '⚠️ วัตถุดิบใกล้หมด {n} รายการ — ไปที่ "จัดการสต๊อก" เพื่อเติม',
-    alert_cant_cook:   '🚨 {n} เมนูทำไม่ได้ — ขาดวัตถุดิบ',
-    alert_ok:          '✅ ทุกอย่างพร้อม! สามารถทำอาหารได้ทุกเมนู',
-    day:['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'],
-    month:['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม']
-  },
-  en:{
-    hero_subtitle:     'Restaurant Management — Taiwanese Gyoza',
-    lbl_products:      'Products',
-    lbl_menus:         'Menus',
-    lbl_orders:        "Today's Orders",
-    lbl_revenue:       "Today's Revenue (฿)",
-    section_main:      'Select System',
-    section_qr:        '📱 QR Order System',
-    section_tools:     '⚙️ Data Management',
-    card_stock_name:   'Stock Manager',
-    card_stock_desc:   'Add products, stock in/out, ingredient tracking',
-    card_menu_name:    'Menu & Kitchen',
-    card_menu_desc:    'Menus, recipes, cooking, kitchen orders',
-    card_kitchen_name: 'Kitchen Display',
-    card_kitchen_desc: 'Real-time orders, instant alerts',
-    card_customer_name:'Customer Menu',
-    card_customer_desc:'Order food, pay via QR / Receipt / Tax Invoice',
-    card_qr_name:      'QR Code Generator',
-    card_qr_desc:      'Generate QR for every table, print & stick',
-    card_tool_name:    'Firebase & Backup',
-    card_tool_desc:    'Sync to Cloud / Backup / Restore data',
-    card_coming:       '✨ Coming Soon',
-    footer_tagline:    'Your Home Away From Home',
-    footer_note:       'Works Offline + Firebase Cloud',
-    alert_low:         '⚠️ {n} ingredients low — go to "Stock Manager" to restock',
-    alert_cant_cook:   '🚨 {n} menus unavailable — insufficient ingredients',
-    alert_ok:          '✅ All ready! Every menu can be cooked.'
-  },
-  zh:{
-    hero_subtitle:     '餐厅管理系统 — 台湾饺子',
-    lbl_products:      '商品数量',
-    lbl_menus:         '菜单数量',
-    lbl_orders:        '今日订单',
-    lbl_revenue:       '今日收入 (฿)',
-    section_main:      '选择系统',
-    section_qr:        '📱 QR点餐系统',
-    section_tools:     '⚙️ 数据管理',
-    card_stock_name:   '库存管理',
-    card_stock_desc:   '添加商品、入库出库、食材追踪',
-    card_menu_name:    '菜单 & 厨房',
-    card_menu_desc:    '菜单、食谱、烹饪、厨房订单',
-    card_kitchen_name: '厨房显示',
-    card_kitchen_desc: '实时订单、即时提醒',
-    card_customer_name:'顾客点餐',
-    card_customer_desc:'点餐、QR支付 / 收据 / 税务发票',
-    card_qr_name:      'QR码生成器',
-    card_qr_desc:      '为每张桌子生成QR码，打印贴桌即可',
-    card_tool_name:    'Firebase与备份',
-    card_tool_desc:    '同步到云端 / 备份 / 恢复数据',
-    card_coming:       '✨ 即将推出',
-    footer_tagline:    '您的第二个家',
-    footer_note:       '支持离线 + Firebase云端',
-    alert_low:         '⚠️ {n}种食材不足 — 请前往"库存管理"补货',
-    alert_cant_cook:   '🚨 {n}个菜单无法制作 — 食材不足',
-    alert_ok:          '✅ 一切就绪！所有菜单均可烹饪。'
-  }
+    th:{
+        hero_subtitle:      'ระบบจัดการร้านอาหาร — เกี๊ยวซ่าไต้หวัน',
+        stat_products:      'รายการสินค้า',
+        stat_menus:         'เมนูอาหาร',
+        stat_orders:        'ออเดอร์วันนี้',
+        stat_revenue:       'รายได้วันนี้',
+        section_main:       'เลือกระบบ',
+        section_qr:         '📱 ระบบรับออเดอร์ผ่าน QR Code',
+        section_tools:      '⚙️ ระบบจัดการข้อมูล',
+        // กลุ่ม 1
+        card_stock_name:    'จัดการสต๊อก',
+        card_stock_desc:    'เพิ่มสินค้า รับเข้า จ่ายออก ตรวจสอบวัตถุดิบ',
+        card_menu_name:     'เมนูและสูตร',
+        card_menu_desc:     'เพิ่มเมนูอาหาร กำหนดวัตถุดิบในสูตร',
+        card_cook_name:     'ทำอาหาร',
+        card_cook_desc:     'กดทำอาหาร ตัดสต๊อกอัตโนมัติ ดูออเดอร์',
+        // กลุ่ม 2
+        card_customer_name: 'หน้าลูกค้า',
+        card_customer_desc: 'ลูกค้าสแกน QR เลือกเมนู สั่งอาหารได้เลย',
+        card_kitchen_name:  'หน้าครัว',
+        card_kitchen_desc:  'รับออเดอร์ Real-time แจ้งเตือนทันที จัดการสถานะ',
+        card_qr_name:       'สร้าง QR Code',
+        card_qr_desc:       'Generate QR Code ทุกโต๊ะ พิมพ์ติดโต๊ะได้เลย',
+        // กลุ่ม 3
+        card_report_name:   'รายงานรายได้',
+        card_report_desc:   'รายวัน รายเดือน รายปี สรุป VAT 7% ยื่น ภ.พ.30',
+        card_firebase_name: 'Firebase & Backup',
+        card_firebase_desc: 'Sync Cloud สำรองข้อมูล กู้คืน ทุกเครื่องเห็นเหมือนกัน',
+        footer_tagline:     'บ้านหลังที่สองของคุณ',
+        footer_note:        'ระบบทำงานแบบ Offline + Firebase Cloud',
+        alert_low:          'วัตถุดิบใกล้หมด {n} รายการ — ไปที่ "จัดการสต๊อก" เพื่อเติม',
+        alert_cant_cook:    '{n} เมนูทำไม่ได้ — ขาดวัตถุดิบ',
+        alert_ok:           'ทุกอย่างพร้อม! สามารถทำอาหารได้ทุกเมนู',
+        day:['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'],
+        month:['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม']
+    },
+    en:{
+        hero_subtitle:      'Restaurant Management — Taiwanese Gyoza',
+        stat_products:      'Products',
+        stat_menus:         'Menus',
+        stat_orders:        "Today's Orders",
+        stat_revenue:       "Today's Revenue",
+        section_main:       'Select System',
+        section_qr:         '📱 QR Order System',
+        section_tools:      '⚙️ Data Management',
+        card_stock_name:    'Stock Manager',
+        card_stock_desc:    'Add products, stock in/out, ingredient tracking',
+        card_menu_name:     'Menus & Recipes',
+        card_menu_desc:     'Create menus, set recipe ingredients',
+        card_cook_name:     'Quick Cook',
+        card_cook_desc:     'Cook dishes, auto deduct stock, view orders',
+        card_customer_name: 'Customer Menu',
+        card_customer_desc: 'Customers scan QR, browse menu & place orders',
+        card_kitchen_name:  'Kitchen Display',
+        card_kitchen_desc:  'Real-time orders, instant alerts, manage status',
+        card_qr_name:       'QR Code Generator',
+        card_qr_desc:       'Generate QR for every table, print & stick on tables',
+        card_report_name:   'Revenue Report',
+        card_report_desc:   'Daily/Monthly/Yearly, VAT 7% breakdown for tax filing',
+        card_firebase_name: 'Firebase & Backup',
+        card_firebase_desc: 'Cloud sync, backup, restore — same data everywhere',
+        footer_tagline:     'Your Home Away From Home',
+        footer_note:        'Works Offline + Firebase Cloud',
+        alert_low:          '{n} ingredients low — go to "Stock Manager" to restock',
+        alert_cant_cook:    '{n} menus unavailable — insufficient ingredients',
+        alert_ok:           'All ready! Every menu can be cooked.'
+    },
+    zh:{
+        hero_subtitle:      '餐厅管理系统 — 台湾饺子',
+        stat_products:      '商品数量',
+        stat_menus:         '菜单数量',
+        stat_orders:        '今日订单',
+        stat_revenue:       '今日收入',
+        section_main:       '选择系统',
+        section_qr:         '📱 QR点餐系统',
+        section_tools:      '⚙️ 数据管理',
+        card_stock_name:    '库存管理',
+        card_stock_desc:    '添加商品、入库出库、食材追踪',
+        card_menu_name:     '菜单与食谱',
+        card_menu_desc:     '创建菜单，设置食谱配料',
+        card_cook_name:     '快速烹饪',
+        card_cook_desc:     '烹饪菜肴，自动扣减库存，查看订单',
+        card_customer_name: '顾客点餐',
+        card_customer_desc: '顾客扫QR码，浏览菜单并下单',
+        card_kitchen_name:  '厨房显示',
+        card_kitchen_desc:  '实时订单、即时提醒、管理状态',
+        card_qr_name:       'QR码生成器',
+        card_qr_desc:       '为每张桌子生成QR码，打印贴桌即可',
+        card_report_name:   '收入报表',
+        card_report_desc:   '日报/月报/年报，增值税7%明细，用于税务申报',
+        card_firebase_name: 'Firebase与备份',
+        card_firebase_desc: '云同步、备份、恢复 — 所有设备数据一致',
+        footer_tagline:     '您的第二个家',
+        footer_note:        '支持离线 + Firebase云端',
+        alert_low:          '{n}种食材不足 — 请前往"库存管理"补货',
+        alert_cant_cook:    '{n}个菜单无法制作 — 食材不足',
+        alert_ok:           '一切就绪！所有菜单均可烹饪。'
+    }
 };
 
-// ===== STATE =====
+// ============================================================
+//  STATE
+// ============================================================
 let currentLang = localStorage.getItem('ok_lang') || 'th';
 
-// ===== SET LANGUAGE =====
+// ============================================================
+//  SET LANGUAGE
+// ============================================================
 function setLang(lang) {
-  currentLang = lang;
-  localStorage.setItem('ok_lang', lang);
-  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang===lang));
+    currentLang = lang;
+    localStorage.setItem('ok_lang', lang);
 
-  const d = i18n[lang];
-  // hero
-  document.getElementById('hero-subtitle').textContent   = d.hero_subtitle;
-  document.getElementById('section-main').textContent    = d.section_main;  // จะถูก section-title wrapper
-  document.getElementById('section-qr').textContent      = d.section_qr;
-  document.getElementById('section-tools').textContent   = d.section_tools;
-  // stats labels
-  document.getElementById('lbl-products').textContent = d.lbl_products;
-  document.getElementById('lbl-menus').textContent    = d.lbl_menus;
-  document.getElementById('lbl-orders').textContent   = d.lbl_orders;
-  document.getElementById('lbl-revenue').textContent  = d.lbl_revenue;
-  // cards
-  document.getElementById('card-stock-name').textContent    = d.card_stock_name;
-  document.getElementById('card-stock-desc').textContent    = d.card_stock_desc;
-  document.getElementById('card-menu-name').textContent     = d.card_menu_name;
-  document.getElementById('card-menu-desc').textContent     = d.card_menu_desc;
-  document.getElementById('card-kitchen-name').textContent  = d.card_kitchen_name;
-  document.getElementById('card-kitchen-desc').textContent  = d.card_kitchen_desc;
-  document.getElementById('card-customer-name').textContent = d.card_customer_name;
-  document.getElementById('card-customer-desc').textContent = d.card_customer_desc;
-  document.getElementById('card-qr-name').textContent       = d.card_qr_name;
-  document.getElementById('card-qr-desc').textContent       = d.card_qr_desc;
-  document.getElementById('card-tool-name').textContent     = d.card_tool_name;
-  document.getElementById('card-tool-desc').textContent     = d.card_tool_desc;
-  document.getElementById('card-coming').textContent        = d.card_coming;
-  // footer
-  document.getElementById('footer-tagline').textContent = d.footer_tagline;
-  document.getElementById('footer-note').textContent    = d.footer_note;
+    document.querySelectorAll('.lang-btn').forEach(btn =>
+        btn.classList.toggle('active', btn.dataset.lang === lang));
 
-  renderDate(lang);
-  loadStats();
+    const d = i18n[lang];
+    document.getElementById('hero-subtitle').textContent = d.hero_subtitle;
+    document.getElementById('section-title-main').textContent = d.section_main;
+
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const k = el.dataset.i18n;
+        if (d[k]) el.textContent = d[k];
+    });
+
+    renderDate(lang);
+    loadStats();
 }
 
-// ===== DATE =====
+// ============================================================
+//  DATE
+// ============================================================
 function renderDate(lang) {
-  const now = new Date();
-  const el  = document.getElementById('current-date');
-  if (lang === 'th') {
-    const d = i18n.th;
-    el.textContent = `วัน${d.day[now.getDay()]}ที่ ${now.getDate()} ${d.month[now.getMonth()]} ${now.getFullYear()+543}`;
-  } else if (lang === 'zh') {
-    el.textContent = now.toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
-  } else {
-    el.textContent = now.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  }
-}
-
-// ===== FIREBASE INIT =====
-let _db = null;
-function initFirebase() {
-  try {
-    if (!firebase.apps.length) {
-      firebase.initializeApp({
-        apiKey:"AIzaSyC650BBAj_y7bObsIA5KpMQkLDNg4FEtmw",
-        authDomain:"ohoi-kyoza.firebaseapp.com",
-        databaseURL:"https://ohoi-kyoza-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId:"ohoi-kyoza",
-        storageBucket:"ohoi-kyoza.firebasestorage.app",
-        messagingSenderId:"311350815436",
-        appId:"1:311350815436:web:5638717dc207f286e5b069"
-      });
+    const now = new Date();
+    const el  = document.getElementById('current-date');
+    if (lang === 'th') {
+        const d = i18n.th;
+        el.textContent = `วัน${d.day[now.getDay()]}ที่ ${now.getDate()} ${d.month[now.getMonth()]} ${now.getFullYear()+543}`;
+    } else if (lang === 'zh') {
+        el.textContent = now.toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
+    } else {
+        el.textContent = now.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
     }
-    _db = firebase.database();
-    _db.ref('products').on('value', snap => {
-      if (snap && snap.exists()) {
-        const arr = Object.values(snap.val()).map(p => ({...p, id: Number(p.id)||p.id}));
-        localStorage.setItem('ok_products', JSON.stringify(arr));
-      }
-      loadStats();
-    });
-    _db.ref('menus').on('value', snap => {
-      if (snap && snap.exists()) {
-        const arr = Object.values(snap.val()).map(m => ({...m, id: Number(m.id)||m.id}));
-        localStorage.setItem('ok_menus', JSON.stringify(arr));
-      }
-      loadStats();
-    });
-    _db.ref('cook_history').on('value', snap => {
-      if (snap && snap.exists()) {
-        localStorage.setItem('ok_cook_history', JSON.stringify(Object.values(snap.val())));
-      }
-      loadStats();
-    });
-  } catch(e) { console.warn('Firebase init error:', e); }
 }
 
-// ===== STATS + ALERTS =====
+// ============================================================
+//  STATS + ALERTS
+// ============================================================
 function loadStats() {
-  const products    = JSON.parse(localStorage.getItem('ok_products')    ||'[]');
-  const menus       = JSON.parse(localStorage.getItem('ok_menus')       ||'[]');
-  const cookHistory = JSON.parse(localStorage.getItem('ok_cook_history')||'[]');
-  const d = i18n[currentLang];
+    const products    = JSON.parse(localStorage.getItem('ok_products'))     || [];
+    const menus       = JSON.parse(localStorage.getItem('ok_menus'))        || [];
+    const cookHistory = JSON.parse(localStorage.getItem('ok_cook_history')) || [];
+    const d = i18n[currentLang];
 
-  document.getElementById('stat-products').textContent = products.length;
-  document.getElementById('stat-menus').textContent    = menus.length;
+    document.getElementById('stat-products').textContent = products.length;
+    document.getElementById('stat-menus').textContent    = menus.length;
 
-  const today       = new Date().toDateString();
-  const todayOrders = cookHistory.filter(h => new Date(h.date).toDateString()===today);
-  document.getElementById('stat-orders').textContent  = todayOrders.reduce((s,h)=>s+h.servings,0);
-  document.getElementById('stat-revenue').textContent = todayOrders.reduce((s,h)=>s+h.totalPrice,0).toLocaleString();
+    const today       = new Date().toDateString();
+    const todayOrders = cookHistory.filter(h => new Date(h.date).toDateString() === today);
+    const orderCount  = todayOrders.reduce((s,h) => s + h.servings, 0);
+    const revenue     = todayOrders.reduce((s,h) => s + h.totalPrice, 0);
 
-  // Alerts
-  const alertsEl = document.getElementById('alerts-section');
-  let html = '';
+    document.getElementById('stat-orders').textContent  = orderCount;
+    document.getElementById('stat-revenue').textContent = revenue.toLocaleString();
 
-  const low = products.filter(p => p.stock <= p.minStock);
-  if (low.length > 0) {
-    html += `<div class="alert-card alert-warning">
-      <span class="alert-icon">⚠️</span>
-      <span class="alert-text">${d.alert_low.replace('{n}',low.length)}</span>
-    </div>`;
-  }
-  const cant = menus.filter(m =>
-    m.ingredients && m.ingredients.some(ing => {
-      const p = products.find(pr => pr.id===ing.productId);
-      return !p || p.stock < ing.quantity;
-    })
-  );
-  if (cant.length > 0) {
-    html += `<div class="alert-card alert-danger">
-      <span class="alert-icon">🚨</span>
-      <span class="alert-text">${d.alert_cant_cook.replace('{n}',cant.length)}</span>
-    </div>`;
-  }
-  if (!html) {
-    html = `<div class="alert-card alert-success">
-      <span class="alert-icon">✅</span>
-      <span class="alert-text">${d.alert_ok}</span>
-    </div>`;
-  }
-  alertsEl.innerHTML = html;
+    // Alerts
+    const alertsEl = document.getElementById('alerts-section');
+    let html = '';
+
+    const lowStock = products.filter(p => p.stock <= p.minStock);
+    if (lowStock.length > 0) {
+        html += `<div class="alert-card alert-danger">
+            <span class="alert-icon">⚠️</span>
+            <span class="alert-text">${d.alert_low.replace('{n}', lowStock.length)}</span>
+        </div>`;
+    }
+
+    const cantCook = menus.filter(m =>
+        m.ingredients && m.ingredients.some(ing => {
+            const p = products.find(pr => pr.id === ing.productId);
+            return !p || p.stock < ing.quantity;
+        })
+    );
+    if (cantCook.length > 0) {
+        html += `<div class="alert-card alert-warning">
+            <span class="alert-icon">🚨</span>
+            <span class="alert-text">${d.alert_cant_cook.replace('{n}', cantCook.length)}</span>
+        </div>`;
+    }
+
+    if (!html) {
+        html = `<div class="alert-card alert-success">
+            <span class="alert-icon">✅</span>
+            <span class="alert-text">${d.alert_ok}</span>
+        </div>`;
+    }
+
+    alertsEl.innerHTML = html;
 }
 
-// ===== INIT =====
+// ============================================================
+//  INIT
+// ============================================================
 document.addEventListener('DOMContentLoaded', () => {
-  setLang(currentLang);
-  setInterval(loadStats, 15000);
+    setLang(currentLang);
+    setInterval(loadStats, 15000);
 });
 </script>
+
 </body>
+</html>
