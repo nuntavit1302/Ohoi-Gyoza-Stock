@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ohoi Kyoza - รายงานรายได้</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;600;700&family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --crimson:#9B2226;--crimson-light:#AE2012;--crimson-soft:rgba(155,34,38,0.08);
+  --gold:#D4A373;--gold-light:#E9C496;--gold-soft:rgba(212,163,115,0.15);
+  --jade:#588157;--jade-soft:rgba(88,129,87,0.12);--jade-light:#6B9B6A;
+  --warm-white:#FDF6EC;--cream:#F5EBDC;--paper:#FAF3E8;
+  --ink:#3D2B1F;--ink-light:#6B5B4F;--ink-muted:#9B8B7F;
+  --shadow-warm:rgba(155,34,38,0.08);--blue:#2980B9;
+}
+body{font-family:'Noto Sans Thai',sans-serif;background:var(--warm-white);color:var(--ink);min-height:100vh;overflow-x:hidden;padding-bottom:40px;}
+body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background-image:url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:1000;opacity:0.6;}
+
+@keyframes slide-up{from{transform:translateY(20px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+@keyframes warm-pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.03);}}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* HEADER */
+.header{background:linear-gradient(160deg,var(--crimson) 0%,#7B181C 60%,#5A1216 100%);padding:30px 20px 38px;text-align:center;position:relative;overflow:hidden;}
+.header::before{content:'📊';position:absolute;top:15px;left:20px;font-size:2rem;opacity:0.35;animation:warm-pulse 4s ease-in-out infinite;}
+.header::after{content:'💰';position:absolute;top:15px;right:20px;font-size:2rem;opacity:0.35;animation:warm-pulse 4s ease-in-out infinite 2s;}
+.back-btn{position:absolute;top:15px;left:55px;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.3);color:rgba(255,248,240,0.9);padding:7px 14px;border-radius:20px;font-size:0.8rem;font-weight:600;font-family:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:all 0.3s;}
+.back-btn:hover{background:rgba(255,255,255,0.25);}
+.logo{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:700;color:var(--gold-light);letter-spacing:3px;}
+.logo span{color:#FFF8F0;font-weight:400;font-style:italic;}
+.subtitle{color:rgba(255,248,240,0.7);font-size:0.9rem;margin-top:8px;}
+.lang-switcher{display:flex;justify-content:center;gap:8px;margin-top:14px;position:relative;z-index:1;}
+.lang-btn{padding:6px 14px;border:1.5px solid rgba(212,163,115,0.4);background:rgba(255,255,255,0.08);color:rgba(255,248,240,0.8);border-radius:20px;cursor:pointer;font-weight:600;font-size:0.8rem;transition:all 0.4s;font-family:inherit;}
+.lang-btn:hover{background:rgba(212,163,115,0.2);}
+.lang-btn.active{background:rgba(212,163,115,0.25);border-color:var(--gold-light);color:var(--gold-light);}
+
+/* CONN STATUS */
+.conn-bar{background:rgba(255,255,255,0.1);text-align:center;padding:6px;font-size:0.78rem;color:rgba(255,255,255,0.7);}
+.conn-bar.online{background:rgba(88,129,87,0.3);color:#90EE90;}
+.conn-bar.offline{background:rgba(155,34,38,0.3);color:#FFB3B3;}
+
+/* NAV */
+.nav-tabs{display:flex;background:var(--cream);border-bottom:1px solid rgba(155,34,38,0.1);overflow-x:auto;scrollbar-width:none;padding:0 8px;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px);}
+.nav-tabs::-webkit-scrollbar{display:none;}
+.nav-tab{flex:1;min-width:80px;padding:14px 6px;border:none;background:none;color:var(--ink-muted);font-family:inherit;font-weight:600;font-size:0.8rem;cursor:pointer;transition:all 0.4s;position:relative;white-space:nowrap;border-radius:12px 12px 0 0;margin:0 2px;}
+.nav-tab:hover{color:var(--crimson);background:rgba(155,34,38,0.05);}
+.nav-tab.active{color:var(--crimson);background:var(--paper);font-weight:700;}
+.nav-tab.active::after{content:'';position:absolute;bottom:0;left:20%;width:60%;height:3px;background:linear-gradient(90deg,transparent,var(--crimson),var(--gold),var(--crimson),transparent);border-radius:3px;}
+
+/* CONTENT */
+.content{padding:22px 18px;max-width:960px;margin:0 auto;background:var(--paper);min-height:calc(100vh - 220px);}
+.tab-content{display:none;animation:slide-up 0.4s ease;}
+.tab-content.active{display:block;}
+
+/* CARD */
+.card{background:#FFF;border-radius:20px;padding:22px;margin-bottom:16px;border:1px solid rgba(155,34,38,0.06);box-shadow:0 2px 8px var(--shadow-warm);position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;width:100%;height:4px;background:linear-gradient(90deg,var(--crimson),var(--gold),var(--jade));opacity:0.6;}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:700;color:var(--crimson);margin-bottom:16px;display:flex;align-items:center;gap:10px;padding-bottom:10px;border-bottom:1px solid rgba(155,34,38,0.1);}
+
+/* SUMMARY CARDS */
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;}
+.summary-chip{background:var(--warm-white);border-radius:16px;padding:16px 10px;text-align:center;border:1px solid rgba(155,34,38,0.08);}
+.summary-chip:nth-child(1){border-top:3px solid var(--crimson);}
+.summary-chip:nth-child(2){border-top:3px solid var(--gold);}
+.summary-chip:nth-child(3){border-top:3px solid #E67E22;}
+.summary-chip:nth-child(4){border-top:3px solid var(--jade);}
+.chip-val{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;margin-bottom:4px;}
+.summary-chip:nth-child(1) .chip-val{color:var(--crimson);}
+.summary-chip:nth-child(2) .chip-val{color:var(--gold);}
+.summary-chip:nth-child(3) .chip-val{color:#E67E22;}
+.summary-chip:nth-child(4) .chip-val{color:var(--jade);}
+.chip-label{font-size:0.72rem;color:var(--ink-muted);font-weight:600;}
+
+/* VAT SUMMARY BOX */
+.vat-box{background:linear-gradient(135deg,rgba(155,34,38,0.05),rgba(212,163,115,0.1));border:1.5px solid rgba(155,34,38,0.15);border-radius:16px;padding:16px;margin-bottom:16px;}
+.vat-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:0.88rem;}
+.vat-row.vat-line{color:#E67E22;font-weight:700;border-top:1px dashed rgba(155,34,38,0.15);padding-top:10px;margin-top:4px;}
+.vat-row.total-line{color:var(--crimson);font-weight:700;font-size:1rem;border-top:2px solid rgba(155,34,38,0.2);padding-top:10px;margin-top:4px;}
+.vat-row .label{color:var(--ink-light);}
+.vat-row .value{font-weight:700;}
+
+/* DATE PICKER */
+.date-row{display:flex;gap:12px;align-items:center;margin-bottom:16px;flex-wrap:wrap;}
+.date-row input[type=date],.date-row input[type=month],.date-row input[type=number]{
+  padding:10px 14px;border:1.5px solid rgba(155,34,38,0.15);border-radius:12px;
+  font-family:inherit;font-size:0.9rem;background:var(--warm-white);color:var(--ink);
+  transition:all 0.3s;}
+.date-row input:focus{outline:none;border-color:var(--crimson);box-shadow:0 0 0 3px var(--crimson-soft);}
+
+/* BUTTONS */
+.btn{padding:10px 20px;border:none;border-radius:12px;font-family:inherit;font-weight:700;font-size:0.85rem;cursor:pointer;transition:all 0.3s;display:inline-flex;align-items:center;gap:6px;}
+.btn:hover{transform:translateY(-2px);}
+.btn-excel{background:linear-gradient(135deg,#27AE60,#2ECC71);color:white;box-shadow:0 3px 12px rgba(39,174,96,0.25);}
+.btn-pdf{background:linear-gradient(135deg,var(--crimson),var(--crimson-light));color:white;box-shadow:0 3px 12px rgba(155,34,38,0.25);}
+.btn-refresh{background:linear-gradient(135deg,var(--blue),#5DADE2);color:white;}
+.btn-group{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+
+/* TABLE */
+.table-wrap{overflow-x:auto;border-radius:14px;border:1px solid rgba(155,34,38,0.08);}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:0.83rem;background:#FFF;}
+th{background:linear-gradient(180deg,var(--cream),var(--warm-white));color:var(--crimson);padding:11px 8px;font-weight:700;font-size:0.73rem;text-transform:uppercase;letter-spacing:0.5px;border-bottom:2px solid rgba(155,34,38,0.1);white-space:nowrap;}
+td{padding:10px 8px;border-bottom:1px solid rgba(155,34,38,0.05);color:var(--ink-light);vertical-align:middle;}
+tr:hover td{background:var(--crimson-soft);}
+tr:last-child td{border-bottom:none;}
+.td-number{text-align:right;font-weight:600;}
+.td-vat{color:#E67E22;font-weight:700;}
+.td-total{color:var(--crimson);font-weight:700;}
+.td-orders{color:var(--jade);font-weight:700;}
+.tfoot-row td{background:linear-gradient(135deg,rgba(155,34,38,0.06),rgba(212,163,115,0.08));font-weight:700;font-size:0.88rem;border-top:2px solid rgba(155,34,38,0.15);}
+
+/* EMPTY */
+.empty-state{text-align:center;padding:44px 20px;color:var(--ink-muted);}
+.empty-icon{font-size:3rem;margin-bottom:12px;opacity:0.5;}
+
+/* LOADING */
+.loading-row td{text-align:center;padding:24px;color:var(--ink-muted);}
+.spinner-inline{width:16px;height:16px;border:2px solid rgba(155,34,38,0.2);border-top-color:var(--crimson);border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block;margin-right:8px;vertical-align:middle;}
+
+/* TAX NOTICE */
+.tax-notice{background:linear-gradient(135deg,rgba(230,126,34,0.08),rgba(212,163,115,0.12));border:1.5px solid rgba(230,126,34,0.3);border-radius:14px;padding:14px 18px;margin-bottom:16px;font-size:0.84rem;color:#7D4E00;}
+.tax-notice strong{color:#E67E22;}
+
+@media(max-width:768px){
+  .summary-grid{grid-template-columns:repeat(2,1fr);}
+  .logo{font-size:2rem;}
+  .content{padding:14px 12px;}
+  table{font-size:0.76rem;}
+  th,td{padding:8px 5px;}
+  .back-btn{left:50px;font-size:0.72px;padding:5px 9px;}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a href="index.html" class="back-btn">← <span data-i18n="btn_back">หน้าหลัก</span></a>
+  <div class="logo">Ohoi <span>Kyoza</span></div>
+  <div class="subtitle" data-i18n="subtitle">📊 รายงานรายได้ & ภาษีมูลค่าเพิ่ม</div>
+  <div class="lang-switcher">
+    <button class="lang-btn active" onclick="changeLang('th')" data-lang="th">🇹🇭 ไทย</button>
+    <button class="lang-btn" onclick="changeLang('en')" data-lang="en">🇬🇧 EN</button>
+    <button class="lang-btn" onclick="changeLang('zh')" data-lang="zh">🇨🇳 中文</button>
+  </div>
+</div>
+<div class="conn-bar" id="conn-bar">กำลังเชื่อมต่อ Firebase...</div>
+
+<div class="nav-tabs">
+  <button class="nav-tab active" onclick="showTab('daily',this)" data-i18n="tab_daily">📅 รายวัน</button>
+  <button class="nav-tab" onclick="showTab('monthly',this)" data-i18n="tab_monthly">📆 รายเดือน</button>
+  <button class="nav-tab" onclick="showTab('yearly',this)" data-i18n="tab_yearly">📈 รายปี</button>
+  <button class="nav-tab" onclick="showTab('vat',this)" data-i18n="tab_vat">🧾 สรุปภาษี</button>
+</div>
+
+<div class="content">
+
+<!-- ===== รายวัน ===== -->
+<div id="daily" class="tab-content active">
+  <div class="card">
+    <div class="card-title" data-i18n="title_daily">📅 รายงานรายได้ประจำวัน</div>
+    <div class="date-row">
+      <input type="date" id="daily-date" onchange="renderDaily()">
+      <button class="btn btn-refresh" onclick="renderDaily()">🔄 <span data-i18n="btn_refresh">โหลดใหม่</span></button>
+      <button class="btn btn-excel" onclick="exportDailyExcel()">📊 Excel</button>
+      <button class="btn btn-pdf" onclick="exportDailyPDF()">📄 PDF</button>
+    </div>
+    <div class="summary-grid" id="daily-summary"></div>
+    <div class="vat-box" id="daily-vat-box"></div>
+    <div class="table-wrap"><table id="daily-table"><tbody><tr class="loading-row"><td colspan="7"><span class="spinner-inline"></span>กำลังโหลด...</td></tr></tbody></table></div>
+  </div>
+</div>
+
+<!-- ===== รายเดือน ===== -->
+<div id="monthly" class="tab-content">
+  <div class="card">
+    <div class="card-title" data-i18n="title_monthly">📆 รายงานรายได้ประจำเดือน</div>
+    <div class="date-row">
+      <input type="month" id="monthly-month" onchange="renderMonthly()">
+      <button class="btn btn-refresh" onclick="renderMonthly()">🔄 <span data-i18n="btn_refresh">โหลดใหม่</span></button>
+      <button class="btn btn-excel" onclick="exportMonthlyExcel()">📊 Excel</button>
+      <button class="btn btn-pdf" onclick="exportMonthlyPDF()">📄 PDF</button>
+    </div>
+    <div class="summary-grid" id="monthly-summary"></div>
+    <div class="vat-box" id="monthly-vat-box"></div>
+    <div class="table-wrap"><table id="monthly-table"><tbody><tr class="loading-row"><td colspan="7"><span class="spinner-inline"></span>กำลังโหลด...</td></tr></tbody></table></div>
+  </div>
+</div>
+
+<!-- ===== รายปี ===== -->
+<div id="yearly" class="tab-content">
+  <div class="card">
+    <div class="card-title" data-i18n="title_yearly">📈 รายงานรายได้ประจำปี</div>
+    <div class="date-row">
+      <input type="number" id="yearly-year" min="2020" max="2099" style="width:110px;" onchange="renderYearly()">
+      <button class="btn btn-refresh" onclick="renderYearly()">🔄 <span data-i18n="btn_refresh">โหลดใหม่</span></button>
+      <button class="btn btn-excel" onclick="exportYearlyExcel()">📊 Excel</button>
+      <button class="btn btn-pdf" onclick="exportYearlyPDF()">📄 PDF</button>
+    </div>
+    <div class="summary-grid" id="yearly-summary"></div>
+    <div class="vat-box" id="yearly-vat-box"></div>
+    <div class="table-wrap"><table id="yearly-table"><tbody><tr class="loading-row"><td colspan="7"><span class="spinner-inline"></span>กำลังโหลด...</td></tr></tbody></table></div>
+  </div>
+</div>
+
+<!-- ===== สรุปภาษี ===== -->
+<div id="vat" class="tab-content">
+  <div class="card">
+    <div class="card-title" data-i18n="title_vat">🧾 สรุปภาษีมูลค่าเพิ่ม (VAT)</div>
+    <div class="tax-notice">
+      <strong data-i18n="tax_notice_title">📌 หมายเหตุ:</strong>
+      <span data-i18n="tax_notice_body"> ยอด VAT ที่แสดงคือ Output VAT ที่เรียกเก็บจากลูกค้า ใช้สำหรับยื่น ภ.พ.30 ประจำเดือน และ ภ.ง.ด.50 ประจำปี</span>
+    </div>
+    <div class="date-row">
+      <input type="month" id="vat-month" onchange="renderVAT()">
+      <button class="btn btn-refresh" onclick="renderVAT()">🔄 <span data-i18n="btn_refresh">โหลดใหม่</span></button>
+      <button class="btn btn-excel" onclick="exportVATExcel()">📊 Export ภ.พ.30</button>
+      <button class="btn btn-pdf" onclick="exportVATPDF()">📄 PDF</button>
+    </div>
+    <div class="vat-box" id="vat-summary-box"></div>
+    <div class="table-wrap"><table id="vat-table"><tbody><tr class="loading-row"><td colspan="6"><span class="spinner-inline"></span>กำลังโหลด...</td></tr></tbody></table></div>
+  </div>
+</div>
+
+</div>
+
+<script>
+// ===== CONFIG =====
+const VAT_RATE   = 0.07;
+const SHOP_NAME  = 'Ohoi Kyoza';
+const SHOP_TAX_ID = '0000000000000'; // ← ใส่เลขจริง
+
+// ===== FIREBASE =====
+let _db = null;
+let allOrders = [];
+
+function initFirebase() {
+  try {
+    if (!firebase.apps.length) {
+      firebase.initializeApp({
+        apiKey:"AIzaSyC650BBAj_y7bObsIA5KpMQkLDNg4FEtmw",
+        authDomain:"ohoi-kyoza.firebaseapp.com",
+        databaseURL:"https://ohoi-kyoza-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId:"ohoi-kyoza",
+        storageBucket:"ohoi-kyoza.firebasestorage.app",
+        messagingSenderId:"311350815436",
+        appId:"1:311350815436:web:5638717dc207f286e5b069"
+      });
+    }
+    _db = firebase.database();
+    _db.ref('.info/connected').on('value', snap => {
+      const bar = document.getElementById('conn-bar');
+      if (snap.val()) {
+        bar.textContent = t('conn_online');
+        bar.className = 'conn-bar online';
+      } else {
+        bar.textContent = t('conn_offline');
+        bar.className = 'conn-bar offline';
+      }
+    });
+    // โหลด orders จาก Firebase
+    _db.ref('orders').on('value', snap => {
+      allOrders = [];
+      if (snap && snap.exists()) {
+        snap.forEach(c => { allOrders.push({fbKey:c.key,...c.val()}); });
+      }
+      refreshCurrentTab();
+    });
+  } catch(e) {
+    document.getElementById('conn-bar').textContent = '❌ Firebase Error: ' + e.message;
+    document.getElementById('conn-bar').className = 'conn-bar offline';
+  }
+}
+
+// ===== I18N =====
+const TL = {
+  th:{
+    btn_back:'หน้าหลัก', subtitle:'📊 รายงานรายได้ & ภาษีมูลค่าเพิ่ม',
+    tab_daily:'📅 รายวัน', tab_monthly:'📆 รายเดือน',
+    tab_yearly:'📈 รายปี', tab_vat:'🧾 สรุปภาษี',
+    title_daily:'📅 รายงานรายได้ประจำวัน',
+    title_monthly:'📆 รายงานรายได้ประจำเดือน',
+    title_yearly:'📈 รายงานรายได้ประจำปี',
+    title_vat:'🧾 สรุปภาษีมูลค่าเพิ่ม (VAT)',
+    btn_refresh:'โหลดใหม่',
+    conn_online:'✅ เชื่อมต่อ Firebase แล้ว — ข้อมูล Real-time',
+    conn_offline:'❌ ขาดการเชื่อมต่อ',
+    tax_notice_title:'📌 หมายเหตุ:',
+    tax_notice_body:' ยอด VAT คือ Output VAT ที่เรียกเก็บจากลูกค้า ใช้ยื่น ภ.พ.30 รายเดือน และ ภ.ง.ด.50 รายปี',
+    // summary chips
+    chip_orders:'ออเดอร์', chip_subtotal:'ยอดก่อน VAT',
+    chip_vat:'VAT 7%', chip_total:'รายได้สุทธิ (รวม VAT)',
+    // vat box
+    vat_subtotal:'ยอดขายก่อน VAT (Base Amount)',
+    vat_amount:'VAT 7% (Output VAT)',
+    vat_total:'ยอดรวมทั้งสิ้น (รวม VAT)',
+    vat_orders:'จำนวนออเดอร์ที่ชำระแล้ว',
+    // table headers daily
+    th_time:'เวลา', th_order:'เลขออเดอร์', th_table:'โต๊ะ',
+    th_subtotal:'ก่อน VAT (฿)', th_vat:'VAT 7% (฿)',
+    th_total:'รวม (฿)', th_items:'รายการ',
+    // table headers monthly/yearly
+    th_date:'วันที่', th_month:'เดือน',
+    th_orders:'ออเดอร์', th_revenue:'รายได้รวม (฿)',
+    // vat table
+    th_period:'รอบ', th_base:'ฐานภาษี (฿)',
+    th_vat_out:'Output VAT (฿)', th_total_vat:'รวมรับ (฿)',
+    // empty
+    empty:'ไม่มีข้อมูลในช่วงเวลานี้',
+    // months
+    months:['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'],
+    // export
+    sheet_daily:'รายวัน', sheet_monthly:'รายเดือน',
+    sheet_yearly:'รายปี', sheet_vat:'สรุปภาษี VAT',
+    export_title_daily:'รายงานรายได้ประจำวัน',
+    export_title_monthly:'รายงานรายได้ประจำเดือน',
+    export_title_yearly:'รายงานรายได้ประจำปี',
+    export_title_vat:'สรุปภาษีมูลค่าเพิ่ม (ภ.พ.30)',
+    vat_notice:'* ยอดนี้ใช้สำหรับยื่นแบบ ภ.พ.30 ประจำเดือน'
+  },
+  en:{
+    btn_back:'Home', subtitle:'📊 Revenue Report & VAT',
+    tab_daily:'📅 Daily', tab_monthly:'📆 Monthly',
+    tab_yearly:'📈 Yearly', tab_vat:'🧾 VAT Summary',
+    title_daily:'📅 Daily Revenue Report',
+    title_monthly:'📆 Monthly Revenue Report',
+    title_yearly:'📈 Yearly Revenue Report',
+    title_vat:'🧾 VAT Summary Report',
+    btn_refresh:'Refresh',
+    conn_online:'✅ Firebase Connected — Real-time data',
+    conn_offline:'❌ Disconnected',
+    tax_notice_title:'📌 Note:',
+    tax_notice_body:' VAT shown is Output VAT collected from customers. Use for monthly VAT filing.',
+    chip_orders:'Orders', chip_subtotal:'Before VAT',
+    chip_vat:'VAT 7%', chip_total:'Total Revenue (incl. VAT)',
+    vat_subtotal:'Sales before VAT (Base Amount)',
+    vat_amount:'VAT 7% (Output VAT)',
+    vat_total:'Grand Total (incl. VAT)',
+    vat_orders:'Paid Orders',
+    th_time:'Time', th_order:'Order ID', th_table:'Table',
+    th_subtotal:'Before VAT (฿)', th_vat:'VAT 7% (฿)',
+    th_total:'Total (฿)', th_items:'Items',
+    th_date:'Date', th_month:'Month',
+    th_orders:'Orders', th_revenue:'Revenue (฿)',
+    th_period:'Period', th_base:'Base Amount (฿)',
+    th_vat_out:'Output VAT (฿)', th_total_vat:'Total Received (฿)',
+    empty:'No data for this period',
+    months:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+    sheet_daily:'Daily', sheet_monthly:'Monthly',
+    sheet_yearly:'Yearly', sheet_vat:'VAT Summary',
+    export_title_daily:'Daily Revenue Report',
+    export_title_monthly:'Monthly Revenue Report',
+    export_title_yearly:'Yearly Revenue Report',
+    export_title_vat:'VAT Summary Report',
+    vat_notice:'* Use this for monthly VAT filing'
+  },
+  zh:{
+    btn_back:'首页', subtitle:'📊 收入报表 & 增值税',
+    tab_daily:'📅 日报', tab_monthly:'📆 月报',
+    tab_yearly:'📈 年报', tab_vat:'🧾 税务汇总',
+    title_daily:'📅 每日收入报表',
+    title_monthly:'📆 每月收入报表',
+    title_yearly:'📈 每年收入报表',
+    title_vat:'🧾 增值税汇总报表',
+    btn_refresh:'刷新',
+    conn_online:'✅ Firebase已连接 — 实时数据',
+    conn_offline:'❌ 连接断开',
+    tax_notice_title:'📌 备注:',
+    tax_notice_body:' 显示的VAT是向顾客收取的销项税，用于每月增值税申报。',
+    chip_orders:'订单数', chip_subtotal:'不含税金额',
+    chip_vat:'增值税 7%', chip_total:'含税总收入',
+    vat_subtotal:'不含税销售额（计税基础）',
+    vat_amount:'增值税 7%（销项税）',
+    vat_total:'含税总计',
+    vat_orders:'已支付订单',
+    th_time:'时间', th_order:'订单号', th_table:'桌号',
+    th_subtotal:'不含税 (฿)', th_vat:'增值税 7% (฿)',
+    th_total:'总计 (฿)', th_items:'菜品',
+    th_date:'日期', th_month:'月份',
+    th_orders:'订单数', th_revenue:'收入 (฿)',
+    th_period:'期间', th_base:'计税基础 (฿)',
+    th_vat_out:'销项税 (฿)', th_total_vat:'含税收入 (฿)',
+    empty:'此期间无数据',
+    months:['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
+    sheet_daily:'日报', sheet_monthly:'月报',
+    sheet_yearly:'年报', sheet_vat:'增值税汇总',
+    export_title_daily:'每日收入报表',
+    export_title_monthly:'每月收入报表',
+    export_title_yearly:'每年收入报表',
+    export_title_vat:'增值税汇总报表',
+    vat_notice:'* 用于每月增值税申报'
+  }
+};
+
+// ===== STATE =====
+let currentLang = localStorage.getItem('ok_lang') || 'th';
+let currentTab  = 'daily';
+
+function t(key) { return TL[currentLang][key] || key; }
+
+// ===== LANGUAGE =====
+function changeLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('ok_lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang===lang));
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.dataset.i18n;
+    if (TL[lang][k]) el.textContent = TL[lang][k];
+  });
+  refreshCurrentTab();
+}
+
+// ===== TABS =====
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  currentTab = id;
+  refreshCurrentTab();
+}
+
+function refreshCurrentTab() {
+  if (currentTab==='daily')   renderDaily();
+  if (currentTab==='monthly') renderMonthly();
+  if (currentTab==='yearly')  renderYearly();
+  if (currentTab==='vat')     renderVAT();
+}
+
+// ===== VAT CALC =====
+function calcVAT(orders) {
+  const paid = orders.filter(o => o.status==='done');
+  let subtotal=0, vat=0, total=0;
+  paid.forEach(o => {
+    // ถ้า order มี vat เก็บแล้ว ใช้เลยnull ถ้าไม่มีคำนวณใหม่
+    const sub  = o.subtotal || (o.total ? o.total/(1+VAT_RATE) : 0);
+    const v    = o.vat    || Math.round(sub*VAT_RATE*100)/100;
+    const tot  = o.total  || sub+v;
+    subtotal += sub;
+    vat      += v;
+    total    += tot;
+  });
+  return {
+    orders: paid.length,
+    subtotal: Math.round(subtotal*100)/100,
+    vat:      Math.round(vat*100)/100,
+    total:    Math.round(total*100)/100
+  };
+}
+
+// ===== SUMMARY CHIPS =====
+function renderSummaryChips(containerId, data) {
+  document.getElementById(containerId).innerHTML = `
+    <div class="summary-chip"><div class="chip-val">${data.orders}</div><div class="chip-label">${t('chip_orders')}</div></div>
+    <div class="summary-chip"><div class="chip-val">${data.subtotal.toLocaleString('th-TH',{minimumFractionDigits:2})}</div><div class="chip-label">${t('chip_subtotal')}</div></div>
+    <div class="summary-chip"><div class="chip-val">${data.vat.toLocaleString('th-TH',{minimumFractionDigits:2})}</div><div class="chip-label">${t('chip_vat')}</div></div>
+    <div class="summary-chip"><div class="chip-val">${data.total.toLocaleString('th-TH',{minimumFractionDigits:2})}</div><div class="chip-label">${t('chip_total')}</div></div>`;
+}
+
+// ===== VAT BOX =====
+function renderVATBox(containerId, data) {
+  document.getElementById(containerId).innerHTML = `
+    <div class="vat-row"><span class="label">${t('vat_orders')}</span><span class="value">${data.orders} รายการ</span></div>
+    <div class="vat-row"><span class="label">${t('vat_subtotal')}</span><span class="value">${data.subtotal.toLocaleString('th-TH',{minimumFractionDigits:2})} ฿</span></div>
+    <div class="vat-row vat-line"><span class="label">${t('vat_amount')} (${(VAT_RATE*100).toFixed(0)}%)</span><span class="value td-vat">${data.vat.toLocaleString('th-TH',{minimumFractionDigits:2})} ฿</span></div>
+    <div class="vat-row total-line"><span class="label">${t('vat_total')}</span><span class="value td-total">${data.total.toLocaleString('th-TH',{minimumFractionDigits:2})} ฿</span></div>`;
+}
+
+// ===== EMPTY TABLE =====
+function emptyTable(tableId, cols) {
+  document.getElementById(tableId).innerHTML = `
+    <tr><td colspan="${cols}" class="empty-state"><div class="empty-icon">📊</div><p>${t('empty')}</p></td></tr>`;
+}
+
+// ===== ฟอร์แมต =====
+function fmt(n) { return (n||0).toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmtDate(iso) { return new Date(iso).toLocaleDateString('th-TH',{year:'numeric',month:'short',day:'numeric'}); }
+function fmtTime(iso) { return new Date(iso).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}); }
+
+// ===== RENDER DAILY =====
+function renderDaily() {
+  const dateEl = document.getElementById('daily-date');
+  const sel    = dateEl.value || new Date().toISOString().slice(0,10);
+  if (!dateEl.value) dateEl.value = sel;
+
+  const orders = allOrders.filter(o => o.createdAt && o.createdAt.slice(0,10)===sel);
+  const data   = calcVAT(orders);
+
+  renderSummaryChips('daily-summary', data);
+  renderVATBox('daily-vat-box', data);
+
+  const paid = orders.filter(o => o.status==='done');
+  if (!paid.length) { emptyTable('daily-table', 7); return; }
+
+  let html = `<thead><tr>
+    <th>${t('th_time')}</th><th>${t('th_order')}</th><th>${t('th_table')}</th>
+    <th class="td-number">${t('th_subtotal')}</th>
+    <th class="td-number td-vat">${t('th_vat')}</th>
+    <th class="td-number td-total">${t('th_total')}</th>
+    <th>${t('th_items')}</th>
+  </tr></thead><tbody>`;
+
+  paid.forEach(o => {
+    const sub = o.subtotal || (o.total ? o.total/(1+VAT_RATE) : 0);
+    const vat = o.vat      || Math.round(sub*VAT_RATE*100)/100;
+    const tot = o.total    || sub+vat;
+    const items = (o.items||[]).map(i => `${i.name_th||i.name}×${i.qty}`).join(', ');
+    html += `<tr>
+      <td>${fmtTime(o.createdAt)}</td>
+      <td style="font-weight:700;color:var(--crimson)">#${(o.orderId||o.fbKey).slice(-6)}</td>
+      <td>โต๊ะ ${o.tableNo||'-'}</td>
+      <td class="td-number">${fmt(sub)}</td>
+      <td class="td-number td-vat">${fmt(vat)}</td>
+      <td class="td-number td-total">${fmt(tot)}</td>
+      <td style="font-size:0.76rem">${items}</td>
+    </tr>`;
+  });
+
+  html += `</tbody><tfoot><tr class="tfoot-row">
+    <td colspan="3">รวม / Total</td>
+    <td class="td-number">${fmt(data.subtotal)}</td>
+    <td class="td-number td-vat">${fmt(data.vat)}</td>
+    <td class="td-number td-total">${fmt(data.total)}</td>
+    <td>${data.orders} รายการ</td>
+  </tr></tfoot>`;
+
+  document.getElementById('daily-table').innerHTML = html;
+}
+
+// ===== RENDER MONTHLY =====
+function renderMonthly() {
+  const monthEl = document.getElementById('monthly-month');
+  const sel     = monthEl.value || new Date().toISOString().slice(0,7);
+  if (!monthEl.value) monthEl.value = sel;
+
+  const [yr, mo] = sel.split('-').map(Number);
+  const orders   = allOrders.filter(o => {
+    if (!o.createdAt) return false;
+    const d = new Date(o.createdAt);
+    return d.getFullYear()===yr && d.getMonth()+1===mo;
+  });
+  const data = calcVAT(orders);
+  renderSummaryChips('monthly-summary', data);
+  renderVATBox('monthly-vat-box', data);
+
+  // กลุ่มตามวัน
+  const byDay = {};
+  orders.filter(o=>o.status==='done').forEach(o => {
+    const day = o.createdAt.slice(0,10);
+    if (!byDay[day]) byDay[day] = {orders:0,subtotal:0,vat:0,total:0};
+    const sub = o.subtotal || (o.total ? o.total/(1+VAT_RATE) : 0);
+    const vat = o.vat      || Math.round(sub*VAT_RATE*100)/100;
+    const tot = o.total    || sub+vat;
+    byDay[day].orders++;
+    byDay[day].subtotal += sub;
+    byDay[day].vat      += vat;
+    byDay[day].total    += tot;
+  });
+
+  const days = Object.keys(byDay).sort();
+  if (!days.length) { emptyTable('monthly-table', 6); return; }
+
+  let html = `<thead><tr>
+    <th>${t('th_date')}</th>
+    <th class="td-number">${t('th_orders')}</th>
+    <th class="td-number">${t('th_subtotal')}</th>
+    <th class="td-number td-vat">${t('th_vat')}</th>
+    <th class="td-number td-total">${t('th_total')}</th>
+  </tr></thead><tbody>`;
+
+  days.forEach(d => {
+    const r = byDay[d];
+    html += `<tr>
+      <td style="font-weight:600">${d}</td>
+      <td class="td-number td-orders">${r.orders}</td>
+      <td class="td-number">${fmt(r.subtotal)}</td>
+      <td class="td-number td-vat">${fmt(r.vat)}</td>
+      <td class="td-number td-total">${fmt(r.total)}</td>
+    </tr>`;
+  });
+
+  html += `</tbody><tfoot><tr class="tfoot-row">
+    <td>รวม / Total</td>
+    <td class="td-number td-orders">${data.orders}</td>
+    <td class="td-number">${fmt(data.subtotal)}</td>
+    <td class="td-number td-vat">${fmt(data.vat)}</td>
+    <td class="td-number td-total">${fmt(data.total)}</td>
+  </tr></tfoot>`;
+  document.getElementById('monthly-table').innerHTML = html;
+}
+
+// ===== RENDER YEARLY =====
+function renderYearly() {
+  const yearEl = document.getElementById('yearly-year');
+  const yr     = parseInt(yearEl.value) || new Date().getFullYear();
+  if (!yearEl.value) yearEl.value = yr;
+
+  const orders = allOrders.filter(o => o.createdAt && new Date(o.createdAt).getFullYear()===yr);
+  const data   = calcVAT(orders);
+  renderSummaryChips('yearly-summary', data);
+  renderVATBox('yearly-vat-box', data);
+
+  // กลุ่มตามเดือน
+  const byMonth = {};
+  for(let m=1;m<=12;m++) byMonth[m] = {orders:0,subtotal:0,vat:0,total:0};
+  orders.filter(o=>o.status==='done').forEach(o => {
+    const m = new Date(o.createdAt).getMonth()+1;
+    const sub = o.subtotal || (o.total ? o.total/(1+VAT_RATE) : 0);
+    const vat = o.vat      || Math.round(sub*VAT_RATE*100)/100;
+    const tot = o.total    || sub+vat;
+    byMonth[m].orders++;
+    byMonth[m].subtotal += sub;
+    byMonth[m].vat      += vat;
+    byMonth[m].total    += tot;
+  });
+
+  const months = TL[currentLang].months;
+  let html = `<thead><tr>
+    <th>${t('th_month')}</th>
+    <th class="td-number">${t('th_orders')}</th>
+    <th class="td-number">${t('th_subtotal')}</th>
+    <th class="td-number td-vat">${t('th_vat')}</th>
+    <th class="td-number td-total">${t('th_total')}</th>
+  </tr></thead><tbody>`;
+
+  for(let m=1;m<=12;m++) {
+    const r = byMonth[m];
+    const hasData = r.orders > 0;
+    html += `<tr style="${hasData?'':'opacity:0.4'}">
+      <td style="font-weight:600">${months[m-1]} ${yr}</td>
+      <td class="td-number td-orders">${r.orders||'-'}</td>
+      <td class="td-number">${hasData?fmt(r.subtotal):'-'}</td>
+      <td class="td-number td-vat">${hasData?fmt(r.vat):'-'}</td>
+      <td class="td-number td-total">${hasData?fmt(r.total):'-'}</td>
+    </tr>`;
+  }
+
+  html += `</tbody><tfoot><tr class="tfoot-row">
+    <td>รวม ${yr}</td>
+    <td class="td-number td-orders">${data.orders}</td>
+    <td class="td-number">${fmt(data.subtotal)}</td>
+    <td class="td-number td-vat">${fmt(data.vat)}</td>
+    <td class="td-number td-total">${fmt(data.total)}</td>
+  </tr></tfoot>`;
+  document.getElementById('yearly-table').innerHTML = html;
+}
+
+// ===== RENDER VAT SUMMARY (ภ.พ.30) =====
+function renderVAT() {
+  const monthEl = document.getElementById('vat-month');
+  const sel     = monthEl.value || new Date().toISOString().slice(0,7);
+  if (!monthEl.value) monthEl.value = sel;
+
+  const [yr, mo] = sel.split('-').map(Number);
+  const orders   = allOrders.filter(o => {
+    if (!o.createdAt || o.status!=='done') return false;
+    const d = new Date(o.createdAt);
+    return d.getFullYear()===yr && d.getMonth()+1===mo;
+  });
+  const data = calcVAT(orders);
+
+  // VAT Summary Box
+  const months = TL[currentLang].months;
+  document.getElementById('vat-summary-box').innerHTML = `
+    <div class="vat-row"><span class="label" style="font-weight:700;font-size:1rem;">📋 รอบภาษี ${months[mo-1]} ${yr+543}</span></div>
+    <div class="vat-row" style="margin-top:8px;"><span class="label">${t('vat_orders')}</span><span class="value">${data.orders} รายการ</span></div>
+    <div class="vat-row"><span class="label">${t('vat_subtotal')}</span><span class="value">${fmt(data.subtotal)} ฿</span></div>
+    <div class="vat-row vat-line"><span class="label"><strong>${t('vat_amount')} ← ยื่น ภ.พ.30</strong></span><span class="value td-vat" style="font-size:1.2rem">${fmt(data.vat)} ฿</span></div>
+    <div class="vat-row total-line"><span class="label">${t('vat_total')}</span><span class="value td-total">${fmt(data.total)} ฿</span></div>`;
+
+  // รายการแต่ละออเดอร์
+  if (!orders.length) { emptyTable('vat-table', 6); return; }
+
+  let html = `<thead><tr>
+    <th>${t('th_date')}</th><th>${t('th_order')}</th>
+    <th>${t('th_table')}</th>
+    <th class="td-number">${t('th_base')}</th>
+    <th class="td-number td-vat">${t('th_vat_out')}</th>
+    <th class="td-number td-total">${t('th_total_vat')}</th>
+  </tr></thead><tbody>`;
+
+  orders.forEach(o => {
+    const sub = o.subtotal || (o.total ? o.total/(1+VAT_RATE) : 0);
+    const vat = o.vat      || Math.round(sub*VAT_RATE*100)/100;
+    const tot = o.total    || sub+vat;
+    html += `<tr>
+      <td>${fmtDate(o.createdAt)}</td>
+      <td style="font-weight:700;color:var(--crimson)">#${(o.orderId||o.fbKey).slice(-6)}</td>
+      <td>โต๊ะ ${o.tableNo||'-'}</td>
+      <td class="td-number">${fmt(sub)}</td>
+      <td class="td-number td-vat">${fmt(vat)}</td>
+      <td class="td-number td-total">${fmt(tot)}</td>
+    </tr>`;
+  });
+
+  html += `</tbody><tfoot><tr class="tfoot-row">
+    <td colspan="3">รวม Output VAT ทั้งหมด</td>
+    <td class="td-number">${fmt(data.subtotal)}</td>
+    <td class="td-number td-vat">${fmt(data.vat)}</td>
+    <td class="td-number td-total">${fmt(data.total)}</td>
+  </tr></tfoot>`;
+  document.getElementById('vat-table').innerHTML = html;
+}
+
+// ===== EXCEL EXPORTS =====
+function makeExcelData(headers, rows, footerRow, title) {
+  const ws = XLSX.utils.aoa_to_sheet([
+    [title], [''], headers, ...rows, [], footerRow,
+    [], [t('vat_notice')]
+  ]);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, title.slice(0,30));
+  return wb;
+}
+
+function exportDailyExcel() {
+  const dateEl = document.getElementById('daily-date');
+  const sel    = dateEl.value || new Date().toISOString().slice(0,10);
+  const paid   = allOrders.filter(o => o.status==='done' && o.createdAt?.slice(0,10)===sel);
+  const data   = calcVAT(paid);
+  const headers = [t('th_time'),t('th_order'),t('th_table'),t('th_subtotal'),t('th_vat'),t('th_total')];
+  const rows = paid.map(o => {
+    const sub=o.subtotal||(o.total?o.total/(1+VAT_RATE):0);
+    const vat=o.vat||Math.round(sub*VAT_RATE*100)/100;
+    return [fmtTime(o.createdAt),`#${(o.orderId||o.fbKey).slice(-6)}`,`โต๊ะ ${o.tableNo||'-'}`,Math.round(sub*100)/100,Math.round(vat*100)/100,o.total||sub+vat];
+  });
+  const footer = ['รวม','','',data.subtotal,data.vat,data.total];
+  const wb = makeExcelData(headers, rows, footer, `${t('export_title_daily')} ${sel}`);
+  XLSX.writeFile(wb, `revenue-daily-${sel}.xlsx`);
+}
+
+function exportMonthlyExcel() {
+  const sel = document.getElementById('monthly-month').value || new Date().toISOString().slice(0,7);
+  const [yr,mo] = sel.split('-').map(Number);
+  const orders  = allOrders.filter(o => o.status==='done' && o.createdAt && new Date(o.createdAt).getFullYear()===yr && new Date(o.createdAt).getMonth()+1===mo);
+  const data    = calcVAT(orders);
+  const byDay   = {};
+  orders.forEach(o => {
+    const d=o.createdAt.slice(0,10);
+    if(!byDay[d])byDay[d]={orders:0,sub:0,vat:0,tot:0};
+    const sub=o.subtotal||(o.total?o.total/(1+VAT_RATE):0);
+    const vat=o.vat||Math.round(sub*VAT_RATE*100)/100;
+    byDay[d].orders++;byDay[d].sub+=sub;byDay[d].vat+=vat;byDay[d].tot+=o.total||sub+vat;
+  });
+  const headers=[t('th_date'),t('th_orders'),t('th_subtotal'),t('th_vat'),t('th_total')];
+  const rows=Object.keys(byDay).sort().map(d=>[d,byDay[d].orders,Math.round(byDay[d].sub*100)/100,Math.round(byDay[d].vat*100)/100,Math.round(byDay[d].tot*100)/100]);
+  const wb=makeExcelData(headers,rows,['รวม',data.orders,data.subtotal,data.vat,data.total],`${t('export_title_monthly')} ${sel}`);
+  XLSX.writeFile(wb,`revenue-monthly-${sel}.xlsx`);
+}
+
+function exportYearlyExcel() {
+  const yr=parseInt(document.getElementById('yearly-year').value)||new Date().getFullYear();
+  const orders=allOrders.filter(o=>o.status==='done'&&o.createdAt&&new Date(o.createdAt).getFullYear()===yr);
+  const data=calcVAT(orders);
+  const byMonth={};
+  for(let m=1;m<=12;m++)byMonth[m]={orders:0,sub:0,vat:0,tot:0};
+  orders.forEach(o=>{
+    const m=new Date(o.createdAt).getMonth()+1;
+    const sub=o.subtotal||(o.total?o.total/(1+VAT_RATE):0);
+    const vat=o.vat||Math.round(sub*VAT_RATE*100)/100;
+    byMonth[m].orders++;byMonth[m].sub+=sub;byMonth[m].vat+=vat;byMonth[m].tot+=o.total||sub+vat;
+  });
+  const months=TL[currentLang].months;
+  const headers=[t('th_month'),t('th_orders'),t('th_subtotal'),t('th_vat'),t('th_total')];
+  const rows=Object.keys(byMonth).map(m=>[`${months[m-1]} ${yr}`,byMonth[m].orders||0,Math.round(byMonth[m].sub*100)/100,Math.round(byMonth[m].vat*100)/100,Math.round(byMonth[m].tot*100)/100]);
+  const wb=makeExcelData(headers,rows,['รวม',data.orders,data.subtotal,data.vat,data.total],`${t('export_title_yearly')} ${yr}`);
+  XLSX.writeFile(wb,`revenue-yearly-${yr}.xlsx`);
+}
+
+function exportVATExcel() {
+  const sel=document.getElementById('vat-month').value||new Date().toISOString().slice(0,7);
+  const [yr,mo]=sel.split('-').map(Number);
+  const orders=allOrders.filter(o=>o.status==='done'&&o.createdAt&&new Date(o.createdAt).getFullYear()===yr&&new Date(o.createdAt).getMonth()+1===mo);
+  const data=calcVAT(orders);
+  const headers=[t('th_date'),t('th_order'),t('th_table'),t('th_base'),t('th_vat_out'),t('th_total_vat')];
+  const rows=orders.map(o=>{
+    const sub=o.subtotal||(o.total?o.total/(1+VAT_RATE):0);
+    const vat=o.vat||Math.round(sub*VAT_RATE*100)/100;
+    return [fmtDate(o.createdAt),`#${(o.orderId||o.fbKey).slice(-6)}`,`โต๊ะ ${o.tableNo||'-'}`,Math.round(sub*100)/100,Math.round(vat*100)/100,o.total||sub+vat];
+  });
+  const wb=makeExcelData(headers,rows,['Output VAT รวม','','',data.subtotal,data.vat,data.total],`${t('export_title_vat')} ${sel}`);
+  XLSX.writeFile(wb,`vat-report-${sel}.xlsx`);
+}
+
+// ===== PDF PRINT =====
+function buildPrintHTML(title, tableHTML, summaryHTML) {
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title>
+  <style>
+    body{font-family:'Noto Sans Thai',Arial,sans-serif;padding:24px;font-size:12px;color:#000;max-width:900px;margin:0 auto;}
+    h2{color:#9B2226;margin-bottom:4px;font-size:16px;}
+    .meta{color:#666;font-size:11px;margin-bottom:14px;}
+    .summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
+    .chip{text-align:center;padding:10px;border:1px solid #ddd;border-radius:8px;}
+    .chip-val{font-size:18px;font-weight:700;color:#9B2226;}
+    .chip-lbl{font-size:10px;color:#666;}
+    table{width:100%;border-collapse:collapse;font-size:11px;}
+    th{background:#f5f5f5;padding:6px 5px;text-align:left;border-bottom:2px solid #9B2226;font-size:10px;}
+    td{padding:5px;border-bottom:1px solid #eee;}
+    .td-r{text-align:right;} .vat{color:#E67E22;font-weight:700;} .tot{color:#9B2226;font-weight:700;}
+    .tfoot-r td{font-weight:700;background:#fff3f3;border-top:2px solid #9B2226;}
+    .note{margin-top:14px;font-size:10px;color:#666;border-top:1px dashed #ccc;padding-top:8px;}
+    @media print{button{display:none!important;}}
+  </style></head><body>
+  <h2>${SHOP_NAME} — ${title}</h2>
+  <div class="meta">เลขประจำตัวผู้เสียภาษี: ${SHOP_TAX_ID} | พิมพ์: ${new Date().toLocaleString('th-TH')}</div>
+  ${summaryHTML}
+  ${tableHTML}
+  <div class="note">${t('vat_notice')}</div>
+  <br><button onclick="window.print()" style="padding:10px 24px;background:#9B2226;color:white;border:none;border-radius:8px;cursor:pointer;font-size:13px;">🖨️ พิมพ์</button>
+  </body></html>`;
+}
+
+function openPrint(title, tableId, summaryId) {
+  const tableEl = document.getElementById(tableId);
+  const sumEl   = document.getElementById(summaryId);
+  const html = buildPrintHTML(title, tableEl?.outerHTML||'', sumEl?.outerHTML||'');
+  const w = window.open('','_blank');
+  if (w) { w.document.write(html); w.document.close(); }
+}
+
+function exportDailyPDF()   { openPrint(t('export_title_daily'),   'daily-table',   'daily-vat-box'); }
+function exportMonthlyPDF() { openPrint(t('export_title_monthly'), 'monthly-table', 'monthly-vat-box'); }
+function exportYearlyPDF()  { openPrint(t('export_title_yearly'),  'yearly-table',  'yearly-vat-box'); }
+function exportVATPDF()     { openPrint(t('export_title_vat'),     'vat-table',     'vat-summary-box'); }
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+  changeLang(currentLang);
+  // Set default dates
+  const now   = new Date();
+  const today = now.toISOString().slice(0,10);
+  const month = now.toISOString().slice(0,7);
+  const year  = now.getFullYear();
+  document.getElementById('daily-date').value   = today;
+  document.getElementById('monthly-month').value = month;
+  document.getElementById('yearly-year').value  = year;
+  document.getElementById('vat-month').value    = month;
+  initFirebase();
+});
+</script>
+</body>
+</html>

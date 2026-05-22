@@ -339,6 +339,7 @@ const db = firebase.database();
 
 // ===== PromptPay Config (แก้เลขที่นี่) =====
 const PROMPTPAY_ID   = '0000000000';   // ← ใส่เบอร์โทร หรือ เลข 13 หลัก
+const VAT_RATE       = 0.07;           // VAT 7%
 const SHOP_NAME      = 'Ohoi Kyoza';
 const SHOP_ADDRESS   = '123 ถนนตัวอย่าง กรุงเทพฯ';
 const SHOP_TAX_ID    = '0000000000000';
@@ -350,7 +351,7 @@ const i18n = {
     table:'โต๊ะ', cat_all:'🍽️ ทั้งหมด',
     cart_count:'{n} รายการ', cart_view:'ดูตะกร้า', cart_title:'🛒 ตะกร้าของคุณ',
     note_label:'📝 หมายเหตุ / แพ้อาหาร', note_ph:'เช่น: ไม่ใส่ผัก, แพ้กุ้ง...',
-    subtotal:'ยอดรวม', total:'รวมทั้งสิ้น', confirm_btn:'🥟 ยืนยันสั่งอาหาร',
+    subtotal:'ยอดก่อน VAT', vat:'ภาษีมูลค่าเพิ่ม 7%', total:'รวมทั้งสิ้น (รวม VAT)', confirm_btn:'🥟 ยืนยันสั่งอาหาร',
     avail:'✅ พร้อมเสิร์ฟ', unavail:'❌ หมดชั่วคราว',
     add_btn:'+ เพิ่มในตะกร้า', added_btn:'✓ เพิ่มแล้ว',
     loading:'กำลังส่งออเดอร์...', baht:'฿',
@@ -389,7 +390,7 @@ const i18n = {
     table:'Table', cat_all:'🍽️ All',
     cart_count:'{n} items', cart_view:'View Cart', cart_title:'🛒 Your Cart',
     note_label:'📝 Special Requests / Allergies', note_ph:'e.g. No vegetables, shrimp allergy...',
-    subtotal:'Subtotal', total:'Total', confirm_btn:'🥟 Confirm Order',
+    subtotal:'Subtotal (excl. VAT)', vat:'VAT 7%', total:'Total (incl. VAT)', confirm_btn:'🥟 Confirm Order',
     avail:'✅ Available', unavail:'❌ Unavailable',
     add_btn:'+ Add to Cart', added_btn:'✓ Added',
     loading:'Placing your order...', baht:'฿',
@@ -427,7 +428,7 @@ const i18n = {
     table:'桌', cat_all:'🍽️ 全部',
     cart_count:'{n} 件', cart_view:'查看购物车', cart_title:'🛒 您的购物车',
     note_label:'📝 备注 / 过敏信息', note_ph:'例如：不放蔬菜，虾过敏...',
-    subtotal:'小计', total:'合计', confirm_btn:'🥟 确认下单',
+    subtotal:'小计（不含税）', vat:'增值税 7%', total:'总计（含税）', confirm_btn:'🥟 确认下单',
     avail:'✅ 可供应', unavail:'❌ 暂时售完',
     add_btn:'+ 加入购物车', added_btn:'✓ 已添加',
     loading:'正在提交订单...', baht:'฿',
@@ -475,14 +476,16 @@ const catNames = {
 const menuEmoji = {gyoza:'🥟',rice:'🍚',noodle:'🍜',soup:'🍲',drink:'🥤',dessert:'🍮',set:'🍱'};
 
 // ===== STATE =====
-let currentLang  = localStorage.getItem('ok_lang') || 'th';
-let tableNo      = 1;
-let menus        = [];
-let products     = [];
-let cart         = [];
-let currentCat   = 'all';
-let currentOrderId = '';
-let currentTotal   = 0;
+let currentLang     = localStorage.getItem('ok_lang') || 'th';
+let tableNo         = 1;
+let menus           = [];
+let products        = [];
+let cart            = [];
+let currentCat      = 'all';
+let currentOrderId  = '';
+let currentTotal    = 0;
+let currentSubtotal = 0;
+let currentVat      = 0;
 
 // ===== HELPERS =====
 function t(key, params={}) {
@@ -625,9 +628,12 @@ function renderCartModal() {
     </div>`;
   }).join('');
   const sub=cart.reduce((s,c)=>s+c.price*c.qty,0);
+  const vat=Math.round(sub*VAT_RATE*100)/100;
+  const grand=Math.round((sub+vat)*100)/100;
   document.getElementById('order-summary').innerHTML=`
-    <div class="summary-row"><span>${t('subtotal')}</span><span>${sub} ${t('baht')}</span></div>
-    <div class="summary-row total"><span>${t('total')}</span><span>${sub} ${t('baht')}</span></div>`;
+    <div class="summary-row"><span>${t('subtotal')}</span><span>${sub.toFixed(2)} ${t('baht')}</span></div>
+    <div class="summary-row"><span>${t('vat')}</span><span>${vat.toFixed(2)} ${t('baht')}</span></div>
+    <div class="summary-row total"><span>${t('total')}</span><span>${grand.toFixed(2)} ${t('baht')}</span></div>`;
 }
 
 // ===== CONFIRM ORDER → FIREBASE =====
@@ -638,12 +644,15 @@ window.confirmOrder = async function() {
   document.getElementById('loading-overlay').classList.add('show');
   const note=document.getElementById('order-note').value.trim();
   const orderId='ORD-'+Date.now().toString().slice(-6);
-  const total=cart.reduce((s,c)=>s+c.price*c.qty,0);
-  currentOrderId=orderId; currentTotal=total;
+  const subtotal=cart.reduce((s,c)=>s+c.price*c.qty,0);
+  const vat=Math.round(subtotal*VAT_RATE*100)/100;
+  const total=Math.round((subtotal+vat)*100)/100;
+  currentOrderId=orderId; currentTotal=total; currentSubtotal=subtotal; currentVat=vat;
   const orderData={
     orderId, tableNo, status:'pending',
     items:cart.map(c=>({menuId:c.menuId,name_th:c.name_th,name_en:c.name_en,name_zh:c.name_zh,price:c.price,qty:c.qty,subtotal:c.price*c.qty})),
-    note, total, createdAt:new Date().toISOString(), lang:currentLang
+    note, subtotal, vat, total, vatRate:VAT_RATE,
+    createdAt:new Date().toISOString(), lang:currentLang
   };
   try {
     await db.ref('orders').push(orderData);
@@ -698,15 +707,23 @@ function showPaymentScreen() {
   document.getElementById('tax-label-branch').textContent=t('tax_label_branch');
   document.getElementById('btn-tax-dl-text').textContent=t('btn_tax_dl').replace('🖨️ ','');
 
-  // Order items list
-  const total=cart.reduce((s,c)=>s+c.price*c.qty,0);
-  currentTotal=total;
+  // Order items list + VAT
+  const _sub=cart.reduce((s,c)=>s+c.price*c.qty,0);
+  const _vat=Math.round(_sub*VAT_RATE*100)/100;
+  const _total=Math.round((_sub+_vat)*100)/100;
+  currentTotal=_total; currentSubtotal=_sub; currentVat=_vat;
   document.getElementById('pay-items-list').innerHTML=cart.map(item=>{
     const name=currentLang==='en'&&item.name_en?item.name_en:currentLang==='zh'&&item.name_zh?item.name_zh:item.name_th;
-    return `<div class="pay-item-row"><span>${name} × ${item.qty}</span><span>${item.price*item.qty} ฿</span></div>`;
-  }).join('');
-  document.getElementById('pay-total-amount').textContent=`${total} ฿`;
-  document.getElementById('pay-qr-amount').textContent=total.toLocaleString();
+    return `<div class="pay-item-row"><span>${name} × ${item.qty}</span><span>${(item.price*item.qty).toFixed(2)} ฿</span></div>`;
+  }).join('')+`
+    <div class="pay-item-row" style="color:var(--ink-muted);font-size:0.82rem;border-top:1px dashed rgba(155,34,38,0.15);padding-top:6px;margin-top:4px;">
+      <span>${t('subtotal')}</span><span>${_sub.toFixed(2)} ฿</span>
+    </div>
+    <div class="pay-item-row" style="color:var(--ink-muted);font-size:0.82rem;">
+      <span>${t('vat')}</span><span>${_vat.toFixed(2)} ฿</span>
+    </div>`;
+  document.getElementById('pay-total-amount').textContent=`${_total.toFixed(2)} ฿`;
+  document.getElementById('pay-qr-amount').textContent=_total.toFixed(2);
 
   // Generate PromptPay QR
   generatePromptPayQR(total);
@@ -830,7 +847,7 @@ function buildReceiptHTML(isTax, date, buyer={}) {
     </tr>`;
   }).join('') : '<tr><td colspan="4" align="center">—</td></tr>';
 
-  const subtotal = currentTotal;
+  // VAT คำนวณจาก currentSubtotal, currentVat, currentTotal ที่ set ไว้แล้ว
 
   return `
 <head><meta charset="UTF-8">
@@ -871,12 +888,18 @@ function buildReceiptHTML(isTax, date, buyer={}) {
     </tr></thead>
     <tbody>${itemsHTML}</tbody>
     <tfoot>
-      <tr class="total-row">
-        <td colspan="3">${t('receipt_subtotal')}</td>
-        <td align="right">${subtotal.toFixed(2)} ฿</td>
+      <tr>
+        <td colspan="3" style="padding:5px 4px;">${t('receipt_subtotal')}</td>
+        <td align="right" style="padding:5px 4px;">${currentSubtotal.toFixed(2)} ฿</td>
       </tr>
-      ${isTax?`<tr><td colspan="3">VAT 0%</td><td align="right">0.00 ฿</td></tr>
-      <tr class="total-row"><td colspan="3">NET TOTAL</td><td align="right">${subtotal.toFixed(2)} ฿</td></tr>`:''}
+      <tr>
+        <td colspan="3" style="padding:5px 4px;color:#666;">${t('vat')} (${(VAT_RATE*100).toFixed(0)}%)</td>
+        <td align="right" style="padding:5px 4px;color:#666;">${currentVat.toFixed(2)} ฿</td>
+      </tr>
+      <tr class="total-row">
+        <td colspan="3">${t('total')}</td>
+        <td align="right">${currentTotal.toFixed(2)} ฿</td>
+      </tr>
     </tfoot>
   </table>
   <hr>
