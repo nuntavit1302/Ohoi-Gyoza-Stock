@@ -15,78 +15,83 @@
 }
 body{font-family:'Noto Sans Thai',sans-serif;background:var(--warm-white);color:var(--ink);min-height:100vh;padding-bottom:40px;}
 
-/* HEADER */
 .header{background:linear-gradient(160deg,var(--crimson) 0%,#7B181C 60%,#5A1216 100%);padding:30px 20px 38px;text-align:center;position:relative;overflow:hidden;}
 .header::before{content:'🪑';position:absolute;top:14px;left:18px;font-size:2rem;opacity:0.3;}
 .header::after{content:'📱';position:absolute;top:14px;right:18px;font-size:2rem;opacity:0.3;}
 .logo{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:700;color:var(--gold-light);letter-spacing:3px;}
 .logo span{color:#FFF8F0;font-weight:400;font-style:italic;}
 .subtitle{color:rgba(255,248,240,0.7);font-size:0.9rem;margin-top:8px;}
-
-/* BACK BTN */
-.back-btn{position:absolute;top:15px;left:55px;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.3);color:rgba(255,248,240,0.9);padding:7px 14px;border-radius:20px;cursor:pointer;font-size:0.8rem;font-weight:600;font-family:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:all 0.3s;}
+.back-btn{position:absolute;top:15px;left:55px;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.3);color:rgba(255,248,240,0.9);padding:7px 14px;border-radius:20px;font-size:0.8rem;font-weight:600;font-family:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:all 0.3s;}
 .back-btn:hover{background:rgba(255,255,255,0.25);}
 
-/* CONTENT */
+/* NOTICE BAR */
+.notice-bar{background:linear-gradient(135deg,rgba(88,129,87,0.15),rgba(88,129,87,0.08));border-bottom:2px solid rgba(88,129,87,0.3);padding:10px 20px;text-align:center;font-size:0.82rem;color:#3D5A3E;font-weight:600;}
+.notice-bar strong{color:var(--jade);}
+
 .content{max-width:860px;margin:0 auto;padding:28px 18px;}
 
-/* CONTROL */
-.control-card{background:#FFF;border-radius:20px;padding:24px;margin-bottom:24px;border:1px solid rgba(155,34,38,0.08);box-shadow:0 2px 12px var(--shadow-warm);}
-.control-card::before{content:'';display:block;height:4px;background:linear-gradient(90deg,var(--crimson),var(--gold),var(--jade));border-radius:4px;margin:-24px -24px 20px;border-radius:20px 20px 0 0;}
-.ctrl-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:700;color:var(--crimson);margin-bottom:18px;}
+/* CONTROL CARD */
+.control-card{background:#FFF;border-radius:20px;padding:24px;margin-bottom:20px;border:1px solid rgba(155,34,38,0.08);box-shadow:0 2px 12px var(--shadow-warm);position:relative;overflow:hidden;}
+.control-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:4px;background:linear-gradient(90deg,var(--crimson),var(--gold),var(--jade));border-radius:20px 20px 0 0;}
+.ctrl-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:700;color:var(--crimson);margin-bottom:16px;}
 .ctrl-row{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;}
 .ctrl-group{display:flex;flex-direction:column;gap:7px;}
 .ctrl-group label{font-weight:700;color:var(--crimson);font-size:0.85rem;}
-.ctrl-group input{padding:11px 16px;border:1.5px solid rgba(155,34,38,0.15);border-radius:12px;font-family:inherit;font-size:0.95rem;background:var(--warm-white);color:var(--ink);width:180px;}
+.ctrl-group input{padding:11px 16px;border:1.5px solid rgba(155,34,38,0.15);border-radius:12px;font-family:inherit;font-size:0.9rem;background:var(--warm-white);color:var(--ink);width:260px;}
 .ctrl-group input:focus{outline:none;border-color:var(--crimson);box-shadow:0 0 0 3px rgba(155,34,38,0.08);}
+.ctrl-group input.url-input{font-size:0.82rem;}
 .gen-btn{padding:12px 24px;background:linear-gradient(135deg,var(--crimson),#AE2012);color:white;border:none;border-radius:12px;font-family:inherit;font-weight:700;font-size:0.95rem;cursor:pointer;transition:all 0.3s;}
 .gen-btn:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(155,34,38,0.3);}
 
 /* URL PREVIEW */
-.url-preview{background:var(--warm-white);border-radius:12px;padding:12px 16px;margin-top:14px;font-size:0.8rem;color:var(--ink-muted);word-break:break-all;border:1px solid rgba(155,34,38,0.1);}
+.url-preview{background:var(--warm-white);border-radius:12px;padding:10px 14px;margin-top:12px;font-size:0.78rem;color:var(--ink-muted);word-break:break-all;border:1px solid rgba(155,34,38,0.1);}
 .url-preview strong{color:var(--crimson);}
 
+/* HOW TO */
+.howto{background:linear-gradient(135deg,rgba(88,129,87,0.06),rgba(212,163,115,0.08));border:1.5px solid rgba(88,129,87,0.2);border-radius:14px;padding:14px 18px;margin-bottom:20px;font-size:0.83rem;line-height:1.8;color:var(--ink-light);}
+.howto strong{color:var(--crimson);}
+.howto-title{font-weight:700;color:var(--jade);margin-bottom:6px;font-size:0.9rem;}
+
+/* PRINT ALL */
+.print-all-wrap{text-align:center;margin-bottom:22px;}
+.print-all-btn{padding:13px 32px;background:linear-gradient(135deg,var(--jade),#6B9B6A);color:white;border:none;border-radius:14px;font-family:inherit;font-weight:700;font-size:0.95rem;cursor:pointer;box-shadow:0 4px 16px rgba(88,129,87,0.25);transition:all 0.3s;}
+.print-all-btn:hover{transform:translateY(-2px);box-shadow:0 6px 22px rgba(88,129,87,0.35);}
+
 /* QR GRID */
-.qr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:18px;}
+.qr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px;}
 
 /* QR CARD */
-.qr-card{
-  background:#FFF;border-radius:22px;padding:22px 18px;
-  text-align:center;border:1px solid rgba(155,34,38,0.08);
-  box-shadow:0 3px 14px var(--shadow-warm);
-  transition:all 0.35s ease; position:relative; overflow:hidden;
-}
+.qr-card{background:#FFF;border-radius:22px;padding:22px 18px;text-align:center;border:1px solid rgba(155,34,38,0.08);box-shadow:0 3px 14px var(--shadow-warm);transition:all 0.35s;position:relative;overflow:hidden;}
 .qr-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,var(--crimson),var(--gold));}
 .qr-card:hover{transform:translateY(-5px);box-shadow:0 10px 30px rgba(155,34,38,0.14);}
 .qr-table-label{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:700;color:var(--crimson);margin-bottom:4px;}
 .qr-table-sub{font-size:0.72rem;color:var(--ink-muted);margin-bottom:14px;}
-.qr-box{display:flex;justify-content:center;margin-bottom:14px;}
-.qr-box canvas,.qr-box img{border-radius:10px;border:3px solid var(--cream);}
-.qr-url{font-size:0.65rem;color:var(--ink-muted);word-break:break-all;margin-bottom:14px;line-height:1.5;padding:6px 10px;background:var(--warm-white);border-radius:8px;}
+.qr-box{display:flex;justify-content:center;margin-bottom:12px;background:#FFF;padding:8px;border-radius:12px;border:2px solid var(--cream);}
+.qr-box canvas,.qr-box img{border-radius:8px;display:block;}
+.qr-url{font-size:0.62rem;color:var(--ink-muted);word-break:break-all;margin-bottom:12px;line-height:1.5;padding:6px 10px;background:var(--warm-white);border-radius:8px;}
 .btn-row{display:flex;gap:8px;justify-content:center;}
 .dl-btn{flex:1;padding:9px 6px;border:none;border-radius:10px;font-family:inherit;font-weight:700;font-size:0.75rem;cursor:pointer;transition:all 0.3s;}
 .dl-btn.primary{background:linear-gradient(135deg,var(--crimson),#AE2012);color:white;}
 .dl-btn.primary:hover{transform:translateY(-1px);box-shadow:0 3px 12px rgba(155,34,38,0.3);}
 .dl-btn.secondary{background:var(--cream);color:var(--ink);}
 .dl-btn.secondary:hover{background:var(--gold);color:var(--crimson);}
+.scan-test-btn{width:100%;padding:8px;border:1.5px solid rgba(88,129,87,0.4);border-radius:10px;background:rgba(88,129,87,0.08);color:var(--jade);font-family:inherit;font-weight:700;font-size:0.74rem;cursor:pointer;margin-top:6px;transition:all 0.3s;}
+.scan-test-btn:hover{background:var(--jade);color:white;}
 
-/* PRINT ALL BTN */
-.print-all-wrap{text-align:center;margin-bottom:24px;}
-.print-all-btn{padding:13px 32px;background:linear-gradient(135deg,var(--jade),#6B9B6A);color:white;border:none;border-radius:14px;font-family:inherit;font-weight:700;font-size:0.95rem;cursor:pointer;box-shadow:0 4px 16px rgba(88,129,87,0.25);transition:all 0.3s;}
-.print-all-btn:hover{transform:translateY(-2px);box-shadow:0 6px 22px rgba(88,129,87,0.35);}
-
-/* PRINT STYLES */
+/* PRINT */
 @media print{
-  .header,.control-card,.print-all-wrap,.back-btn{display:none!important;}
-  .qr-card{break-inside:avoid;box-shadow:none;border:2px solid #ddd;margin:8px;}
-  .btn-row{display:none!important;}
-  .qr-grid{grid-template-columns:repeat(2,1fr);}
+  .header,.control-card,.print-all-wrap,.back-btn,.notice-bar,.howto,.scan-test-btn,.btn-row{display:none!important;}
+  body{background:white;}
+  .qr-card{break-inside:avoid;box-shadow:none;border:1.5px solid #ddd;margin:6px;page-break-inside:avoid;}
+  .qr-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+  .qr-url{font-size:0.6rem;}
 }
 
 @media(max-width:600px){
   .ctrl-row{flex-direction:column;}
   .ctrl-group input{width:100%;}
   .logo{font-size:1.9rem;}
+  .qr-grid{grid-template-columns:repeat(2,1fr);gap:12px;}
 }
 </style>
 </head>
@@ -98,19 +103,36 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--warm-white);color:
   <div class="subtitle">📱 QR Code สำหรับแต่ละโต๊ะ</div>
 </div>
 
+<!-- NOTICE -->
+<div class="notice-bar">
+  ✅ QR Code เหล่านี้ใช้สำหรับลูกค้า <strong>สแกนด้วยกล้องมือถือ</strong> แล้วเข้าหน้าสั่งอาหารได้ทันที ไม่ต้องโหลดแอป
+</div>
+
 <div class="content">
+
+  <!-- HOW TO USE -->
+  <div class="howto">
+    <div class="howto-title">📌 วิธีใช้งาน QR Code</div>
+    <strong>1.</strong> ตั้งค่า URL ด้านล่างให้ถูกต้อง (ต้องเป็น <strong>https://</strong> เท่านั้น)<br>
+    <strong>2.</strong> กด "สร้าง QR Code" → QR จะแสดงทั้งหมด<br>
+    <strong>3.</strong> กด "🖨️ พิมพ์ QR ทั้งหมด" หรือดาวน์โหลดทีละโต๊ะ<br>
+    <strong>4.</strong> ลูกค้าใช้กล้องมือถือ (iOS/Android) สแกนโดยตรง — ไม่ต้องใช้แอปเพิ่มเติม<br>
+    <strong>⚠️ หากสแกนแล้วไม่เข้า:</strong> ตรวจสอบว่า URL ขึ้นต้นด้วย <strong>https://</strong> และ GitHub Pages เปิดใช้งานแล้ว
+  </div>
 
   <!-- CONTROL -->
   <div class="control-card">
     <div class="ctrl-title">⚙️ ตั้งค่า QR Code</div>
     <div class="ctrl-row">
-      <div class="ctrl-group">
-        <label>🌐 URL เว็บไซต์ของคุณ</label>
-        <input type="text" id="base-url" value="https://nuntavit1302.github.io/customer.html" placeholder="https://...">
+      <div class="ctrl-group" style="flex:1;min-width:260px;">
+        <label>🌐 URL หน้าลูกค้า (ต้องเป็น https://)</label>
+        <input type="url" id="base-url" class="url-input"
+          value="https://nuntavit1302.github.io/customer.html"
+          placeholder="https://yourusername.github.io/customer.html">
       </div>
       <div class="ctrl-group">
         <label>🪑 จำนวนโต๊ะ</label>
-        <input type="number" id="table-count" value="4" min="1" max="30">
+        <input type="number" id="table-count" value="4" min="1" max="30" style="width:100px;">
       </div>
       <div class="ctrl-group">
         <label>&nbsp;</label>
@@ -118,7 +140,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--warm-white);color:
       </div>
     </div>
     <div class="url-preview" id="url-preview">
-      ตัวอย่าง URL: <strong>https://nuntavit1302.github.io/customer.html?table=1</strong>
+      ตัวอย่าง URL: <strong id="url-example">https://nuntavit1302.github.io/customer.html?table=1</strong>
     </div>
   </div>
 
@@ -135,20 +157,28 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--warm-white);color:
 <script>
 // ===== GENERATE ALL QR =====
 function generateAll() {
-  const baseUrl    = document.getElementById('base-url').value.trim();
+  const rawUrl     = document.getElementById('base-url').value.trim();
   const tableCount = parseInt(document.getElementById('table-count').value) || 4;
   const grid       = document.getElementById('qr-grid');
 
+  // ตรวจสอบ URL
+  if (!rawUrl.startsWith('https://') && !rawUrl.startsWith('http://')) {
+    alert('⚠️ URL ต้องขึ้นต้นด้วย https:// เท่านั้น\nตัวอย่าง: https://nuntavit1302.github.io/customer.html');
+    return;
+  }
+
+  // ทำให้ URL clean (ไม่มี trailing slash)
+  const baseUrl = rawUrl.replace(/\/$/, '');
+
   // Update preview
-  document.getElementById('url-preview').innerHTML =
-    `ตัวอย่าง URL: <strong>${baseUrl}?table=1</strong>`;
+  document.getElementById('url-example').textContent = `${baseUrl}?table=1`;
 
   grid.innerHTML = '';
 
   for (let i = 1; i <= tableCount; i++) {
+    // ใช้ encodeURIComponent สำหรับ parameter
     const url = `${baseUrl}?table=${i}`;
 
-    // Card
     const card = document.createElement('div');
     card.className = 'qr-card';
     card.id = `card-${i}`;
@@ -159,64 +189,80 @@ function generateAll() {
       <div class="qr-url">${url}</div>
       <div class="btn-row">
         <button class="dl-btn primary" onclick="downloadQR(${i})">⬇️ ดาวน์โหลด</button>
-        <button class="dl-btn secondary" onclick="copyURL(${i}, '${url}')">📋 Copy URL</button>
-      </div>`;
+        <button class="dl-btn secondary" onclick="copyURL('${url}')">📋 Copy</button>
+      </div>
+      <button class="scan-test-btn" onclick="testURL('${url}')">🔗 ทดสอบ URL นี้</button>`;
     grid.appendChild(card);
 
-    // Generate QR
-    new QRCode(document.getElementById(`qr-box-${i}`), {
-      text:          url,
-      width:         160,
-      height:        160,
-      colorDark:     '#9B2226',
-      colorLight:    '#FDF6EC',
-      correctLevel:  QRCode.CorrectLevel.H
-    });
+    // สร้าง QR — ใช้ Level M แทน H เพื่อให้สแกนง่ายขึ้น
+    try {
+      new QRCode(document.getElementById(`qr-box-${i}`), {
+        text:         url,
+        width:        180,
+        height:       180,
+        colorDark:    '#1A0A00',   // สีเข้มขึ้นสแกนง่ายขึ้น
+        colorLight:   '#FFFFFF',   // พื้นขาว contrast สูง
+        correctLevel: QRCode.CorrectLevel.M  // M ดีกว่า H สำหรับ URL สั้น
+      });
+    } catch(e) {
+      document.getElementById(`qr-box-${i}`).innerHTML =
+        `<div style="padding:20px;color:red;font-size:0.8rem;">QR Error: ${e.message}</div>`;
+    }
   }
 }
 
 // ===== DOWNLOAD QR =====
 function downloadQR(tableNo) {
-  const box = document.getElementById(`qr-box-${tableNo}`);
+  const box    = document.getElementById(`qr-box-${tableNo}`);
   const canvas = box.querySelector('canvas');
   const img    = box.querySelector('img');
 
   if (canvas) {
+    // canvas → PNG download
     const link    = document.createElement('a');
     link.download = `QR_Table_${tableNo}.png`;
     link.href     = canvas.toDataURL('image/png');
     link.click();
   } else if (img) {
-    // Fallback: open image in new tab
-    window.open(img.src, '_blank');
+    // img fallback (Safari) → เปิด new tab
+    const newTab = window.open('', '_blank');
+    newTab.document.write(`
+      <html><body style="margin:0;background:#fff;display:flex;flex-direction:column;align-items:center;padding:20px;">
+        <h2 style="font-family:sans-serif;margin-bottom:12px;">🪑 โต๊ะ ${tableNo}</h2>
+        <img src="${img.src}" style="max-width:300px;border:2px solid #ddd;border-radius:8px;">
+        <p style="font-family:sans-serif;font-size:12px;color:#666;margin-top:10px;">
+          กด "บันทึกรูปภาพ" เพื่อดาวน์โหลด หรือ Screenshot เพื่อบันทึก
+        </p>
+        <button onclick="window.close()" style="margin-top:12px;padding:10px 20px;background:#9B2226;color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer;">ปิด</button>
+      </body></html>`);
+    newTab.document.close();
   }
 }
 
 // ===== COPY URL =====
-function copyURL(tableNo, url) {
+function copyURL(url) {
   navigator.clipboard.writeText(url).then(() => {
-    const btn = event.target;
-    const orig = btn.textContent;
-    btn.textContent = '✅ Copied!';
-    btn.style.background = 'var(--jade)';
-    btn.style.color = 'white';
-    setTimeout(() => {
-      btn.textContent = orig;
-      btn.style.background = '';
-      btn.style.color = '';
-    }, 1800);
+    alert('✅ คัดลอก URL แล้ว!\n' + url);
   }).catch(() => {
     prompt('Copy URL นี้:', url);
   });
 }
 
-// Auto generate on load
-window.addEventListener('DOMContentLoaded', generateAll);
+// ===== TEST URL =====
+function testURL(url) {
+  window.open(url, '_blank');
+}
 
-// Regenerate when table count changes
-document.addEventListener('DOMContentLoaded', () => {
+// ===== AUTO GENERATE ON LOAD =====
+window.addEventListener('DOMContentLoaded', () => {
+  generateAll();
+  // อัปเดต preview เมื่อเปลี่ยน input
   document.getElementById('table-count').addEventListener('change', generateAll);
-  document.getElementById('base-url').addEventListener('change', generateAll);
+  document.getElementById('base-url').addEventListener('change', () => {
+    document.getElementById('url-example').textContent =
+      document.getElementById('base-url').value.trim() + '?table=1';
+    generateAll();
+  });
 });
 </script>
 </body>
