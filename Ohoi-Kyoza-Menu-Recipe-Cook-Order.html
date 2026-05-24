@@ -280,6 +280,12 @@ tr:last-child td{border-bottom:none;}
 .warm-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(155,34,38,0.15),var(--gold),rgba(155,34,38,0.15),transparent);margin:20px 0;}
 .footer-note{text-align:center;padding:28px 20px;color:var(--ink-muted);font-size:0.85rem;font-style:italic;}
 
+/* CATEGORY FILTER BAR */
+.cat-filter-btn{padding:7px 14px;border:1.5px solid rgba(155,34,38,0.15);background:#FFFFFF;color:var(--ink-muted);border-radius:20px;cursor:pointer;font-weight:600;font-size:0.78rem;transition:all 0.3s;white-space:nowrap;font-family:'Noto Sans Thai',sans-serif;}
+.cat-filter-btn:hover{border-color:var(--crimson);color:var(--crimson);}
+.cat-filter-btn.active{background:linear-gradient(135deg,var(--crimson),var(--crimson-light));color:white;border-color:var(--crimson);box-shadow:0 3px 12px rgba(155,34,38,0.25);}
+#menu-cat-filter::-webkit-scrollbar{display:none;}
+
 @media(max-width:768px){
   .logo{font-size:2rem;}
   .stats-grid{grid-template-columns:1fr;gap:10px;}
@@ -348,6 +354,7 @@ tr:last-child td{border-bottom:none;}
   <div class="card">
     <div class="card-title" data-i18n="tab_menus">🍽️ เมนูอาหารทั้งหมด</div>
     <div class="search-box"><input type="text" id="menu-search" data-i18n-placeholder="ph_search_menu" placeholder="ค้นหาเมนู..." onkeyup="renderMenus()"></div>
+    <div id="menu-cat-filter" style="display:flex;gap:7px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none;flex-wrap:wrap;padding-bottom:3px;"></div>
     <div id="menus-grid" class="menu-grid"></div>
   </div>
 </div>
@@ -513,13 +520,17 @@ function fbListen(path,cb){ if(_db) _db.ref(path).on('value',cb); }
 
 // ===== CATEGORY DATA =====
 const CAT = {
-  gyoza:{th:'🥟 เกี๊ยวซ่า',en:'🥟 Gyoza',zh:'🥟 煎饺'},
-  rice:{th:'🍚 ข้าว',en:'🍚 Rice',zh:'🍚 米饭'},
-  noodle:{th:'🍜 ก๋วยเตี๋ยว',en:'🍜 Noodle',zh:'🍜 面条'},
-  soup:{th:'🍲 ซุป',en:'🍲 Soup',zh:'🍲 汤'},
-  drink:{th:'🥤 เครื่องดื่ม',en:'🥤 Drink',zh:'🥤 饮料'},
-  dessert:{th:'🍮 ของหวาน',en:'🍮 Dessert',zh:'🍮 甜点'},
-  set:{th:'🍱 เซ็ต',en:'🍱 Set',zh:'🍱 套餐'}
+  gyoza:   {th:'🥟 เกี๊ยวซ่า',          en:'🥟 Gyoza',              zh:'🥟 煎饺'},
+  rice:    {th:'🍚 ข้าว',               en:'🍚 Rice',               zh:'🍚 米饭'},
+  noodle:  {th:'🍜 ก๋วยเตี๋ยว',         en:'🍜 Noodle',             zh:'🍜 面条'},
+  soup:    {th:'🍲 ซุป',               en:'🍲 Soup',               zh:'🍲 汤'},
+  snack:   {th:'🍿 ของทานเล่น',         en:'🍿 Snack',              zh:'🍿 小食'},
+  taiwan:  {th:'🫕 อาหารเล่นสไตล์ไต้หวัน',en:'🫕 Taiwanese Snack',   zh:'🫕 台湾小吃'},
+  salad:   {th:'🥗 สลัด',              en:'🥗 Salad',              zh:'🥗 沙拉'},
+  frozen:  {th:'🧊 อาหารแช่แข็ง',       en:'🧊 Frozen Food',        zh:'🧊 冷冻食品'},
+  drink:   {th:'🥤 เครื่องดื่ม',        en:'🥤 Drink',              zh:'🥤 饮料'},
+  dessert: {th:'🍮 ของหวาน',           en:'🍮 Dessert',            zh:'🍮 甜点'},
+  set:     {th:'🍱 เซ็ต',              en:'🍱 Set',                zh:'🍱 套餐'}
 };
 
 // ===== TRANSLATIONS =====
@@ -695,6 +706,7 @@ const TL = {
 
 // ===== STATE =====
 let currentLang   = localStorage.getItem('ok_lang') || 'th';
+let currentMenuCat = 'all'; // category filter for menus tab
 let products      = JSON.parse(localStorage.getItem('ok_products'))     || [];
 let menus         = JSON.parse(localStorage.getItem('ok_menus'))        || [];
 let cookHistory   = JSON.parse(localStorage.getItem('ok_cook_history')) || [];
@@ -747,7 +759,7 @@ function changeLang(lang) {
   document.querySelectorAll('[data-i18n]').forEach(el => { const k=el.dataset.i18n; if(TL[lang][k]) el.textContent=TL[lang][k]; });
   document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { const k=el.dataset.i18nPlaceholder; if(TL[lang][k]) el.placeholder=TL[lang][k]; });
   renderCatDropdowns();
-  renderMenus(); renderOrders(); renderHistory(); updateDashboard();
+  buildMenuCatFilter(); renderMenus(); renderOrders(); renderHistory(); updateDashboard();
   document.getElementById('btn-add-ing').textContent = '+ ' + (lang==='zh'?'添加食材':lang==='en'?'Add Ingredient':'เพิ่มวัตถุดิบ');
   document.getElementById('btn-edit-add-ing').textContent = '+ ' + (lang==='zh'?'添加食材':lang==='en'?'Add Ingredient':'เพิ่มวัตถุดิบ');
 }
@@ -837,7 +849,7 @@ document.addEventListener('DOMContentLoaded', () => {
       menus = Object.values(d).map(m=>({...m,id:Number(m.id)||m.id}));
       localStorage.setItem('ok_menus', JSON.stringify(menus));
     } else { menus = []; }
-    renderMenus(); updateDashboard();
+    buildMenuCatFilter(); renderMenus(); updateDashboard();
   });
   fbListen('cook_history', snap => {
     if (snap && snap.exists()) {
@@ -1018,14 +1030,36 @@ function deleteMenuFromModal() {
 
 document.getElementById('edit-modal').addEventListener('click',function(e){if(e.target===this)closeEditModal();});
 
+// ===== BUILD CATEGORY FILTER =====
+function buildMenuCatFilter() {
+  const bar = document.getElementById('menu-cat-filter');
+  if (!bar) return;
+  const cats = ['all', ...Object.keys(CAT).filter(k => menus.some(m => m.category === k))];
+  bar.innerHTML = cats.map(c => {
+    const label = c === 'all'
+      ? (currentLang==='en'?'🗂️ All':currentLang==='zh'?'🗂️ 全部':'🗂️ ทั้งหมด')
+      : (CAT[c]?.[currentLang] || c);
+    return `<button class="cat-filter-btn ${currentMenuCat===c?'active':''}" onclick="setMenuCat('${c}')">${label}</button>`;
+  }).join('');
+}
+function setMenuCat(cat) {
+  currentMenuCat = cat;
+  buildMenuCatFilter();
+  renderMenus();
+}
+
 // ===== RENDER MENUS =====
 function renderMenus() {
   const search=(document.getElementById('menu-search')?.value||'').toLowerCase();
-  const filtered=menus.filter(m=>
+  let filtered=menus.filter(m=>
     (m.name_th||'').toLowerCase().includes(search)||
     (m.name_en||'').toLowerCase().includes(search)||
     (m.name_zh||'').toLowerCase().includes(search)
   );
+  // กรองตามหมวดหมู่
+  if (currentMenuCat !== 'all') {
+    filtered = filtered.filter(m => m.category === currentMenuCat);
+  }
   const cont=document.getElementById('menus-grid');
   if (!filtered.length) { cont.innerHTML=`<div class="empty-state"><div class="empty-state-icon">🍽️</div><p>${t('empty_menu')}</p></div>`; return; }
   cont.innerHTML=filtered.map(m=>{
@@ -1033,7 +1067,9 @@ function renderMenus() {
     const ing=m.ingredients.slice(0,3).map(i=>{const p=products.find(x=>x.id===i.productId);return p?getProductName(p):i.productName;}).join(', ')+(m.ingredients.length>3?`...`:'');
     const nameAlt=[m.name_en&&currentLang!=='en'?'🇬🇧 '+m.name_en:'',m.name_zh&&currentLang!=='zh'?'🇨🇳 '+m.name_zh:''].filter(Boolean).join(' ');
     const desc=getMenuDesc(m);
-    return `<div class="menu-card ${!avail?'':''}">
+    const emoji = MENU_EMOJI[m.category] || '🍽️';
+    return `<div class="menu-card ${!avail?'unavailable':''}">
+      <div style="font-size:2rem;text-align:center;margin-bottom:6px;">${emoji}</div>
       <div class="menu-card-header">
         <div class="menu-card-title">${getMenuName(m)}</div>
         <div class="menu-card-price">${m.price} ฿</div>
