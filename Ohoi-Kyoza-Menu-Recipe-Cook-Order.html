@@ -280,12 +280,10 @@ tr:last-child td{border-bottom:none;}
 .warm-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(155,34,38,0.15),var(--gold),rgba(155,34,38,0.15),transparent);margin:20px 0;}
 .footer-note{text-align:center;padding:28px 20px;color:var(--ink-muted);font-size:0.85rem;font-style:italic;}
 
-/* CATEGORY FILTER BAR */
 .cat-filter-btn{padding:7px 14px;border:1.5px solid rgba(155,34,38,0.15);background:#FFFFFF;color:var(--ink-muted);border-radius:20px;cursor:pointer;font-weight:600;font-size:0.78rem;transition:all 0.3s;white-space:nowrap;font-family:'Noto Sans Thai',sans-serif;}
 .cat-filter-btn:hover{border-color:var(--crimson);color:var(--crimson);}
 .cat-filter-btn.active{background:linear-gradient(135deg,var(--crimson),var(--crimson-light));color:white;border-color:var(--crimson);box-shadow:0 3px 12px rgba(155,34,38,0.25);}
 #menu-cat-filter::-webkit-scrollbar{display:none;}
-
 @media(max-width:768px){
   .logo{font-size:2rem;}
   .stats-grid{grid-template-columns:1fr;gap:10px;}
@@ -520,17 +518,17 @@ function fbListen(path,cb){ if(_db) _db.ref(path).on('value',cb); }
 
 // ===== CATEGORY DATA =====
 const CAT = {
-  gyoza:   {th:'🥟 เกี๊ยวซ่า',          en:'🥟 Gyoza',              zh:'🥟 煎饺'},
-  rice:    {th:'🍚 ข้าว',               en:'🍚 Rice',               zh:'🍚 米饭'},
-  noodle:  {th:'🍜 ก๋วยเตี๋ยว',         en:'🍜 Noodle',             zh:'🍜 面条'},
-  soup:    {th:'🍲 ซุป',               en:'🍲 Soup',               zh:'🍲 汤'},
-  snack:   {th:'🍿 ของทานเล่น',         en:'🍿 Snack',              zh:'🍿 小食'},
-  taiwan:  {th:'🫕 อาหารเล่นสไตล์ไต้หวัน',en:'🫕 Taiwanese Snack',   zh:'🫕 台湾小吃'},
-  salad:   {th:'🥗 สลัด',              en:'🥗 Salad',              zh:'🥗 沙拉'},
-  frozen:  {th:'🧊 อาหารแช่แข็ง',       en:'🧊 Frozen Food',        zh:'🧊 冷冻食品'},
-  drink:   {th:'🥤 เครื่องดื่ม',        en:'🥤 Drink',              zh:'🥤 饮料'},
-  dessert: {th:'🍮 ของหวาน',           en:'🍮 Dessert',            zh:'🍮 甜点'},
-  set:     {th:'🍱 เซ็ต',              en:'🍱 Set',                zh:'🍱 套餐'}
+  gyoza:   {th:'🥟 เกี๊ยวซ่า',              en:'🥟 Gyoza',            zh:'🥟 煎饺'},
+  rice:    {th:'🍚 ข้าว',                   en:'🍚 Rice',             zh:'🍚 米饭'},
+  noodle:  {th:'🍜 ก๋วยเตี๋ยว',             en:'🍜 Noodle',           zh:'🍜 面条'},
+  soup:    {th:'🍲 ซุป',                    en:'🍲 Soup',             zh:'🍲 汤'},
+  snack:   {th:'🍿 ของทานเล่น',             en:'🍿 Snack',            zh:'🍿 小食'},
+  taiwan:  {th:'🫕 อาหารเล่นสไตล์ไต้หวัน', en:'🫕 Taiwanese Snack',  zh:'🫕 台湾小吃'},
+  salad:   {th:'🥗 สลัด',                  en:'🥗 Salad',            zh:'🥗 沙拉'},
+  frozen:  {th:'🧊 อาหารแช่แข็ง',           en:'🧊 Frozen Food',      zh:'🧊 冷冻食品'},
+  drink:   {th:'🥤 เครื่องดื่ม',            en:'🥤 Drink',            zh:'🥤 饮料'},
+  dessert: {th:'🍮 ของหวาน',               en:'🍮 Dessert',          zh:'🍮 甜点'},
+  set:     {th:'🍱 เซ็ต',                  en:'🍱 Set',              zh:'🍱 套餐'}
 };
 
 // ===== TRANSLATIONS =====
@@ -705,8 +703,8 @@ const TL = {
 };
 
 // ===== STATE =====
-let currentLang   = localStorage.getItem('ok_lang') || 'th';
-let currentMenuCat = 'all'; // category filter for menus tab
+let currentLang    = localStorage.getItem('ok_lang') || 'th';
+let currentMenuCat = 'all';
 let products      = JSON.parse(localStorage.getItem('ok_products'))     || [];
 let menus         = JSON.parse(localStorage.getItem('ok_menus'))        || [];
 let cookHistory   = JSON.parse(localStorage.getItem('ok_cook_history')) || [];
@@ -831,24 +829,31 @@ document.addEventListener('DOMContentLoaded', () => {
   startClock();
   renderCatDropdowns();
 
-  // Load from localStorage first
-  renderMenus(); updateDashboard(); renderHistory();
+  // โหลดจาก localStorage ก่อนเสมอ
+  menus       = JSON.parse(localStorage.getItem('ok_menus')        || '[]');
+  products    = JSON.parse(localStorage.getItem('ok_products')     || '[]');
+  cookHistory = JSON.parse(localStorage.getItem('ok_cook_history') || '[]');
+  buildMenuCatFilter(); renderMenus(); updateDashboard(); renderHistory();
 
   // Firebase real-time listeners
   fbListen('products', snap => {
     if (snap && snap.exists()) {
-      const d = snap.val();
-      products = Object.values(d).map(p=>({...p,id:Number(p.id)||p.id}));
-      localStorage.setItem('ok_products', JSON.stringify(products));
+      const fbProds = Object.values(snap.val()).map(p=>({...p,id:Number(p.id)||p.id}));
+      if (fbProds.length > 0) {
+        products = fbProds;
+        localStorage.setItem('ok_products', JSON.stringify(products));
+      }
     }
     renderMenus(); updateDashboard();
   });
   fbListen('menus', snap => {
     if (snap && snap.exists()) {
-      const d = snap.val();
-      menus = Object.values(d).map(m=>({...m,id:Number(m.id)||m.id}));
-      localStorage.setItem('ok_menus', JSON.stringify(menus));
-    } else { menus = []; }
+      const fbMenus = Object.values(snap.val()).map(m=>({...m,id:Number(m.id)||m.id}));
+      if (fbMenus.length > 0) {
+        menus = fbMenus;
+        localStorage.setItem('ok_menus', JSON.stringify(menus));
+      }
+    }
     buildMenuCatFilter(); renderMenus(); updateDashboard();
   });
   fbListen('cook_history', snap => {
@@ -1030,23 +1035,26 @@ function deleteMenuFromModal() {
 
 document.getElementById('edit-modal').addEventListener('click',function(e){if(e.target===this)closeEditModal();});
 
-// ===== BUILD CATEGORY FILTER =====
+// ===== EMOJI MAP =====
+const MENU_EMOJI = {
+  gyoza:'🥟', rice:'🍚', noodle:'🍜', soup:'🍲',
+  snack:'🍿', taiwan:'🫕', salad:'🥗', frozen:'🧊',
+  drink:'🥤', dessert:'🍮', set:'🍱'
+};
+
+// ===== CATEGORY FILTER =====
 function buildMenuCatFilter() {
   const bar = document.getElementById('menu-cat-filter');
   if (!bar) return;
-  const cats = ['all', ...Object.keys(CAT).filter(k => menus.some(m => m.category === k))];
-  bar.innerHTML = cats.map(c => {
+  const used = ['all', ...Object.keys(CAT).filter(k => menus.some(m => m.category === k))];
+  bar.innerHTML = used.map(c => {
     const label = c === 'all'
       ? (currentLang==='en'?'🗂️ All':currentLang==='zh'?'🗂️ 全部':'🗂️ ทั้งหมด')
       : (CAT[c]?.[currentLang] || c);
     return `<button class="cat-filter-btn ${currentMenuCat===c?'active':''}" onclick="setMenuCat('${c}')">${label}</button>`;
   }).join('');
 }
-function setMenuCat(cat) {
-  currentMenuCat = cat;
-  buildMenuCatFilter();
-  renderMenus();
-}
+function setMenuCat(cat) { currentMenuCat=cat; buildMenuCatFilter(); renderMenus(); }
 
 // ===== RENDER MENUS =====
 function renderMenus() {
@@ -1056,7 +1064,6 @@ function renderMenus() {
     (m.name_en||'').toLowerCase().includes(search)||
     (m.name_zh||'').toLowerCase().includes(search)
   );
-  // กรองตามหมวดหมู่
   if (currentMenuCat !== 'all') {
     filtered = filtered.filter(m => m.category === currentMenuCat);
   }
