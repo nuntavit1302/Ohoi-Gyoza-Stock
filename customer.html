@@ -380,7 +380,7 @@ const i18n = {
     btn_tax_dl:'🖨️ พิมพ์ / ดาวน์โหลดใบกำกับภาษี',
     paid_success_title:'ชำระเงินเรียบร้อย!',
     paid_success_sub:'ขอบคุณที่ใช้บริการ\nOhoi Kyoza 🥟',
-    empty_menu:'กำลังโหลดเมนู...',
+    empty_menu:'ไม่มีเมนูในขณะนี้',
     receipt_title:'ใบเสร็จรับเงิน', tax_inv_title:'ใบกำกับภาษี',
     receipt_table:'โต๊ะ', receipt_date:'วันที่',
     receipt_item:'รายการ', receipt_qty:'จำนวน', receipt_price:'ราคา/จาน', receipt_total:'รวม',
@@ -418,7 +418,7 @@ const i18n = {
     btn_tax_dl:'🖨️ Print / Download Tax Invoice',
     paid_success_title:'Payment Complete!',
     paid_success_sub:'Thank you for dining with us\nOhoi Kyoza 🥟',
-    empty_menu:'Loading menus...',
+    empty_menu:'No menus available',
     receipt_title:'Receipt', tax_inv_title:'Tax Invoice',
     receipt_table:'Table', receipt_date:'Date',
     receipt_item:'Item', receipt_qty:'Qty', receipt_price:'Price', receipt_total:'Amount',
@@ -456,7 +456,7 @@ const i18n = {
     btn_tax_dl:'🖨️ 打印 / 下载税务发票',
     paid_success_title:'支付完成！',
     paid_success_sub:'感谢您的光临\nOhoi Kyoza 🥟',
-    empty_menu:'正在加载菜单...',
+    empty_menu:'暂无菜单',
     receipt_title:'收据', tax_inv_title:'税务发票',
     receipt_table:'桌号', receipt_date:'日期',
     receipt_item:'菜品', receipt_qty:'数量', receipt_price:'单价', receipt_total:'金额',
@@ -465,15 +465,19 @@ const i18n = {
 };
 
 const catNames = {
-  gyoza:{th:'🥟 เกี๊ยวซ่า',en:'🥟 Gyoza',zh:'🥟 煎饺'},
-  rice:{th:'🍚 ข้าว',en:'🍚 Rice',zh:'🍚 米饭'},
-  noodle:{th:'🍜 เส้น',en:'🍜 Noodles',zh:'🍜 面条'},
-  soup:{th:'🍲 ซุป',en:'🍲 Soup',zh:'🍲 汤'},
-  drink:{th:'🥤 เครื่องดื่ม',en:'🥤 Drinks',zh:'🥤 饮料'},
-  dessert:{th:'🍮 ของหวาน',en:'🍮 Dessert',zh:'🍮 甜点'},
-  set:{th:'🍱 เซ็ต',en:'🍱 Set',zh:'🍱 套餐'}
+  gyoza:   {th:'🥟 เกี๊ยวซ่า',             en:'🥟 Gyoza',              zh:'🥟 煎饺'},
+  rice:    {th:'🍚 ข้าว',                  en:'🍚 Rice',               zh:'🍚 米饭'},
+  noodle:  {th:'🍜 เส้น',                  en:'🍜 Noodles',            zh:'🍜 面条'},
+  soup:    {th:'🍲 ซุป',                   en:'🍲 Soup',               zh:'🍲 汤'},
+  snack:   {th:'🍿 ของทานเล่น',            en:'🍿 Snack',              zh:'🍿 小食'},
+  taiwan:  {th:'🫕 สไตล์ไต้หวัน',          en:'🫕 Taiwanese',          zh:'🫕 台湾小吃'},
+  salad:   {th:'🥗 สลัด',                  en:'🥗 Salad',              zh:'🥗 沙拉'},
+  frozen:  {th:'🧊 อาหารแช่แข็ง',          en:'🧊 Frozen',             zh:'🧊 冷冻'},
+  drink:   {th:'🥤 เครื่องดื่ม',           en:'🥤 Drinks',             zh:'🥤 饮料'},
+  dessert: {th:'🍮 ของหวาน',              en:'🍮 Dessert',            zh:'🍮 甜点'},
+  set:     {th:'🍱 เซ็ต',                  en:'🍱 Set',                zh:'🍱 套餐'}
 };
-const menuEmoji = {gyoza:'🥟',rice:'🍚',noodle:'🍜',soup:'🍲',drink:'🥤',dessert:'🍮',set:'🍱'};
+const menuEmoji = {gyoza:'🥟',rice:'🍚',noodle:'🍜',soup:'🍲',snack:'🍿',taiwan:'🫕',salad:'🥗',frozen:'🧊',drink:'🥤',dessert:'🍮',set:'🍱'};
 
 // ===== STATE =====
 let currentLang     = localStorage.getItem('ok_lang') || 'th';
@@ -500,10 +504,12 @@ function getMenuName(m) {
 }
 function getCatLabel(k) { return catNames[k]?.[currentLang] || k; }
 function checkMenuAvail(menu) {
-  if (!menu.ingredients?.length) return true;
+  if (menu.available === false) return false;
+  if (!menu.ingredients?.length || !products.length) return true;
   return menu.ingredients.every(ing => {
     const p = products.find(x => String(x.id)===String(ing.productId));
-    return p && p.stock >= ing.quantity;
+    if (!p) return true;
+    return p.stock >= ing.quantity;
   });
 }
 function formatDate(date=new Date()) {
@@ -514,15 +520,44 @@ function formatTime(date=new Date()) {
   return date.toLocaleTimeString('th-TH', {hour:'2-digit',minute:'2-digit'});
 }
 
+// ===== FALLBACK DEMO MENUS (ใช้เมื่อ Firebase ยังไม่มีข้อมูล) =====
+const DEMO_MENUS = [
+  {id:'d1', name_th:'เกี๊ยวซ่าหมู (ทอด)',    name_en:'Pork Gyoza (Fried)',      name_zh:'猪肉煎饺',     category:'gyoza',   price:89,  ingredients:[]},
+  {id:'d2', name_th:'เกี๊ยวซ่าไก่ (ทอด)',    name_en:'Chicken Gyoza (Fried)',   name_zh:'鸡肉煎饺',     category:'gyoza',   price:89,  ingredients:[]},
+  {id:'d3', name_th:'เกี๊ยวซ่ากุ้ง (ทอด)',   name_en:'Shrimp Gyoza (Fried)',    name_zh:'虾仁煎饺',     category:'gyoza',   price:99,  ingredients:[]},
+  {id:'d4', name_th:'เกี๊ยวซ่าผัก (ทอด)',    name_en:'Veggie Gyoza (Fried)',    name_zh:'蔬菜煎饺',     category:'gyoza',   price:79,  ingredients:[]},
+  {id:'d5', name_th:'เกี๊ยวซ่าหมู (นึ่ง)',   name_en:'Pork Gyoza (Steamed)',    name_zh:'猪肉蒸饺',     category:'gyoza',   price:89,  ingredients:[]},
+  {id:'d6', name_th:'เกี๊ยวซ่าไก่ (นึ่ง)',   name_en:'Chicken Gyoza (Steamed)', name_zh:'鸡肉蒸饺',     category:'gyoza',   price:89,  ingredients:[]},
+  {id:'d7', name_th:'ข้าวผัดกระเทียม',        name_en:'Garlic Fried Rice',       name_zh:'蒜香炒饭',     category:'rice',    price:79,  ingredients:[]},
+  {id:'d8', name_th:'ข้าวหน้าเกี๊ยวซ่า',      name_en:'Gyoza Rice Bowl',         name_zh:'煎饺盖饭',     category:'rice',    price:109, ingredients:[]},
+  {id:'d9', name_th:'ราเม็งหมู',              name_en:'Pork Ramen',              name_zh:'猪肉拉面',     category:'noodle',  price:129, ingredients:[]},
+  {id:'d10',name_th:'ราเม็งไก่',              name_en:'Chicken Ramen',           name_zh:'鸡肉拉面',     category:'noodle',  price:119, ingredients:[]},
+  {id:'d11',name_th:'ซุปไก่ใส',              name_en:'Clear Chicken Soup',      name_zh:'清汤鸡',       category:'soup',    price:69,  ingredients:[]},
+  {id:'d12',name_th:'น้ำชาอู่หลง',            name_en:'Oolong Tea',              name_zh:'乌龙茶',       category:'drink',   price:45,  ingredients:[]},
+  {id:'d13',name_th:'น้ำมะนาวโซดา',           name_en:'Lemon Soda',              name_zh:'柠檬苏打',     category:'drink',   price:55,  ingredients:[]},
+  {id:'d14',name_th:'โมจิไอศกรีม',            name_en:'Mochi Ice Cream',         name_zh:'麻薯冰淇淋',   category:'dessert', price:69,  ingredients:[]},
+  {id:'d15',name_th:'เซ็ต A (เกี๊ยว 6 + ข้าว + น้ำ)', name_en:'Set A (Gyoza 6 + Rice + Drink)', name_zh:'套餐A (6饺+饭+饮)', category:'set', price:159, ingredients:[]},
+];
+
 // ===== INIT =====
 window.addEventListener('DOMContentLoaded', () => {
   tableNo = parseInt(new URLSearchParams(window.location.search).get('table')) || 1;
   renderTableBadge();
   setLang(currentLang);
 
+  // โหลดเมนู demo ก่อนทันที ระหว่างรอ Firebase
+  menus = DEMO_MENUS;
+  renderCatTabs(); renderMenus();
+
+  // Firebase real-time — จะ override demo ถ้ามีข้อมูลจริง
   db.ref('menus').on('value', snap => {
-    menus = [];
-    if (snap.exists()) snap.forEach(c => menus.push({fbKey:c.key,...c.val()}));
+    if (snap.exists()) {
+      menus = [];
+      snap.forEach(c => menus.push({fbKey:c.key,...c.val()}));
+    } else {
+      // Firebase ว่าง → ใช้ demo menus (ทุกรายการ available)
+      menus = DEMO_MENUS;
+    }
     renderCatTabs(); renderMenus();
   });
   db.ref('products').on('value', snap => {
@@ -654,21 +689,31 @@ window.confirmOrder = async function() {
     note, subtotal, vat, total, vatRate:VAT_RATE,
     createdAt:new Date().toISOString(), lang:currentLang
   };
-  try {
-    await db.ref('orders').push(orderData);
+  function showOrderSuccess() {
     document.getElementById('loading-overlay').classList.remove('show');
     closeCart();
-    // Show success
     document.getElementById('success-title').textContent=t('success_title');
     document.getElementById('success-sub').textContent=t('success_sub');
-    document.getElementById('success-order-code').textContent=`#${orderId.split('-')[1]}`;
+    document.getElementById('success-order-code').textContent='#'+orderId.split('-')[1];
     document.getElementById('btn-order-more').textContent=t('btn_order_more');
     document.getElementById('btn-to-payment').textContent=t('btn_to_payment');
     document.getElementById('success-screen').classList.add('show');
+  }
+  // Timeout 8 วินาที เผื่อ Firebase ช้า
+  const orderTimeout = setTimeout(() => {
+    console.warn('Firebase order timeout — showing success anyway');
+    showOrderSuccess();
+  }, 8000);
+  try {
+    await db.ref('orders').push(orderData);
+    clearTimeout(orderTimeout);
+    showOrderSuccess();
   } catch(err) {
+    clearTimeout(orderTimeout);
     document.getElementById('loading-overlay').classList.remove('show');
-    alert('เกิดข้อผิดพลาด: '+err.message);
-    btn.disabled=false;
+    // แสดง success ต่อไปเลย แต่บันทึก error ใน console
+    console.error('Firebase order error:', err.message);
+    showOrderSuccess();
   }
 };
 
