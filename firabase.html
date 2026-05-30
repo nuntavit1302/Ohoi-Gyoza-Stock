@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ohoi Kyoza — Firebase Sync</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;600;700&family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --crimson:#9B2226;--gold:#D4A373;--jade:#588157;
+  --warm-white:#FDF6EC;--cream:#F5EBDC;--ink:#3D2B1F;--ink-muted:#9B8B7F;
+}
+body{font-family:'Noto Sans Thai',sans-serif;background:var(--warm-white);color:var(--ink);min-height:100vh;}
+
+.header{background:linear-gradient(160deg,var(--crimson),#5A1216);padding:28px 20px;text-align:center;}
+.logo{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:#E9C496;letter-spacing:3px;}
+.logo span{color:#FFF8F0;font-weight:400;font-style:italic;}
+.subtitle{color:rgba(255,248,240,0.7);font-size:0.85rem;margin-top:6px;}
+
+.wrap{max-width:680px;margin:32px auto;padding:0 18px 60px;}
+
+.card{background:#fff;border-radius:20px;padding:26px;margin-bottom:20px;border:1px solid rgba(155,34,38,0.08);box-shadow:0 2px 14px rgba(155,34,38,0.07);}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:700;color:var(--crimson);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+
+/* STATUS */
+.status-row{display:flex;flex-direction:column;gap:10px;}
+.status-item{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--warm-white);border-radius:10px;}
+.status-label{font-size:0.85rem;color:var(--ink-muted);}
+.status-val{font-weight:700;font-size:0.95rem;}
+.badge{padding:3px 10px;border-radius:20px;font-size:0.78rem;font-weight:700;}
+.badge.ok{background:#D8F3DC;color:#1B4332;}
+.badge.warn{background:#FFF3CD;color:#856404;}
+.badge.err{background:#F8D7DA;color:#721C24;}
+
+/* LOG */
+.log-box{background:#1E1008;border-radius:12px;padding:16px;font-family:monospace;font-size:0.8rem;color:#E9C496;max-height:260px;overflow-y:auto;line-height:1.7;}
+.log-ok{color:#86EFAC;}
+.log-warn{color:#FCD34D;}
+.log-err{color:#FCA5A5;}
+.log-info{color:#93C5FD;}
+
+/* BTN */
+.btn{width:100%;padding:14px;border:none;border-radius:14px;font-family:inherit;font-size:1rem;font-weight:700;cursor:pointer;transition:all .3s;margin-bottom:10px;}
+.btn-sync{background:linear-gradient(135deg,var(--crimson),#AE2012);color:#fff;}
+.btn-sync:hover{transform:translateY(-2px);box-shadow:0 5px 18px rgba(155,34,38,0.35);}
+.btn-sync:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.btn-clear{background:var(--cream);color:var(--ink-muted);}
+.btn-clear:hover{background:#e8d5c2;color:var(--ink);}
+
+/* PROGRESS */
+.progress-wrap{display:none;margin-bottom:14px;}
+.progress-bar{height:8px;background:#e8d5c2;border-radius:99px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--crimson),var(--gold));border-radius:99px;width:0%;transition:width .4s;}
+.progress-text{font-size:0.8rem;color:var(--ink-muted);margin-top:6px;text-align:center;}
+
+/* MENU PREVIEW TABLE */
+.preview-table{width:100%;border-collapse:collapse;font-size:0.82rem;}
+.preview-table th{background:var(--crimson);color:#fff;padding:8px 10px;text-align:left;}
+.preview-table td{padding:7px 10px;border-bottom:1px solid var(--cream);}
+.preview-table tr:hover td{background:var(--warm-white);}
+.cat-badge{padding:2px 8px;border-radius:99px;background:var(--cream);font-size:0.72rem;color:var(--ink-muted);}
+
+.empty-state{text-align:center;padding:30px;color:var(--ink-muted);}
+.empty-icon{font-size:2.5rem;margin-bottom:10px;}
+
+.note{font-size:0.8rem;color:var(--ink-muted);background:var(--warm-white);border-radius:10px;padding:12px 14px;line-height:1.7;border-left:3px solid var(--gold);}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">Ohoi <span>Kyoza</span></div>
+  <div class="subtitle">🔥 Firebase Sync Tool — อัปโหลดเมนูขึ้น Firebase</div>
+</div>
+
+<div class="wrap">
+
+  <!-- STATUS CARD -->
+  <div class="card">
+    <div class="card-title">📊 สถานะข้อมูล</div>
+    <div class="status-row" id="status-row">
+      <div class="status-item">
+        <span class="status-label">🗂️ เมนูใน LocalStorage (Admin)</span>
+        <span class="status-val" id="ls-menus">กำลังตรวจ...</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">📦 Products ใน LocalStorage</span>
+        <span class="status-val" id="ls-products">กำลังตรวจ...</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">🔥 Firebase Connection</span>
+        <span class="status-val" id="fb-status">กำลังเชื่อมต่อ...</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">☁️ เมนูใน Firebase ปัจจุบัน</span>
+        <span class="status-val" id="fb-menus">กำลังโหลด...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="card">
+    <div class="card-title">⚡ Sync ขึ้น Firebase</div>
+    <div class="note" style="margin-bottom:16px;">
+      ⚠️ <strong>เปิดหน้านี้บนเครื่องที่เคยใช้ Admin</strong> (Ohoi-Kyoza-Menu-Recipe-Cook-Order.html) เพื่อให้ LocalStorage มีข้อมูลเมนูครบถ้วน<br>
+      จากนั้นกด <strong>"Sync เมนูทั้งหมด"</strong> เมนูจะถูกอัปโหลดขึ้น Firebase ทันที
+    </div>
+    <div class="progress-wrap" id="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="progress-text" id="progress-text">0 / 0</div>
+    </div>
+    <button class="btn btn-sync" id="sync-btn" onclick="syncAll()">🔄 Sync เมนูทั้งหมดขึ้น Firebase</button>
+    <button class="btn btn-sync" style="background:linear-gradient(135deg,var(--jade),#3A6B39);" onclick="syncProducts()">📦 Sync Products ด้วย</button>
+    <button class="btn btn-clear" onclick="clearLog()">🗑️ ล้าง Log</button>
+  </div>
+
+  <!-- LOG -->
+  <div class="card">
+    <div class="card-title">📋 Log</div>
+    <div class="log-box" id="log-box">
+      <span class="log-info">► เริ่มต้นระบบ...</span><br>
+    </div>
+  </div>
+
+  <!-- PREVIEW -->
+  <div class="card">
+    <div class="card-title">🍽️ เมนูที่พบใน LocalStorage</div>
+    <div id="preview-area"><div class="empty-state"><div class="empty-icon">⏳</div><p>กำลังโหลด...</p></div></div>
+  </div>
+
+</div>
+
+<script>
+// ===== FIREBASE =====
+const _app = firebase.apps.length ? firebase.app() : firebase.initializeApp({
+  apiKey:"AIzaSyC650BBAj_y7bObsIA5KpMQkLDNg4FEtmw",
+  authDomain:"ohoi-kyoza.firebaseapp.com",
+  databaseURL:"https://ohoi-kyoza-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"ohoi-kyoza",
+  storageBucket:"ohoi-kyoza.firebasestorage.app",
+  messagingSenderId:"311350815436",
+  appId:"1:311350815436:web:5638717dc207f286e5b069"
+});
+const db = firebase.database();
+
+// ===== LOG =====
+function log(msg, type='info') {
+  const box = document.getElementById('log-box');
+  const cls = {ok:'log-ok', warn:'log-warn', err:'log-err', info:'log-info'}[type] || 'log-info';
+  box.innerHTML += `<span class="${cls}">${new Date().toLocaleTimeString('th')} — ${msg}</span><br>`;
+  box.scrollTop = box.scrollHeight;
+}
+function clearLog() {
+  document.getElementById('log-box').innerHTML = '<span class="log-info">► Log cleared</span><br>';
+}
+
+// ===== LOAD LOCAL STORAGE =====
+function getLocalMenus() {
+  try {
+    const raw = localStorage.getItem('ok_menus');
+    return raw ? JSON.parse(raw) : [];
+  } catch(e) { return []; }
+}
+function getLocalProducts() {
+  try {
+    const raw = localStorage.getItem('ok_products');
+    return raw ? JSON.parse(raw) : [];
+  } catch(e) { return []; }
+}
+
+// ===== BADGE =====
+function badge(text, type) {
+  return `<span class="badge ${type}">${text}</span>`;
+}
+
+// ===== CHECK STATUS =====
+function checkStatus() {
+  const menus    = getLocalMenus();
+  const products = getLocalProducts();
+
+  // LocalStorage counts
+  const lsMenuEl = document.getElementById('ls-menus');
+  const lsProdEl = document.getElementById('ls-products');
+  lsMenuEl.innerHTML    = menus.length    > 0 ? badge(`${menus.length} รายการ`, 'ok')    : badge('ไม่พบข้อมูล', 'warn');
+  lsProdEl.innerHTML    = products.length > 0 ? badge(`${products.length} รายการ`, 'ok') : badge('ไม่พบข้อมูล', 'warn');
+
+  log(`LocalStorage: พบเมนู ${menus.length} รายการ, products ${products.length} รายการ`, menus.length > 0 ? 'ok' : 'warn');
+
+  // Firebase connection
+  db.ref('.info/connected').on('value', snap => {
+    const connected = snap.val();
+    document.getElementById('fb-status').innerHTML = connected
+      ? badge('✅ เชื่อมต่อแล้ว', 'ok')
+      : badge('❌ ไม่ได้เชื่อมต่อ', 'err');
+    log(`Firebase: ${connected ? 'เชื่อมต่อสำเร็จ' : 'ไม่ได้เชื่อมต่อ'}`, connected ? 'ok' : 'err');
+  });
+
+  // Firebase current menus count
+  db.ref('menus').once('value', snap => {
+    const count = snap.exists() ? Object.keys(snap.val()).length : 0;
+    document.getElementById('fb-menus').innerHTML = badge(`${count} รายการ`, count > 0 ? 'ok' : 'warn');
+    log(`Firebase ปัจจุบัน: มีเมนู ${count} รายการ`, count > 0 ? 'ok' : 'warn');
+  });
+
+  renderPreview(menus);
+}
+
+// ===== RENDER PREVIEW =====
+function renderPreview(menus) {
+  const area = document.getElementById('preview-area');
+  if (!menus.length) {
+    area.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><p>ไม่พบเมนูใน LocalStorage<br><small>กรุณาเปิดหน้านี้บนเครื่องที่เคยใช้ Admin</small></p></div>`;
+    return;
+  }
+  const rows = menus.map(m => `
+    <tr>
+      <td>${m.name_th || m.name || '—'}</td>
+      <td>${m.name_en || '—'}</td>
+      <td><span class="cat-badge">${m.category || '—'}</span></td>
+      <td>${m.price || 0} ฿</td>
+      <td>${m.available !== false ? '✅' : '❌'}</td>
+    </tr>`).join('');
+  area.innerHTML = `
+    <table class="preview-table">
+      <thead><tr><th>ชื่อไทย</th><th>English</th><th>หมวด</th><th>ราคา</th><th>พร้อมขาย</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+// ===== SYNC MENUS =====
+async function syncAll() {
+  const menus = getLocalMenus();
+  if (!menus.length) {
+    alert('⚠️ ไม่พบเมนูใน LocalStorage\nกรุณาเปิดหน้านี้บนเครื่องที่เคยใช้งาน Admin');
+    return;
+  }
+
+  const btn = document.getElementById('sync-btn');
+  btn.disabled = true;
+  const pw = document.getElementById('progress-wrap');
+  const pf = document.getElementById('progress-fill');
+  const pt = document.getElementById('progress-text');
+  pw.style.display = 'block';
+
+  log(`เริ่ม Sync เมนู ${menus.length} รายการ...`, 'info');
+  let done = 0;
+
+  for (const m of menus) {
+    try {
+      const key = String(m.id || m.fbKey || Date.now());
+      await db.ref(`menus/${key}`).set({
+        ...m,
+        available: m.available !== false,
+        id: key,
+        updatedAt: new Date().toISOString()
+      });
+      done++;
+      pf.style.width = `${(done/menus.length)*100}%`;
+      pt.textContent = `${done} / ${menus.length}`;
+      log(`✅ ${m.name_th || m.name} — อัปโหลดแล้ว`, 'ok');
+    } catch(e) {
+      log(`❌ ${m.name_th || m.name} — ERROR: ${e.message}`, 'err');
+    }
+  }
+
+  log(`🎉 Sync เสร็จสิ้น! อัปโหลด ${done}/${menus.length} รายการ`, 'ok');
+  btn.disabled = false;
+  checkStatus();
+}
+
+// ===== SYNC PRODUCTS =====
+async function syncProducts() {
+  const products = getLocalProducts();
+  if (!products.length) {
+    alert('⚠️ ไม่พบ Products ใน LocalStorage');
+    return;
+  }
+  log(`เริ่ม Sync products ${products.length} รายการ...`, 'info');
+  const po = {};
+  products.forEach(p => { po[String(p.id)] = p; });
+  try {
+    await db.ref('products').set(po);
+    log(`✅ Sync products ${products.length} รายการ เสร็จแล้ว`, 'ok');
+  } catch(e) {
+    log(`❌ Sync products ERROR: ${e.message}`, 'err');
+  }
+  checkStatus();
+}
+
+// ===== INIT =====
+window.addEventListener('DOMContentLoaded', checkStatus);
+</script>
+</body>
+</html>
