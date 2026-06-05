@@ -5,200 +5,181 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ohoi Kyoza - สั่งอาหาร</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;600;700&family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
-<!-- Firebase Compat -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
-<!-- QRCode for payment -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{
   --crimson:#9B2226;--crimson-light:#AE2012;--crimson-soft:rgba(155,34,38,0.08);
   --gold:#D4A373;--gold-light:#E9C496;--gold-soft:rgba(212,163,115,0.15);
-  --jade:#588157;--jade-soft:rgba(88,129,87,0.12);--jade-light:#6B9B6A;
+  --jade:#588157;--jade-light:#6B9B6A;--jade-soft:rgba(88,129,87,0.12);
   --warm-white:#FDF6EC;--cream:#F5EBDC;--paper:#FAF3E8;
   --ink:#3D2B1F;--ink-light:#6B5B4F;--ink-muted:#9B8B7F;
   --shadow-warm:rgba(155,34,38,0.08);
 }
 body{font-family:'Noto Sans Thai',sans-serif;background:var(--warm-white);color:var(--ink);min-height:100vh;padding-bottom:140px;}
 
-@keyframes slide-up{from{transform:translateY(24px);opacity:0;}to{transform:translateY(0);opacity:1;}}
-@keyframes warm-pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.03);}}
-@keyframes bounce-in{0%{transform:scale(0.5);opacity:0;}70%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
-@keyframes fade-in{from{opacity:0;}to{opacity:1;}}
-@keyframes spin{to{transform:rotate(360deg);}}
+@keyframes slide-up{from{transform:translateY(24px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes warm-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+@keyframes bounce-in{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
+@keyframes fade-in{from{opacity:0}to{opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
 
 /* HEADER */
 .header{background:linear-gradient(160deg,var(--crimson) 0%,#7B181C 60%,#5A1216 100%);padding:28px 20px 36px;text-align:center;position:relative;overflow:hidden;}
-.header::before{content:'🥟';position:absolute;top:14px;left:18px;font-size:1.8rem;opacity:0.35;animation:warm-pulse 4s ease-in-out infinite;}
-.header::after{content:'🏮';position:absolute;top:14px;right:18px;font-size:1.8rem;opacity:0.35;animation:warm-pulse 4s ease-in-out infinite 2s;}
-.logo{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:700;color:var(--gold-light);letter-spacing:3px;text-shadow:0 2px 10px rgba(0,0,0,0.3);}
+.header::before{content:'🥟';position:absolute;top:14px;left:18px;font-size:1.8rem;opacity:.35;animation:warm-pulse 4s ease-in-out infinite;}
+.header::after{content:'🏮';position:absolute;top:14px;right:18px;font-size:1.8rem;opacity:.35;animation:warm-pulse 4s ease-in-out infinite 2s;}
+.logo{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:700;color:var(--gold-light);letter-spacing:3px;text-shadow:0 2px 10px rgba(0,0,0,.3);}
 .logo span{color:#FFF8F0;font-weight:400;font-style:italic;}
-.table-badge{display:inline-block;margin-top:10px;background:rgba(255,255,255,0.18);border:1.5px solid rgba(255,255,255,0.35);color:#FFF8F0;padding:7px 22px;border-radius:24px;font-size:1rem;font-weight:700;}
+.table-badge{display:inline-block;margin-top:10px;background:rgba(255,255,255,.18);border:1.5px solid rgba(255,255,255,.35);color:#FFF8F0;padding:7px 22px;border-radius:24px;font-size:1rem;font-weight:700;}
 .lang-switcher{display:flex;justify-content:center;gap:8px;margin-top:14px;}
-.lang-btn{padding:6px 14px;border:1.5px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.85);border-radius:20px;cursor:pointer;font-weight:600;font-size:0.78rem;transition:all 0.3s;font-family:inherit;}
+.lang-btn{padding:6px 14px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:rgba(255,255,255,.85);border-radius:20px;cursor:pointer;font-weight:600;font-size:.78rem;transition:all .3s;font-family:inherit;}
 .lang-btn.active{background:var(--gold);border-color:var(--gold);color:var(--crimson);font-weight:700;}
 
-/* CATEGORY TABS */
+/* LOADING SCREEN */
+.init-loading{position:fixed;top:0;left:0;right:0;bottom:0;background:linear-gradient(160deg,var(--crimson),#5A1216);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;}
+.init-loading.hide{display:none;}
+.init-loading-logo{font-family:'Cormorant Garamond',serif;font-size:2.5rem;font-weight:700;color:var(--gold-light);letter-spacing:3px;margin-bottom:6px;}
+.init-loading-logo span{color:#FFF8F0;font-weight:400;font-style:italic;}
+.init-loading-spin{font-size:3rem;animation:spin 1.2s linear infinite;margin:20px 0;}
+.init-loading-text{color:rgba(255,248,240,.8);font-size:.95rem;}
+.init-loading-sub{color:rgba(255,248,240,.5);font-size:.78rem;margin-top:6px;}
+
+/* CAT TABS */
 .cat-tabs{display:flex;gap:8px;padding:14px 14px 4px;overflow-x:auto;scrollbar-width:none;position:sticky;top:0;z-index:50;background:var(--warm-white);}
 .cat-tabs::-webkit-scrollbar{display:none;}
-.cat-tab{padding:8px 16px;border:1.5px solid rgba(155,34,38,0.15);background:#FFF;color:var(--ink-muted);border-radius:22px;cursor:pointer;font-weight:600;font-size:0.8rem;white-space:nowrap;transition:all 0.3s;font-family:inherit;}
-.cat-tab.active{background:linear-gradient(135deg,var(--crimson),var(--crimson-light));color:white;border-color:var(--crimson);box-shadow:0 3px 12px rgba(155,34,38,0.25);}
+.cat-tab{padding:8px 16px;border:1.5px solid rgba(155,34,38,.15);background:#FFF;color:var(--ink-muted);border-radius:22px;cursor:pointer;font-weight:600;font-size:.8rem;white-space:nowrap;transition:all .3s;font-family:inherit;}
+.cat-tab.active{background:linear-gradient(135deg,var(--crimson),var(--crimson-light));color:white;border-color:var(--crimson);box-shadow:0 3px 12px rgba(155,34,38,.25);}
 
 /* MENU */
 .menu-section{padding:14px;}
 .section-label{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:700;color:var(--crimson);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
-.section-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(155,34,38,0.2),transparent);}
-.menu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
-.menu-card{background:#FFF;border-radius:18px;padding:15px;border:1px solid rgba(155,34,38,0.08);box-shadow:0 2px 10px var(--shadow-warm);transition:all 0.35s;position:relative;overflow:hidden;animation:slide-up 0.4s ease;}
-.menu-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,var(--crimson),var(--gold));opacity:0;transition:opacity 0.3s;}
+.section-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(155,34,38,.2),transparent);}
+.menu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px;}
+.menu-card{background:#FFF;border-radius:18px;padding:15px;border:1px solid rgba(155,34,38,.08);box-shadow:0 2px 10px var(--shadow-warm);transition:all .35s;position:relative;overflow:hidden;animation:slide-up .4s ease;}
+.menu-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,var(--crimson),var(--gold));opacity:0;transition:opacity .3s;}
 .menu-card:hover::before{opacity:1;}
-.menu-card.unavailable{opacity:0.45;filter:grayscale(0.5);}
+.menu-card.unavailable{opacity:.45;filter:grayscale(.5);}
 .menu-emoji{font-size:2.2rem;text-align:center;margin-bottom:7px;display:block;}
 .menu-name{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:700;color:var(--crimson);margin-bottom:2px;line-height:1.3;}
-.menu-name-sub{font-size:0.66rem;color:var(--ink-muted);margin-bottom:6px;line-height:1.4;}
-.menu-price{font-size:0.95rem;font-weight:700;color:var(--gold);margin-bottom:8px;}
-.menu-avail{font-size:0.68rem;margin-bottom:7px;}
-.avail-ok{color:var(--jade);}.avail-no{color:var(--crimson);}
+.menu-name-sub{font-size:.66rem;color:var(--ink-muted);margin-bottom:6px;line-height:1.4;}
+.menu-price{font-size:.95rem;font-weight:700;color:var(--gold);margin-bottom:8px;}
+.menu-avail{font-size:.68rem;margin-bottom:7px;}
+.avail-ok{color:var(--jade);} .avail-no{color:var(--crimson);}
 .qty-row{display:flex;align-items:center;justify-content:center;gap:7px;}
-.qty-btn{width:30px;height:30px;border-radius:9px;border:1.5px solid rgba(155,34,38,0.2);background:var(--warm-white);color:var(--crimson);font-size:1rem;font-weight:700;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;}
+.qty-btn{width:30px;height:30px;border-radius:9px;border:1.5px solid rgba(155,34,38,.2);background:var(--warm-white);color:var(--crimson);font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;}
 .qty-btn:hover{background:var(--crimson);color:white;}
 .qty-num{width:30px;text-align:center;font-size:1rem;font-weight:700;color:var(--crimson);}
-.add-btn{width:100%;padding:8px;background:linear-gradient(135deg,var(--jade),var(--jade-light));color:white;border:none;border-radius:11px;font-family:inherit;font-weight:700;font-size:0.82rem;cursor:pointer;margin-top:7px;transition:all 0.3s;}
-.add-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(88,129,87,0.3);}
+.add-btn{width:100%;padding:8px;background:linear-gradient(135deg,var(--jade),var(--jade-light));color:white;border:none;border-radius:11px;font-family:inherit;font-weight:700;font-size:.82rem;cursor:pointer;margin-top:7px;transition:all .3s;}
+.add-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(88,129,87,.3);}
 .add-btn:disabled{background:#ccc;cursor:not-allowed;}
+.empty-cat{text-align:center;padding:44px 20px;color:var(--ink-muted);}
+.empty-cat-icon{font-size:3rem;margin-bottom:12px;opacity:.5;}
 
 /* CART BAR */
-.cart-bar{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,var(--crimson),var(--crimson-light));padding:14px 18px;display:none;box-shadow:0 -4px 20px rgba(155,34,38,0.3);z-index:200;}
-.cart-bar.show{display:flex;align-items:center;justify-content:space-between;animation:slide-up 0.3s ease;}
+.cart-bar{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,var(--crimson),var(--crimson-light));padding:14px 18px;display:none;box-shadow:0 -4px 20px rgba(155,34,38,.3);z-index:200;}
+.cart-bar.show{display:flex;align-items:center;justify-content:space-between;animation:slide-up .3s ease;}
 .cart-info{color:white;}
-.cart-count{font-size:0.78rem;opacity:0.85;}
+.cart-count{font-size:.78rem;opacity:.85;}
 .cart-total{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;}
-.cart-btn{background:var(--gold);color:var(--crimson);border:none;padding:12px 22px;border-radius:14px;font-family:inherit;font-weight:700;font-size:0.9rem;cursor:pointer;transition:all 0.3s;}
+.cart-btn{background:var(--gold);color:var(--crimson);border:none;padding:12px 22px;border-radius:14px;font-family:inherit;font-weight:700;font-size:.9rem;cursor:pointer;transition:all .3s;}
 .cart-btn:hover{transform:scale(1.04);}
 
 /* OVERLAY */
-.overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.6);z-index:500;backdrop-filter:blur(4px);}
-.overlay.show{display:block;animation:fade-in 0.3s ease;}
+.overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,.6);z-index:500;backdrop-filter:blur(4px);}
+.overlay.show{display:block;animation:fade-in .3s ease;}
 
 /* CART MODAL */
-.cart-modal{position:fixed;bottom:0;left:0;right:0;background:var(--paper);border-radius:26px 26px 0 0;max-height:88vh;overflow-y:auto;z-index:501;display:none;padding:22px 18px 36px;box-shadow:0 -8px 40px rgba(155,34,38,0.2);}
-.cart-modal.show{display:block;animation:slide-up 0.35s ease;}
-.modal-handle{width:44px;height:4px;background:rgba(155,34,38,0.2);border-radius:4px;margin:0 auto 18px;}
+.cart-modal{position:fixed;bottom:0;left:0;right:0;background:var(--paper);border-radius:26px 26px 0 0;max-height:88vh;overflow-y:auto;z-index:501;display:none;padding:22px 18px 36px;box-shadow:0 -8px 40px rgba(155,34,38,.2);}
+.cart-modal.show{display:block;animation:slide-up .35s ease;}
+.modal-handle{width:44px;height:4px;background:rgba(155,34,38,.2);border-radius:4px;margin:0 auto 18px;}
 .modal-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;color:var(--crimson);margin-bottom:16px;text-align:center;}
-.cart-item{background:#FFF;border-radius:14px;padding:13px 15px;margin-bottom:9px;border:1px solid rgba(155,34,38,0.07);box-shadow:0 2px 8px var(--shadow-warm);display:flex;justify-content:space-between;align-items:center;}
+.cart-item{background:#FFF;border-radius:14px;padding:13px 15px;margin-bottom:9px;border:1px solid rgba(155,34,38,.07);box-shadow:0 2px 8px var(--shadow-warm);display:flex;justify-content:space-between;align-items:center;}
 .cart-item-info{flex:1;}
-.cart-item-name{font-weight:700;color:var(--crimson);font-size:0.92rem;}
-.cart-item-price{font-size:0.78rem;color:var(--ink-muted);margin-top:2px;}
+.cart-item-name{font-weight:700;color:var(--crimson);font-size:.92rem;}
+.cart-item-price{font-size:.78rem;color:var(--ink-muted);margin-top:2px;}
 .cart-item-right{display:flex;align-items:center;gap:8px;}
-.cart-item-total{font-weight:700;color:var(--gold);font-size:0.95rem;white-space:nowrap;}
-.remove-btn{background:rgba(155,34,38,0.1);border:none;color:var(--crimson);width:28px;height:28px;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.cart-item-total{font-weight:700;color:var(--gold);font-size:.95rem;white-space:nowrap;}
+.remove-btn{background:rgba(155,34,38,.1);border:none;color:var(--crimson);width:28px;height:28px;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
 .remove-btn:hover{background:var(--crimson);color:white;}
-
 .note-group{margin:14px 0;}
-.note-group label{display:block;font-weight:700;color:var(--crimson);font-size:0.86rem;margin-bottom:7px;}
-.note-group textarea{width:100%;padding:11px 15px;background:var(--warm-white);border:1.5px solid rgba(155,34,38,0.15);border-radius:13px;font-family:inherit;font-size:0.92rem;color:var(--ink);resize:none;min-height:64px;transition:all 0.3s;}
+.note-group label{display:block;font-weight:700;color:var(--crimson);font-size:.86rem;margin-bottom:7px;}
+.note-group textarea{width:100%;padding:11px 15px;background:var(--warm-white);border:1.5px solid rgba(155,34,38,.15);border-radius:13px;font-family:inherit;font-size:.92rem;color:var(--ink);resize:none;min-height:64px;transition:all .3s;}
 .note-group textarea:focus{outline:none;border-color:var(--crimson);box-shadow:0 0 0 4px var(--crimson-soft);}
-
 .order-summary{background:linear-gradient(135deg,var(--crimson-soft),var(--gold-soft));border-radius:16px;padding:15px;margin:14px 0;}
-.summary-row{display:flex;justify-content:space-between;padding:5px 0;font-size:0.88rem;color:var(--ink-light);}
-.summary-row.total{font-weight:700;font-size:1.08rem;color:var(--crimson);border-top:1px solid rgba(155,34,38,0.15);padding-top:9px;margin-top:4px;}
-
-.order-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--crimson),var(--crimson-light));color:white;border:none;border-radius:16px;font-family:inherit;font-weight:700;font-size:1rem;cursor:pointer;transition:all 0.3s;box-shadow:0 4px 18px rgba(155,34,38,0.3);}
+.summary-row{display:flex;justify-content:space-between;padding:5px 0;font-size:.88rem;color:var(--ink-light);}
+.summary-row.total{font-weight:700;font-size:1.08rem;color:var(--crimson);border-top:1px solid rgba(155,34,38,.15);padding-top:9px;margin-top:4px;}
+.order-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--crimson),var(--crimson-light));color:white;border:none;border-radius:16px;font-family:inherit;font-weight:700;font-size:1rem;cursor:pointer;transition:all .3s;box-shadow:0 4px 18px rgba(155,34,38,.3);}
 .order-btn:hover{transform:translateY(-2px);}
 .order-btn:disabled{background:#ccc;cursor:not-allowed;transform:none;box-shadow:none;}
 
-/* ===== PAYMENT SCREEN ===== */
-.payment-screen{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--warm-white);z-index:800;overflow-y:auto;padding-bottom:40px;}
-.payment-screen.show{display:block;animation:fade-in 0.3s ease;}
-
-.payment-header{background:linear-gradient(135deg,var(--crimson),#5A1216);padding:20px;text-align:center;color:white;}
-.payment-header h2{font-family:'Cormorant Garamond',serif;font-size:1.8rem;margin-bottom:4px;}
-.payment-header p{font-size:0.85rem;opacity:0.8;}
-
-.payment-content{max-width:480px;margin:0 auto;padding:20px;}
-
-/* Order summary before payment */
-.pay-order-summary{background:#FFF;border-radius:18px;padding:18px;margin-bottom:16px;border:1px solid rgba(155,34,38,0.08);box-shadow:0 2px 12px var(--shadow-warm);}
-.pay-order-summary h3{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:700;color:var(--crimson);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(155,34,38,0.1);}
-.pay-item-row{display:flex;justify-content:space-between;padding:6px 0;font-size:0.88rem;color:var(--ink-light);border-bottom:1px solid rgba(155,34,38,0.04);}
-.pay-item-row:last-child{border-bottom:none;}
-.pay-total-row{display:flex;justify-content:space-between;padding:10px 0 0;font-weight:700;font-size:1.05rem;color:var(--crimson);border-top:1px solid rgba(155,34,38,0.1);margin-top:6px;}
-.pay-total-amount{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--crimson);}
-
-/* QR Payment */
-.qr-section{background:#FFF;border-radius:18px;padding:22px;margin-bottom:16px;text-align:center;border:1px solid rgba(155,34,38,0.08);box-shadow:0 2px 12px var(--shadow-warm);}
-.qr-section h3{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:700;color:var(--crimson);margin-bottom:6px;}
-.qr-section p{font-size:0.82rem;color:var(--ink-muted);margin-bottom:16px;}
-.qr-amount{font-family:'Cormorant Garamond',serif;font-size:2.5rem;font-weight:700;color:var(--crimson);margin-bottom:4px;}
-.qr-amount-sub{font-size:0.8rem;color:var(--ink-muted);margin-bottom:16px;}
-.qr-box{display:flex;justify-content:center;margin-bottom:14px;}
-.qr-box canvas,.qr-box img{border-radius:12px;border:4px solid var(--cream);}
-.qr-note{font-size:0.75rem;color:var(--ink-muted);line-height:1.6;}
-.qr-badge{display:inline-block;background:var(--jade-soft);color:var(--jade);padding:4px 14px;border-radius:20px;font-size:0.76rem;font-weight:700;margin-top:8px;border:1px solid rgba(88,129,87,0.3);}
-
-/* Payment actions */
-.pay-btn{width:100%;padding:15px;border:none;border-radius:16px;font-family:inherit;font-weight:700;font-size:0.95rem;cursor:pointer;transition:all 0.3s;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px;}
-.pay-btn-success{background:linear-gradient(135deg,var(--jade),var(--jade-light));color:white;box-shadow:0 4px 16px rgba(88,129,87,0.3);}
-.pay-btn-success:hover{transform:translateY(-2px);}
-.pay-btn-receipt{background:linear-gradient(135deg,#2980B9,#5DADE2);color:white;box-shadow:0 4px 16px rgba(41,128,185,0.25);}
-.pay-btn-receipt:hover{transform:translateY(-2px);}
-.pay-btn-tax{background:var(--cream);color:var(--crimson);border:1.5px solid rgba(155,34,38,0.2);}
-.pay-btn-tax:hover{background:var(--crimson-soft);}
-
-/* ===== TAX INVOICE FORM ===== */
-.tax-form{background:#FFF;border-radius:18px;padding:20px;margin-bottom:14px;border:1px solid rgba(155,34,38,0.1);box-shadow:0 2px 12px var(--shadow-warm);display:none;}
-.tax-form.show{display:block;animation:slide-up 0.3s ease;}
-.tax-form h3{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:700;color:var(--crimson);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid rgba(155,34,38,0.1);}
-.tax-field{margin-bottom:12px;}
-.tax-field label{display:block;font-weight:600;color:var(--crimson);font-size:0.82rem;margin-bottom:6px;}
-.tax-field input,.tax-field textarea{width:100%;padding:11px 14px;background:var(--warm-white);border:1.5px solid rgba(155,34,38,0.15);border-radius:12px;font-family:inherit;font-size:0.9rem;color:var(--ink);transition:all 0.3s;}
-.tax-field input:focus,.tax-field textarea:focus{outline:none;border-color:var(--crimson);box-shadow:0 0 0 4px var(--crimson-soft);}
-.tax-field textarea{min-height:60px;resize:vertical;}
-
-/* ===== SUCCESS SCREEN ===== */
-.success-screen{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:linear-gradient(160deg,var(--crimson),#5A1216);z-index:1000;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;}
-.success-screen.show{display:flex;}
-.success-icon{font-size:5rem;margin-bottom:18px;animation:bounce-in 0.6s ease;}
-.success-title{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;color:var(--gold-light);margin-bottom:10px;}
-.success-sub{color:rgba(255,248,240,0.75);font-size:0.95rem;line-height:1.7;margin-bottom:24px;white-space:pre-line;}
-.order-code{background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.3);border-radius:16px;padding:12px 28px;font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--gold-light);letter-spacing:3px;margin-bottom:24px;}
-.success-btns{display:flex;flex-direction:column;gap:10px;width:100%;max-width:300px;}
-.success-btn{padding:14px 28px;border:none;border-radius:14px;font-family:inherit;font-weight:700;font-size:0.9rem;cursor:pointer;transition:all 0.3s;}
-.success-btn-more{background:var(--gold);color:var(--crimson);}
-.success-btn-receipt{background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.35);color:white;}
-.success-btn-receipt:hover{background:rgba(255,255,255,0.25);}
-
-/* LOADING */
-.loading-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.7);z-index:2000;align-items:center;justify-content:center;}
+/* LOADING OVERLAY */
+.loading-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,.7);z-index:2000;align-items:center;justify-content:center;}
 .loading-overlay.show{display:flex;}
 .loading-box{background:white;border-radius:20px;padding:28px 34px;text-align:center;}
 .loading-spinner{font-size:2.5rem;animation:warm-pulse 1s ease-in-out infinite;margin-bottom:10px;}
 .loading-text{color:var(--crimson);font-weight:700;}
 
-/* EMPTY */
-.empty-cat{text-align:center;padding:44px 20px;color:var(--ink-muted);}
-.empty-cat-icon{font-size:3rem;margin-bottom:12px;opacity:0.5;}
+/* SUCCESS SCREEN */
+.success-screen{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:linear-gradient(160deg,var(--crimson),#5A1216);z-index:1000;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;}
+.success-screen.show{display:flex;}
+.success-icon{font-size:5rem;margin-bottom:18px;animation:bounce-in .6s ease;}
+.success-title{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;color:var(--gold-light);margin-bottom:10px;}
+.success-sub{color:rgba(255,248,240,.75);font-size:.95rem;line-height:1.7;margin-bottom:24px;white-space:pre-line;}
+.order-code{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);border-radius:16px;padding:12px 28px;font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--gold-light);letter-spacing:3px;margin-bottom:24px;}
+.success-btns{display:flex;flex-direction:column;gap:10px;width:100%;max-width:300px;}
+.success-btn{padding:14px 28px;border:none;border-radius:14px;font-family:inherit;font-weight:700;font-size:.9rem;cursor:pointer;transition:all .3s;}
+.success-btn-more{background:var(--gold);color:var(--crimson);}
+.success-btn-receipt{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.35);color:white;}
 
-/* ===== PRINT RECEIPT ===== */
-@media print{
-  body>*:not(#print-receipt){display:none!important;}
-  #print-receipt{display:block!important;}
-}
-#print-receipt{display:none;}
-.receipt-paper{max-width:320px;margin:0 auto;font-family:'Noto Sans Thai',monospace;font-size:12px;line-height:1.8;color:#000;}
-.receipt-center{text-align:center;}
-.receipt-logo{font-size:20px;font-weight:700;letter-spacing:2px;}
-.receipt-divider{border:none;border-top:1px dashed #999;margin:8px 0;}
-.receipt-row{display:flex;justify-content:space-between;}
-.receipt-total{font-size:14px;font-weight:700;}
-
+/* PAYMENT SCREEN */
+.payment-screen{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--warm-white);z-index:800;overflow-y:auto;padding-bottom:40px;}
+.payment-screen.show{display:block;animation:fade-in .3s ease;}
+.payment-header{background:linear-gradient(135deg,var(--crimson),#5A1216);padding:20px;text-align:center;color:white;}
+.payment-header h2{font-family:'Cormorant Garamond',serif;font-size:1.8rem;margin-bottom:4px;}
+.payment-header p{font-size:.85rem;opacity:.8;}
+.payment-content{max-width:480px;margin:0 auto;padding:20px;}
+.pay-card{background:#FFF;border-radius:18px;padding:18px;margin-bottom:16px;border:1px solid rgba(155,34,38,.08);box-shadow:0 2px 12px var(--shadow-warm);}
+.pay-card h3{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:700;color:var(--crimson);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(155,34,38,.1);}
+.pay-item-row{display:flex;justify-content:space-between;padding:6px 0;font-size:.88rem;color:var(--ink-light);border-bottom:1px solid rgba(155,34,38,.04);}
+.pay-total-row{display:flex;justify-content:space-between;padding:10px 0 0;font-weight:700;font-size:1.05rem;color:var(--crimson);border-top:1px solid rgba(155,34,38,.1);margin-top:6px;}
+.pay-total-amount{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--crimson);}
+.qr-section{text-align:center;}
+.qr-amount{font-family:'Cormorant Garamond',serif;font-size:2.5rem;font-weight:700;color:var(--crimson);margin-bottom:4px;}
+.qr-amount-sub{font-size:.8rem;color:var(--ink-muted);margin-bottom:16px;}
+.qr-box{display:flex;justify-content:center;margin-bottom:14px;}
+.qr-box canvas,.qr-box img{border-radius:12px;border:4px solid var(--cream);}
+.qr-note{font-size:.75rem;color:var(--ink-muted);line-height:1.6;}
+.qr-badge{display:inline-block;background:var(--jade-soft);color:var(--jade);padding:4px 14px;border-radius:20px;font-size:.76rem;font-weight:700;margin-top:8px;border:1px solid rgba(88,129,87,.3);}
+.pay-btn{width:100%;padding:15px;border:none;border-radius:16px;font-family:inherit;font-weight:700;font-size:.95rem;cursor:pointer;transition:all .3s;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.pay-btn-jade{background:linear-gradient(135deg,var(--jade),var(--jade-light));color:white;box-shadow:0 4px 16px rgba(88,129,87,.3);}
+.pay-btn-blue{background:linear-gradient(135deg,#2980B9,#5DADE2);color:white;}
+.pay-btn-ghost{background:var(--cream);color:var(--crimson);border:1.5px solid rgba(155,34,38,.2);}
+.tax-form{background:#FFF;border-radius:18px;padding:20px;margin-bottom:14px;border:1px solid rgba(155,34,38,.1);box-shadow:0 2px 12px var(--shadow-warm);display:none;}
+.tax-form.show{display:block;animation:slide-up .3s ease;}
+.tax-form h3{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:700;color:var(--crimson);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid rgba(155,34,38,.1);}
+.tax-field{margin-bottom:12px;}
+.tax-field label{display:block;font-weight:600;color:var(--crimson);font-size:.82rem;margin-bottom:6px;}
+.tax-field input,.tax-field textarea{width:100%;padding:11px 14px;background:var(--warm-white);border:1.5px solid rgba(155,34,38,.15);border-radius:12px;font-family:inherit;font-size:.9rem;color:var(--ink);transition:all .3s;}
+.tax-field input:focus,.tax-field textarea:focus{outline:none;border-color:var(--crimson);box-shadow:0 0 0 4px var(--crimson-soft);}
+.tax-field textarea{min-height:60px;resize:vertical;}
 @media(max-width:400px){.menu-grid{grid-template-columns:1fr;}}
+@media print{body>*:not(#print-receipt){display:none!important;}#print-receipt{display:block!important;}}
+#print-receipt{display:none;}
 </style>
 </head>
 <body>
 
-<!-- LOADING -->
+<!-- INIT LOADING -->
+<div class="init-loading" id="init-loading">
+  <div class="init-loading-logo">Ohoi <span>Kyoza</span></div>
+  <div class="init-loading-spin">🥟</div>
+  <div class="init-loading-text" id="init-loading-text">กำลังโหลดเมนู...</div>
+  <div class="init-loading-sub">กำลังเชื่อมต่อ Firebase</div>
+</div>
+
+<!-- LOADING OVERLAY (order) -->
 <div class="loading-overlay" id="loading-overlay">
   <div class="loading-box">
     <div class="loading-spinner">🥟</div>
@@ -210,7 +191,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--warm-white);color:
 <div class="success-screen" id="success-screen">
   <div class="success-icon">✅</div>
   <div class="success-title" id="success-title">ส่งออเดอร์เรียบร้อย!</div>
-  <div class="success-sub" id="success-sub">ครัวได้รับออเดอร์ของคุณแล้ว<br>กรุณารอสักครู่</div>
+  <div class="success-sub" id="success-sub">ครัวได้รับออเดอร์แล้ว กรุณารอสักครู่</div>
   <div class="order-code" id="success-order-code">#000000</div>
   <div class="success-btns">
     <button class="success-btn success-btn-more" id="btn-order-more" onclick="orderMore()">+ สั่งอาหารเพิ่ม</button>
@@ -221,63 +202,39 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--warm-white);color:
 <!-- PAYMENT SCREEN -->
 <div class="payment-screen" id="payment-screen">
   <div class="payment-header">
-    <h2 id="pay-header-title">💳 ชำระเงิน</h2>
-    <p id="pay-header-sub">สแกน QR เพื่อชำระเงิน</p>
+    <h2>💳 ชำระเงิน</h2>
+    <p>สแกน QR เพื่อชำระเงิน</p>
   </div>
   <div class="payment-content">
-
-    <!-- Order Summary -->
-    <div class="pay-order-summary">
-      <h3 id="pay-summary-title">🧾 รายการอาหาร</h3>
+    <div class="pay-card">
+      <h3>🧾 รายการอาหาร</h3>
       <div id="pay-items-list"></div>
-      <div class="pay-total-row">
-        <span id="pay-total-label">ยอดรวม</span>
-        <span class="pay-total-amount" id="pay-total-amount">0 ฿</span>
-      </div>
+      <div class="pay-total-row"><span>ยอดรวม</span><span class="pay-total-amount" id="pay-total-amount">0 ฿</span></div>
     </div>
-
-    <!-- QR Payment -->
-    <div class="qr-section">
-      <h3 id="pay-qr-title">📱 QR พร้อมเพย์</h3>
-      <p id="pay-qr-sub">สแกน QR ด้วยแอปธนาคารเพื่อชำระเงิน</p>
+    <div class="pay-card qr-section">
+      <h3>📱 QR พร้อมเพย์</h3>
+      <p style="font-size:.82rem;color:var(--ink-muted);margin-bottom:14px;">สแกนด้วยแอปธนาคารเพื่อชำระเงิน</p>
       <div class="qr-amount" id="pay-qr-amount">0</div>
-      <div class="qr-amount-sub" id="pay-qr-currency">บาท (THB)</div>
+      <div class="qr-amount-sub">บาท (THB)</div>
       <div class="qr-box" id="pay-qr-box"></div>
-      <div class="qr-note" id="pay-qr-note">PromptPay: 0XX-XXX-XXXX</div>
-      <span class="qr-badge" id="pay-qr-badge">🔒 ชำระผ่าน PromptPay</span>
+      <div class="qr-note" id="pay-qr-note"></div>
+      <span class="qr-badge">🔒 ชำระผ่าน PromptPay</span>
     </div>
-
-    <!-- Action Buttons -->
-    <button class="pay-btn pay-btn-success" id="btn-paid-confirm" onclick="confirmPayment()">
-      ✅ <span id="btn-paid-text">ยืนยันชำระเงินเรียบร้อยแล้ว</span>
-    </button>
-    <button class="pay-btn pay-btn-receipt" onclick="downloadReceipt()">
-      📄 <span id="btn-receipt-text">ดาวน์โหลดใบเสร็จ</span>
-    </button>
-    <button class="pay-btn pay-btn-tax" onclick="toggleTaxForm()">
-      🗂️ <span id="btn-tax-text">ขอใบกำกับภาษีแบบเต็ม</span>
-    </button>
-
-    <!-- Tax Invoice Form -->
+    <button class="pay-btn pay-btn-jade" onclick="confirmPayment()">✅ ยืนยันชำระเงินแล้ว</button>
+    <button class="pay-btn pay-btn-blue" onclick="downloadReceipt()">📄 ดาวน์โหลดใบเสร็จ</button>
+    <button class="pay-btn pay-btn-ghost" onclick="toggleTaxForm()">🗂️ ขอใบกำกับภาษี</button>
     <div class="tax-form" id="tax-form">
-      <h3 id="tax-form-title">🗂️ ข้อมูลใบกำกับภาษี</h3>
-      <div class="tax-field"><label id="tax-label-name">ชื่อผู้ซื้อ / บริษัท</label><input type="text" id="tax-name" placeholder="บริษัท ABC จำกัด"></div>
-      <div class="tax-field"><label id="tax-label-taxid">เลขประจำตัวผู้เสียภาษี (13 หลัก)</label><input type="text" id="tax-taxid" placeholder="0-0000-00000-00-0" maxlength="17"></div>
-      <div class="tax-field"><label id="tax-label-addr">ที่อยู่</label><textarea id="tax-addr" placeholder="123 ถ.สุขุมวิท แขวงคลองเตย เขตคลองเตย กรุงเทพฯ 10110"></textarea></div>
-      <div class="tax-field"><label id="tax-label-branch">สาขา (ถ้ามี)</label><input type="text" id="tax-branch" placeholder="สำนักงานใหญ่ / 00000"></div>
-      <button class="pay-btn pay-btn-receipt" style="margin-top:8px;" onclick="downloadTaxInvoice()">
-        🖨️ <span id="btn-tax-dl-text">พิมพ์ / ดาวน์โหลดใบกำกับภาษี</span>
-      </button>
+      <h3>🗂️ ข้อมูลใบกำกับภาษี</h3>
+      <div class="tax-field"><label>ชื่อผู้ซื้อ / บริษัท</label><input type="text" id="tax-name" placeholder="บริษัท ABC จำกัด"></div>
+      <div class="tax-field"><label>เลขประจำตัวผู้เสียภาษี (13 หลัก)</label><input type="text" id="tax-taxid" placeholder="0-0000-00000-00-0" maxlength="17"></div>
+      <div class="tax-field"><label>ที่อยู่</label><textarea id="tax-addr"></textarea></div>
+      <div class="tax-field"><label>สาขา (ถ้ามี)</label><input type="text" id="tax-branch" placeholder="สำนักงานใหญ่"></div>
+      <button class="pay-btn pay-btn-blue" style="margin-top:4px;" onclick="downloadTaxInvoice()">🖨️ พิมพ์ใบกำกับภาษี</button>
     </div>
-
-    <!-- Back to menu -->
-    <button class="pay-btn" style="background:var(--cream);color:var(--crimson);margin-top:6px;" onclick="backToMenu()">
-      🍽️ <span id="btn-back-menu-text">กลับไปสั่งอาหารเพิ่ม</span>
-    </button>
+    <button class="pay-btn pay-btn-ghost" style="margin-top:6px;" onclick="backToMenu()">🍽️ กลับสั่งอาหารเพิ่ม</button>
   </div>
 </div>
 
-<!-- PRINT RECEIPT (hidden, for print only) -->
 <div id="print-receipt"></div>
 
 <!-- HEADER -->
@@ -291,40 +248,41 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--warm-white);color:
   </div>
 </div>
 
-<!-- CATEGORY TABS -->
 <div class="cat-tabs" id="cat-tabs"></div>
-
-<!-- MENU -->
 <div class="menu-section" id="menu-section"></div>
 
 <!-- CART BAR -->
 <div class="cart-bar" id="cart-bar">
   <div class="cart-info">
-    <div class="cart-count" id="cart-count-text">0 รายการ</div>
-    <div class="cart-total" id="cart-total-text">0 ฿</div>
+    <div class="cart-count" id="cart-count-text"></div>
+    <div class="cart-total" id="cart-total-text"></div>
   </div>
-  <button class="cart-btn" onclick="openCart()">🛒 <span id="cart-btn-label">ดูตะกร้า</span></button>
+  <button class="cart-btn" onclick="openCart()">🛒 ดูตะกร้า</button>
 </div>
 
-<!-- OVERLAY -->
 <div class="overlay" id="overlay" onclick="closeCart()"></div>
 
 <!-- CART MODAL -->
 <div class="cart-modal" id="cart-modal">
   <div class="modal-handle"></div>
-  <div class="modal-title" id="cart-modal-title">🛒 ตะกร้าของคุณ</div>
+  <div class="modal-title">🛒 ตะกร้าของคุณ</div>
   <div id="cart-items-container"></div>
   <div class="note-group">
-    <label id="note-label">📝 หมายเหตุ / แพ้อาหาร</label>
-    <textarea id="order-note" rows="2" placeholder="เช่น: ไม่ใส่ผัก, แพ้กุ้ง..."></textarea>
+    <label>📝 หมายเหตุ / แพ้อาหาร</label>
+    <textarea id="order-note" placeholder="เช่น: ไม่ใส่ผัก, แพ้กุ้ง..."></textarea>
   </div>
   <div class="order-summary" id="order-summary"></div>
-  <button class="order-btn" id="confirm-order-btn" onclick="confirmOrder()">
-    🥟 <span id="confirm-btn-text">ยืนยันสั่งอาหาร</span>
-  </button>
+  <button class="order-btn" id="confirm-order-btn" onclick="confirmOrder()">🥟 ยืนยันสั่งอาหาร</button>
 </div>
 
 <script>
+// ===== CONFIG =====
+const PROMPTPAY_ID = '0000000000'; // ← เปลี่ยนเป็นเบอร์/เลขบัตรของร้าน
+const VAT_RATE     = 0.07;
+const SHOP_NAME    = 'Ohoi Kyoza';
+const SHOP_ADDRESS = '123 ถนนตัวอย่าง กรุงเทพฯ';
+const SHOP_TAX_ID  = '0000000000000';
+
 // ===== FIREBASE =====
 const _app = firebase.apps.length ? firebase.app() : firebase.initializeApp({
   apiKey:"AIzaSyC650BBAj_y7bObsIA5KpMQkLDNg4FEtmw",
@@ -337,645 +295,402 @@ const _app = firebase.apps.length ? firebase.app() : firebase.initializeApp({
 });
 const db = firebase.database();
 
-// ===== PromptPay Config (แก้เลขที่นี่) =====
-const PROMPTPAY_ID   = '0000000000';   // ← ใส่เบอร์โทร หรือ เลข 13 หลัก
-const VAT_RATE       = 0.07;           // VAT 7%
-const SHOP_NAME      = 'Ohoi Kyoza';
-const SHOP_ADDRESS   = '123 ถนนตัวอย่าง กรุงเทพฯ';
-const SHOP_TAX_ID    = '0000000000000';
-const SHOP_BRANCH    = 'สำนักงานใหญ่';
-
-// ===== I18N =====
-const i18n = {
-  th:{
-    table:'โต๊ะ', cat_all:'🍽️ ทั้งหมด',
-    cart_count:'{n} รายการ', cart_view:'ดูตะกร้า', cart_title:'🛒 ตะกร้าของคุณ',
-    note_label:'📝 หมายเหตุ / แพ้อาหาร', note_ph:'เช่น: ไม่ใส่ผัก, แพ้กุ้ง...',
-    subtotal:'ยอดก่อน VAT', vat:'ภาษีมูลค่าเพิ่ม 7%', total:'รวมทั้งสิ้น (รวม VAT)', confirm_btn:'🥟 ยืนยันสั่งอาหาร',
-    avail:'✅ พร้อมเสิร์ฟ', unavail:'❌ หมดชั่วคราว',
-    add_btn:'+ เพิ่มในตะกร้า', added_btn:'✓ เพิ่มแล้ว',
-    loading:'กำลังส่งออเดอร์...', baht:'฿',
-    success_title:'ส่งออเดอร์เรียบร้อย!',
-    success_sub:'ครัวได้รับออเดอร์ของคุณแล้ว\nกรุณารอสักครู่',
-    btn_order_more:'+ สั่งอาหารเพิ่ม',
-    btn_to_payment:'💳 ชำระเงิน / ดูใบเสร็จ',
-    // Payment
-    pay_header_title:'💳 ชำระเงิน',
-    pay_header_sub:'สแกน QR เพื่อชำระเงิน',
-    pay_summary_title:'🧾 รายการอาหาร',
-    pay_total_label:'ยอดรวม',
-    pay_qr_title:'📱 QR พร้อมเพย์',
-    pay_qr_sub:'สแกน QR ด้วยแอปธนาคารเพื่อชำระเงิน',
-    pay_qr_currency:'บาท (THB)',
-    pay_qr_badge:'🔒 ชำระผ่าน PromptPay',
-    btn_paid:'✅ ยืนยันชำระเงินเรียบร้อยแล้ว',
-    btn_receipt:'📄 ดาวน์โหลดใบเสร็จ',
-    btn_tax:'🗂️ ขอใบกำกับภาษีแบบเต็ม',
-    btn_back_menu:'🍽️ กลับไปสั่งอาหารเพิ่ม',
-    tax_form_title:'🗂️ ข้อมูลใบกำกับภาษี',
-    tax_label_name:'ชื่อผู้ซื้อ / บริษัท',
-    tax_label_taxid:'เลขประจำตัวผู้เสียภาษี (13 หลัก)',
-    tax_label_addr:'ที่อยู่',
-    tax_label_branch:'สาขา (ถ้ามี)',
-    btn_tax_dl:'🖨️ พิมพ์ / ดาวน์โหลดใบกำกับภาษี',
-    paid_success_title:'ชำระเงินเรียบร้อย!',
-    paid_success_sub:'ขอบคุณที่ใช้บริการ\nOhoi Kyoza 🥟',
-    empty_menu:'ไม่มีเมนูในขณะนี้',
-    receipt_title:'ใบเสร็จรับเงิน', tax_inv_title:'ใบกำกับภาษี',
-    receipt_table:'โต๊ะ', receipt_date:'วันที่',
-    receipt_item:'รายการ', receipt_qty:'จำนวน', receipt_price:'ราคา/จาน', receipt_total:'รวม',
-    receipt_subtotal:'ยอดรวม', receipt_thank:'ขอบคุณที่ใช้บริการ'
-  },
-  en:{
-    table:'Table', cat_all:'🍽️ All',
-    cart_count:'{n} items', cart_view:'View Cart', cart_title:'🛒 Your Cart',
-    note_label:'📝 Special Requests / Allergies', note_ph:'e.g. No vegetables, shrimp allergy...',
-    subtotal:'Subtotal (excl. VAT)', vat:'VAT 7%', total:'Total (incl. VAT)', confirm_btn:'🥟 Confirm Order',
-    avail:'✅ Available', unavail:'❌ Unavailable',
-    add_btn:'+ Add to Cart', added_btn:'✓ Added',
-    loading:'Placing your order...', baht:'฿',
-    success_title:'Order Placed!',
-    success_sub:'The kitchen received your order.\nPlease wait a moment.',
-    btn_order_more:'+ Order More',
-    btn_to_payment:'💳 Pay / View Receipt',
-    pay_header_title:'💳 Payment',
-    pay_header_sub:'Scan QR to pay',
-    pay_summary_title:'🧾 Order Summary',
-    pay_total_label:'Total',
-    pay_qr_title:'📱 PromptPay QR',
-    pay_qr_sub:'Scan with your banking app to pay',
-    pay_qr_currency:'THB',
-    pay_qr_badge:'🔒 Pay via PromptPay',
-    btn_paid:'✅ Confirm Payment Done',
-    btn_receipt:'📄 Download Receipt',
-    btn_tax:'🗂️ Request Tax Invoice',
-    btn_back_menu:'🍽️ Order More Food',
-    tax_form_title:'🗂️ Tax Invoice Information',
-    tax_label_name:'Buyer Name / Company',
-    tax_label_taxid:'Tax ID (13 digits)',
-    tax_label_addr:'Address',
-    tax_label_branch:'Branch (if any)',
-    btn_tax_dl:'🖨️ Print / Download Tax Invoice',
-    paid_success_title:'Payment Complete!',
-    paid_success_sub:'Thank you for dining with us\nOhoi Kyoza 🥟',
-    empty_menu:'No menus available',
-    receipt_title:'Receipt', tax_inv_title:'Tax Invoice',
-    receipt_table:'Table', receipt_date:'Date',
-    receipt_item:'Item', receipt_qty:'Qty', receipt_price:'Price', receipt_total:'Amount',
-    receipt_subtotal:'Subtotal', receipt_thank:'Thank you for your visit'
-  },
-  zh:{
-    table:'桌', cat_all:'🍽️ 全部',
-    cart_count:'{n} 件', cart_view:'查看购物车', cart_title:'🛒 您的购物车',
-    note_label:'📝 备注 / 过敏信息', note_ph:'例如：不放蔬菜，虾过敏...',
-    subtotal:'小计（不含税）', vat:'增值税 7%', total:'总计（含税）', confirm_btn:'🥟 确认下单',
-    avail:'✅ 可供应', unavail:'❌ 暂时售完',
-    add_btn:'+ 加入购物车', added_btn:'✓ 已添加',
-    loading:'正在提交订单...', baht:'฿',
-    success_title:'下单成功！',
-    success_sub:'厨房已收到您的订单\n请稍候',
-    btn_order_more:'+ 继续点餐',
-    btn_to_payment:'💳 支付 / 查看收据',
-    pay_header_title:'💳 支付',
-    pay_header_sub:'扫描QR码支付',
-    pay_summary_title:'🧾 订单明细',
-    pay_total_label:'合计',
-    pay_qr_title:'📱 PromptPay 二维码',
-    pay_qr_sub:'使用银行APP扫码支付',
-    pay_qr_currency:'泰铢 (THB)',
-    pay_qr_badge:'🔒 通过PromptPay支付',
-    btn_paid:'✅ 确认已完成支付',
-    btn_receipt:'📄 下载收据',
-    btn_tax:'🗂️ 申请完整税务发票',
-    btn_back_menu:'🍽️ 继续点餐',
-    tax_form_title:'🗂️ 税务发票信息',
-    tax_label_name:'买方姓名 / 公司名称',
-    tax_label_taxid:'纳税人识别号（13位）',
-    tax_label_addr:'地址',
-    tax_label_branch:'分支机构（如有）',
-    btn_tax_dl:'🖨️ 打印 / 下载税务发票',
-    paid_success_title:'支付完成！',
-    paid_success_sub:'感谢您的光临\nOhoi Kyoza 🥟',
-    empty_menu:'暂无菜单',
-    receipt_title:'收据', tax_inv_title:'税务发票',
-    receipt_table:'桌号', receipt_date:'日期',
-    receipt_item:'菜品', receipt_qty:'数量', receipt_price:'单价', receipt_total:'金额',
-    receipt_subtotal:'小计', receipt_thank:'感谢您的光临'
-  }
-};
-
+// ===== CATEGORY CONFIG =====
 const catNames = {
-  gyoza:   {th:'🥟 เกี๊ยวซ่า',             en:'🥟 Gyoza',              zh:'🥟 煎饺'},
-  rice:    {th:'🍚 ข้าว',                  en:'🍚 Rice',               zh:'🍚 米饭'},
-  noodle:  {th:'🍜 เส้น',                  en:'🍜 Noodles',            zh:'🍜 面条'},
-  soup:    {th:'🍲 ซุป',                   en:'🍲 Soup',               zh:'🍲 汤'},
-  snack:   {th:'🍿 ของทานเล่น',            en:'🍿 Snack',              zh:'🍿 小食'},
-  taiwan:  {th:'🫕 สไตล์ไต้หวัน',          en:'🫕 Taiwanese',          zh:'🫕 台湾小吃'},
-  salad:   {th:'🥗 สลัด',                  en:'🥗 Salad',              zh:'🥗 沙拉'},
-  frozen:  {th:'🧊 อาหารแช่แข็ง',          en:'🧊 Frozen',             zh:'🧊 冷冻'},
-  drink:   {th:'🥤 เครื่องดื่ม',           en:'🥤 Drinks',             zh:'🥤 饮料'},
-  dessert: {th:'🍮 ของหวาน',              en:'🍮 Dessert',            zh:'🍮 甜点'},
-  set:     {th:'🍱 เซ็ต',                  en:'🍱 Set',                zh:'🍱 套餐'}
+  gyoza:  {th:'🥟 เกี๊ยวซ่า',en:'🥟 Gyoza',zh:'🥟 煎饺'},
+  rice:   {th:'🍚 ข้าว',en:'🍚 Rice',zh:'🍚 米饭'},
+  noodle: {th:'🍜 เส้น',en:'🍜 Noodles',zh:'🍜 面条'},
+  soup:   {th:'🍲 ซุป',en:'🍲 Soup',zh:'🍲 汤'},
+  snack:  {th:'🍿 ของทานเล่น',en:'🍿 Snack',zh:'🍿 小食'},
+  taiwan: {th:'🫕 ไต้หวัน',en:'🫕 Taiwanese',zh:'🫕 台湾小吃'},
+  salad:  {th:'🥗 สลัด',en:'🥗 Salad',zh:'🥗 沙拉'},
+  frozen: {th:'🧊 แช่แข็ง',en:'🧊 Frozen',zh:'🧊 冷冻'},
+  drink:  {th:'🥤 เครื่องดื่ม',en:'🥤 Drinks',zh:'🥤 饮料'},
+  dessert:{th:'🍮 ของหวาน',en:'🍮 Dessert',zh:'🍮 甜点'},
+  set:    {th:'🍱 เซ็ต',en:'🍱 Set',zh:'🍱 套餐'},
+  other:  {th:'🍽️ อื่นๆ',en:'🍽️ Other',zh:'🍽️ 其他'}
 };
-const menuEmoji = {gyoza:'🥟',rice:'🍚',noodle:'🍜',soup:'🍲',snack:'🍿',taiwan:'🫕',salad:'🥗',frozen:'🧊',drink:'🥤',dessert:'🍮',set:'🍱'};
+const menuEmoji = {gyoza:'🥟',rice:'🍚',noodle:'🍜',soup:'🍲',snack:'🍿',taiwan:'🫕',salad:'🥗',frozen:'🧊',drink:'🥤',dessert:'🍮',set:'🍱',other:'🍽️'};
 
 // ===== STATE =====
-let currentLang     = localStorage.getItem('ok_lang') || 'th';
-let tableNo         = 1;
-let menus           = [];
-let products        = [];
-let cart            = [];
-let currentCat      = 'all';
-let currentOrderId  = '';
-let currentTotal    = 0;
+let currentLang = localStorage.getItem('ok_lang') || 'th';
+let tableNo = 1;
+let menus = [];
+let products = [];
+let cart = [];
+let currentCat = 'all';
+let currentOrderId = '';
+let currentTotal = 0;
 let currentSubtotal = 0;
-let currentVat      = 0;
+let currentVat = 0;
 
 // ===== HELPERS =====
-function t(key, params={}) {
-  let text = i18n[currentLang][key] || key;
-  Object.keys(params).forEach(k => { text = text.replace(`{${k}}`, params[k]); });
-  return text;
-}
 function getMenuName(m) {
   if (currentLang==='en' && m.name_en) return m.name_en;
   if (currentLang==='zh' && m.name_zh) return m.name_zh;
   return m.name_th || m.name || '—';
 }
-function getCatLabel(k) { return catNames[k]?.[currentLang] || k; }
-function checkMenuAvail(menu) {
-  if (menu.available === false) return false;
-  if (!menu.ingredients?.length || !products.length) return true;
-  return menu.ingredients.every(ing => {
+function getCatLabel(k) { return (catNames[k]||catNames.other)[currentLang]; }
+function checkMenuAvail(m) {
+  if (m.available === false) return false;
+  if (!m.ingredients?.length || !products.length) return true;
+  return m.ingredients.every(ing => {
     const p = products.find(x => String(x.id)===String(ing.productId));
-    if (!p) return true;
-    return p.stock >= ing.quantity;
+    return p ? p.stock >= ing.quantity : true;
   });
 }
-function formatDate(date=new Date()) {
-  const locale = currentLang==='zh'?'zh-CN':currentLang==='en'?'en-US':'th-TH';
-  return date.toLocaleDateString(locale, {year:'numeric',month:'long',day:'numeric'});
-}
-function formatTime(date=new Date()) {
-  return date.toLocaleTimeString('th-TH', {hour:'2-digit',minute:'2-digit'});
-}
-
-// ===== FALLBACK DEMO MENUS (ใช้เมื่อ Firebase ยังไม่มีข้อมูล) =====
-const DEMO_MENUS = [
-  {id:'d1', name_th:'เกี๊ยวซ่าหมู (ทอด)',    name_en:'Pork Gyoza (Fried)',      name_zh:'猪肉煎饺',     category:'gyoza',   price:89,  ingredients:[]},
-  {id:'d2', name_th:'เกี๊ยวซ่าไก่ (ทอด)',    name_en:'Chicken Gyoza (Fried)',   name_zh:'鸡肉煎饺',     category:'gyoza',   price:89,  ingredients:[]},
-  {id:'d3', name_th:'เกี๊ยวซ่ากุ้ง (ทอด)',   name_en:'Shrimp Gyoza (Fried)',    name_zh:'虾仁煎饺',     category:'gyoza',   price:99,  ingredients:[]},
-  {id:'d4', name_th:'เกี๊ยวซ่าผัก (ทอด)',    name_en:'Veggie Gyoza (Fried)',    name_zh:'蔬菜煎饺',     category:'gyoza',   price:79,  ingredients:[]},
-  {id:'d5', name_th:'เกี๊ยวซ่าหมู (นึ่ง)',   name_en:'Pork Gyoza (Steamed)',    name_zh:'猪肉蒸饺',     category:'gyoza',   price:89,  ingredients:[]},
-  {id:'d6', name_th:'เกี๊ยวซ่าไก่ (นึ่ง)',   name_en:'Chicken Gyoza (Steamed)', name_zh:'鸡肉蒸饺',     category:'gyoza',   price:89,  ingredients:[]},
-  {id:'d7', name_th:'ข้าวผัดกระเทียม',        name_en:'Garlic Fried Rice',       name_zh:'蒜香炒饭',     category:'rice',    price:79,  ingredients:[]},
-  {id:'d8', name_th:'ข้าวหน้าเกี๊ยวซ่า',      name_en:'Gyoza Rice Bowl',         name_zh:'煎饺盖饭',     category:'rice',    price:109, ingredients:[]},
-  {id:'d9', name_th:'ราเม็งหมู',              name_en:'Pork Ramen',              name_zh:'猪肉拉面',     category:'noodle',  price:129, ingredients:[]},
-  {id:'d10',name_th:'ราเม็งไก่',              name_en:'Chicken Ramen',           name_zh:'鸡肉拉面',     category:'noodle',  price:119, ingredients:[]},
-  {id:'d11',name_th:'ซุปไก่ใส',              name_en:'Clear Chicken Soup',      name_zh:'清汤鸡',       category:'soup',    price:69,  ingredients:[]},
-  {id:'d12',name_th:'น้ำชาอู่หลง',            name_en:'Oolong Tea',              name_zh:'乌龙茶',       category:'drink',   price:45,  ingredients:[]},
-  {id:'d13',name_th:'น้ำมะนาวโซดา',           name_en:'Lemon Soda',              name_zh:'柠檬苏打',     category:'drink',   price:55,  ingredients:[]},
-  {id:'d14',name_th:'โมจิไอศกรีม',            name_en:'Mochi Ice Cream',         name_zh:'麻薯冰淇淋',   category:'dessert', price:69,  ingredients:[]},
-  {id:'d15',name_th:'เซ็ต A (เกี๊ยว 6 + ข้าว + น้ำ)', name_en:'Set A (Gyoza 6 + Rice + Drink)', name_zh:'套餐A (6饺+饭+饮)', category:'set', price:159, ingredients:[]},
-];
 
 // ===== INIT =====
 window.addEventListener('DOMContentLoaded', () => {
   tableNo = parseInt(new URLSearchParams(window.location.search).get('table')) || 1;
-  renderTableBadge();
-  setLang(currentLang);
+  document.getElementById('table-badge').textContent = `🪑 โต๊ะ ${tableNo}`;
+  setLangBtn(currentLang);
 
-  // โหลดเมนู demo ก่อนทันที ระหว่างรอ Firebase
-  menus = DEMO_MENUS;
-  renderCatTabs(); renderMenus();
-
-  // Firebase real-time — จะ override demo ถ้ามีข้อมูลจริง
+  // โหลดจาก Firebase realtime
   db.ref('menus').on('value', snap => {
+    menus = [];
     if (snap.exists()) {
-      menus = [];
-      snap.forEach(c => menus.push({fbKey:c.key,...c.val()}));
-    } else {
-      // Firebase ว่าง → ใช้ demo menus (ทุกรายการ available)
-      menus = DEMO_MENUS;
+      snap.forEach(c => {
+        const m = { fbKey: c.key, ...c.val() };
+        // ถ้า available ไม่มีค่า → ถือว่า true
+        if (m.available === undefined || m.available === null) m.available = true;
+        menus.push(m);
+      });
     }
-    renderCatTabs(); renderMenus();
-  });
-  db.ref('products').on('value', snap => {
-    products = [];
-    if (snap.exists()) snap.forEach(c => products.push({fbKey:c.key,...c.val()}));
+    hideInitLoading();
+    renderCatTabs();
     renderMenus();
   });
+
+  db.ref('products').on('value', snap => {
+    products = [];
+    if (snap.exists()) snap.forEach(c => products.push({ fbKey: c.key, ...c.val() }));
+    renderMenus();
+  });
+
+  // Timeout 10 วิ — ถ้า Firebase ไม่ตอบก็ซ่อน loading
+  setTimeout(() => {
+    hideInitLoading();
+    if (!menus.length) {
+      document.getElementById('menu-section').innerHTML =
+        '<div class="empty-cat"><div class="empty-cat-icon">⚠️</div><p>ไม่สามารถโหลดเมนูได้<br>กรุณาตรวจสอบอินเทอร์เน็ต</p></div>';
+    }
+  }, 10000);
 });
 
-// ===== RENDER TABLE BADGE =====
-function renderTableBadge() {
-  document.getElementById('table-badge').textContent = `🪑 ${t('table')} ${tableNo}`;
+function hideInitLoading() {
+  document.getElementById('init-loading').classList.add('hide');
 }
 
-// ===== RENDER CAT TABS =====
+// ===== RENDER CATS =====
 function renderCatTabs() {
-  const cats = ['all', ...new Set(menus.map(m=>m.category).filter(Boolean))];
+  const cats = ['all', ...new Set(menus.map(m => m.category || 'other').filter(Boolean))];
   document.getElementById('cat-tabs').innerHTML = cats.map(c =>
-    `<button class="cat-tab ${currentCat===c?'active':''}" onclick="filterCat('${c}')">${c==='all'?t('cat_all'):getCatLabel(c)}</button>`
+    `<button class="cat-tab ${currentCat===c?'active':''}" onclick="filterCat('${c}')">
+      ${c==='all' ? (currentLang==='en'?'🍽️ All':currentLang==='zh'?'🍽️ 全部':'🍽️ ทั้งหมด') : getCatLabel(c)}
+    </button>`
   ).join('');
 }
 function filterCat(cat) { currentCat=cat; renderCatTabs(); renderMenus(); }
 
 // ===== RENDER MENUS =====
 function renderMenus() {
-  const filtered = currentCat==='all' ? menus : menus.filter(m=>m.category===currentCat);
+  const filtered = currentCat==='all' ? menus : menus.filter(m => (m.category||'other')===currentCat);
   const sec = document.getElementById('menu-section');
-  if (!filtered.length) { sec.innerHTML=`<div class="empty-cat"><div class="empty-cat-icon">🍽️</div><p>${t('empty_menu')}</p></div>`; return; }
+  if (!filtered.length) {
+    sec.innerHTML = '<div class="empty-cat"><div class="empty-cat-icon">🍽️</div><p>ไม่มีเมนูในหมวดนี้</p></div>';
+    return;
+  }
   if (currentCat==='all') {
-    const groups={};
-    filtered.forEach(m=>{const c=m.category||'other';if(!groups[c])groups[c]=[];groups[c].push(m);});
-    sec.innerHTML=Object.entries(groups).map(([cat,items])=>
-      `<div><div class="section-label">${getCatLabel(cat)}</div><div class="menu-grid">${items.map(menuCardHTML).join('')}</div></div>`
+    const groups = {};
+    filtered.forEach(m => { const c=m.category||'other'; if(!groups[c]) groups[c]=[]; groups[c].push(m); });
+    sec.innerHTML = Object.entries(groups).map(([cat,items]) =>
+      `<div>
+        <div class="section-label">${getCatLabel(cat)}</div>
+        <div class="menu-grid">${items.map(menuCardHTML).join('')}</div>
+      </div>`
     ).join('');
   } else {
-    sec.innerHTML=`<div class="menu-grid">${filtered.map(menuCardHTML).join('')}</div>`;
+    sec.innerHTML = `<div class="menu-grid">${filtered.map(menuCardHTML).join('')}</div>`;
   }
 }
 
 function menuCardHTML(m) {
-  const avail=checkMenuAvail(m);
-  const emoji=menuEmoji[m.category]||'🍽️';
-  const mid=String(m.id||m.fbKey);
-  const inCart=cart.find(c=>c.menuId===mid);
-  const subNames=[m.name_en&&currentLang!=='en'?m.name_en:'',m.name_zh&&currentLang!=='zh'?m.name_zh:''].filter(Boolean).join(' · ');
+  const avail = checkMenuAvail(m);
+  const emoji = menuEmoji[m.category] || '🍽️';
+  const mid   = String(m.id || m.fbKey);
+  const inCart = cart.find(c => c.menuId===mid);
+  const subNames = [
+    m.name_en && currentLang!=='en' ? m.name_en : '',
+    m.name_zh && currentLang!=='zh' ? m.name_zh : ''
+  ].filter(Boolean).join(' · ');
   return `<div class="menu-card ${!avail?'unavailable':''}">
     <span class="menu-emoji">${emoji}</span>
     <div class="menu-name">${getMenuName(m)}</div>
-    ${subNames?`<div class="menu-name-sub">${subNames}</div>`:''}
-    <div class="menu-price">${m.price} ${t('baht')}</div>
-    <div class="menu-avail ${avail?'avail-ok':'avail-no'}">${avail?t('avail'):t('unavail')}</div>
-    ${avail?`
+    ${subNames ? `<div class="menu-name-sub">${subNames}</div>` : ''}
+    <div class="menu-price">${m.price} ฿</div>
+    <div class="menu-avail ${avail?'avail-ok':'avail-no'}">${avail?'✅ พร้อมเสิร์ฟ':'❌ หมดชั่วคราว'}</div>
+    ${avail ? `
       <div class="qty-row">
         <button class="qty-btn" onclick="changeQty('${mid}',-1)">−</button>
         <span class="qty-num" id="qty-${mid}">${inCart?inCart.qty:0}</span>
         <button class="qty-btn" onclick="changeQty('${mid}',1)">+</button>
       </div>
-      <button class="add-btn" onclick="addToCart('${mid}')">${inCart?t('added_btn'):t('add_btn')}</button>
-    `:`<button class="add-btn" disabled>${t('unavail')}</button>`}
+      <button class="add-btn" onclick="addToCart('${mid}')">
+        ${inCart ? '✓ เพิ่มแล้ว' : '+ เพิ่มในตะกร้า'}
+      </button>
+    ` : `<button class="add-btn" disabled>❌ หมดชั่วคราว</button>`}
   </div>`;
 }
 
 // ===== CART =====
 function changeQty(menuId, delta) {
-  const el=document.getElementById(`qty-${menuId}`); if(!el) return;
-  el.textContent=Math.max(0,Math.min(20,parseInt(el.textContent)+delta));
+  const el = document.getElementById(`qty-${menuId}`);
+  if (!el) return;
+  el.textContent = Math.max(0, Math.min(20, parseInt(el.textContent)+delta));
 }
 function addToCart(menuId) {
-  const menu=menus.find(m=>String(m.id||m.fbKey)===menuId); if(!menu) return;
-  const qty=parseInt(document.getElementById(`qty-${menuId}`)?.textContent)||1;
+  const menu = menus.find(m => String(m.id||m.fbKey)===menuId);
+  if (!menu) return;
+  const qty = parseInt(document.getElementById(`qty-${menuId}`)?.textContent) || 1;
   if (qty===0) { document.getElementById(`qty-${menuId}`).textContent='1'; return; }
-  const ex=cart.find(c=>c.menuId===menuId);
-  if (ex) ex.qty+=qty;
-  else cart.push({menuId,name_th:menu.name_th||menu.name,name_en:menu.name_en||menu.name,name_zh:menu.name_zh||menu.name,price:menu.price,qty});
-  document.getElementById(`qty-${menuId}`).textContent='0';
-  updateCartBar(); renderMenus();
+  const ex = cart.find(c => c.menuId===menuId);
+  if (ex) ex.qty += qty;
+  else cart.push({ menuId, name_th:menu.name_th||menu.name, name_en:menu.name_en, name_zh:menu.name_zh, price:menu.price, qty });
+  document.getElementById(`qty-${menuId}`).textContent = '0';
+  updateCartBar();
+  renderMenus();
 }
 function updateCartBar() {
-  const total=cart.reduce((s,c)=>s+c.price*c.qty,0);
-  const count=cart.reduce((s,c)=>s+c.qty,0);
-  const bar=document.getElementById('cart-bar');
-  if (!cart.length){bar.classList.remove('show');return;}
+  const total = cart.reduce((s,c)=>s+c.price*c.qty, 0);
+  const count = cart.reduce((s,c)=>s+c.qty, 0);
+  const bar   = document.getElementById('cart-bar');
+  if (!cart.length) { bar.classList.remove('show'); return; }
   bar.classList.add('show');
-  document.getElementById('cart-count-text').textContent=t('cart_count',{n:count});
-  document.getElementById('cart-total-text').textContent=`${total} ${t('baht')}`;
-  document.getElementById('cart-btn-label').textContent=t('cart_view');
+  document.getElementById('cart-count-text').textContent = `${count} รายการ`;
+  document.getElementById('cart-total-text').textContent = `${total} ฿`;
 }
-function openCart() { renderCartModal(); document.getElementById('cart-modal').classList.add('show'); document.getElementById('overlay').classList.add('show'); document.body.style.overflow='hidden'; }
-function closeCart() { document.getElementById('cart-modal').classList.remove('show'); document.getElementById('overlay').classList.remove('show'); document.body.style.overflow=''; }
-function removeFromCart(idx) { cart.splice(idx,1); renderCartModal(); updateCartBar(); if(!cart.length) closeCart(); }
-
+function openCart() {
+  renderCartModal();
+  document.getElementById('cart-modal').classList.add('show');
+  document.getElementById('overlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeCart() {
+  document.getElementById('cart-modal').classList.remove('show');
+  document.getElementById('overlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
+function removeFromCart(idx) {
+  cart.splice(idx, 1);
+  renderCartModal();
+  updateCartBar();
+  if (!cart.length) closeCart();
+}
 function renderCartModal() {
-  document.getElementById('cart-modal-title').textContent=t('cart_title');
-  document.getElementById('note-label').textContent=t('note_label');
-  document.getElementById('order-note').placeholder=t('note_ph');
-  document.getElementById('confirm-btn-text').textContent=t('confirm_btn').replace('🥟 ','');
-  const cont=document.getElementById('cart-items-container');
-  cont.innerHTML=cart.map((item,i)=>{
-    const name=currentLang==='en'&&item.name_en?item.name_en:currentLang==='zh'&&item.name_zh?item.name_zh:item.name_th;
+  const cont = document.getElementById('cart-items-container');
+  cont.innerHTML = cart.map((item,i) => {
+    const name = currentLang==='en'&&item.name_en ? item.name_en : currentLang==='zh'&&item.name_zh ? item.name_zh : item.name_th;
     return `<div class="cart-item">
-      <div class="cart-item-info"><div class="cart-item-name">${name}</div><div class="cart-item-price">${item.price} ${t('baht')} × ${item.qty}</div></div>
-      <div class="cart-item-right"><div class="cart-item-total">${item.price*item.qty} ${t('baht')}</div><button class="remove-btn" onclick="removeFromCart(${i})">✕</button></div>
+      <div class="cart-item-info">
+        <div class="cart-item-name">${name}</div>
+        <div class="cart-item-price">${item.price} ฿ × ${item.qty}</div>
+      </div>
+      <div class="cart-item-right">
+        <div class="cart-item-total">${item.price*item.qty} ฿</div>
+        <button class="remove-btn" onclick="removeFromCart(${i})">✕</button>
+      </div>
     </div>`;
   }).join('');
-  const sub=cart.reduce((s,c)=>s+c.price*c.qty,0);
-  const vat=Math.round(sub*VAT_RATE*100)/100;
-  const grand=Math.round((sub+vat)*100)/100;
-  document.getElementById('order-summary').innerHTML=`
-    <div class="summary-row"><span>${t('subtotal')}</span><span>${sub.toFixed(2)} ${t('baht')}</span></div>
-    <div class="summary-row"><span>${t('vat')}</span><span>${vat.toFixed(2)} ${t('baht')}</span></div>
-    <div class="summary-row total"><span>${t('total')}</span><span>${grand.toFixed(2)} ${t('baht')}</span></div>`;
+  const sub   = cart.reduce((s,c)=>s+c.price*c.qty, 0);
+  const vat   = Math.round(sub*VAT_RATE*100)/100;
+  const grand = Math.round((sub+vat)*100)/100;
+  document.getElementById('order-summary').innerHTML = `
+    <div class="summary-row"><span>ยอดก่อน VAT</span><span>${sub.toFixed(2)} ฿</span></div>
+    <div class="summary-row"><span>VAT 7%</span><span>${vat.toFixed(2)} ฿</span></div>
+    <div class="summary-row total"><span>รวมทั้งสิ้น</span><span>${grand.toFixed(2)} ฿</span></div>`;
 }
 
-// ===== CONFIRM ORDER → FIREBASE =====
+// ===== CONFIRM ORDER =====
 window.confirmOrder = async function() {
   if (!cart.length) return;
-  const btn=document.getElementById('confirm-order-btn'); btn.disabled=true;
-  document.getElementById('loading-text').textContent=t('loading');
+  const btn = document.getElementById('confirm-order-btn');
+  btn.disabled = true;
   document.getElementById('loading-overlay').classList.add('show');
-  const note=document.getElementById('order-note').value.trim();
-  const orderId='ORD-'+Date.now().toString().slice(-6);
-  const subtotal=cart.reduce((s,c)=>s+c.price*c.qty,0);
-  const vat=Math.round(subtotal*VAT_RATE*100)/100;
-  const total=Math.round((subtotal+vat)*100)/100;
+  const note = document.getElementById('order-note').value.trim();
+  const orderId = 'ORD-' + Date.now().toString().slice(-6);
+  const subtotal = cart.reduce((s,c)=>s+c.price*c.qty, 0);
+  const vat   = Math.round(subtotal*VAT_RATE*100)/100;
+  const total = Math.round((subtotal+vat)*100)/100;
   currentOrderId=orderId; currentTotal=total; currentSubtotal=subtotal; currentVat=vat;
-  const orderData={
+  const orderData = {
     orderId, tableNo, status:'pending',
-    items:cart.map(c=>({menuId:c.menuId,name_th:c.name_th,name_en:c.name_en,name_zh:c.name_zh,price:c.price,qty:c.qty,subtotal:c.price*c.qty})),
-    note, subtotal, vat, total, vatRate:VAT_RATE,
-    createdAt:new Date().toISOString(), lang:currentLang
+    items: cart.map(c=>({menuId:c.menuId,name_th:c.name_th,name_en:c.name_en,name_zh:c.name_zh,price:c.price,qty:c.qty,subtotal:c.price*c.qty})),
+    note, subtotal, vat, total, createdAt: new Date().toISOString()
   };
-  function showOrderSuccess() {
+  function showSuccess() {
     document.getElementById('loading-overlay').classList.remove('show');
     closeCart();
-    document.getElementById('success-title').textContent=t('success_title');
-    document.getElementById('success-sub').textContent=t('success_sub');
-    document.getElementById('success-order-code').textContent='#'+orderId.split('-')[1];
-    document.getElementById('btn-order-more').textContent=t('btn_order_more');
-    document.getElementById('btn-to-payment').textContent=t('btn_to_payment');
+    document.getElementById('success-order-code').textContent = '#'+orderId.split('-')[1];
     document.getElementById('success-screen').classList.add('show');
+    btn.disabled = false;
   }
-  // Timeout 8 วินาที เผื่อ Firebase ช้า
-  const orderTimeout = setTimeout(() => {
-    console.warn('Firebase order timeout — showing success anyway');
-    showOrderSuccess();
-  }, 8000);
+  const t = setTimeout(() => showSuccess(), 8000);
   try {
     await db.ref('orders').push(orderData);
-    clearTimeout(orderTimeout);
-    showOrderSuccess();
-  } catch(err) {
-    clearTimeout(orderTimeout);
-    document.getElementById('loading-overlay').classList.remove('show');
-    // แสดง success ต่อไปเลย แต่บันทึก error ใน console
-    console.error('Firebase order error:', err.message);
-    showOrderSuccess();
+    clearTimeout(t);
+    showSuccess();
+  } catch(e) {
+    clearTimeout(t);
+    console.error('Order error:', e.message);
+    showSuccess();
   }
 };
 
-// ===== ORDER MORE =====
 function orderMore() {
   document.getElementById('success-screen').classList.remove('show');
-  document.getElementById('order-note').value='';
-  updateCartBar(); renderMenus();
+  cart = [];
+  updateCartBar();
+  renderMenus();
 }
-
-// ===== GO TO PAYMENT =====
 function goToPayment() {
   document.getElementById('success-screen').classList.remove('show');
   showPaymentScreen();
 }
+function backToMenu() {
+  document.getElementById('payment-screen').classList.remove('show');
+}
 
-// ===== SHOW PAYMENT SCREEN =====
+// ===== PAYMENT =====
 function showPaymentScreen() {
-  // Update texts
-  document.getElementById('pay-header-title').textContent=t('pay_header_title');
-  document.getElementById('pay-header-sub').textContent=t('pay_header_sub');
-  document.getElementById('pay-summary-title').textContent=t('pay_summary_title');
-  document.getElementById('pay-total-label').textContent=t('pay_total_label');
-  document.getElementById('pay-qr-title').textContent=t('pay_qr_title');
-  document.getElementById('pay-qr-sub').textContent=t('pay_qr_sub');
-  document.getElementById('pay-qr-currency').textContent=t('pay_qr_currency');
-  document.getElementById('pay-qr-badge').textContent=t('pay_qr_badge');
-  document.getElementById('btn-paid-text').textContent=t('btn_paid').replace('✅ ','');
-  document.getElementById('btn-receipt-text').textContent=t('btn_receipt').replace('📄 ','');
-  document.getElementById('btn-tax-text').textContent=t('btn_tax').replace('🗂️ ','');
-  document.getElementById('btn-back-menu-text').textContent=t('btn_back_menu').replace('🍽️ ','');
-  document.getElementById('tax-form-title').textContent=t('tax_form_title');
-  document.getElementById('tax-label-name').textContent=t('tax_label_name');
-  document.getElementById('tax-label-taxid').textContent=t('tax_label_taxid');
-  document.getElementById('tax-label-addr').textContent=t('tax_label_addr');
-  document.getElementById('tax-label-branch').textContent=t('tax_label_branch');
-  document.getElementById('btn-tax-dl-text').textContent=t('btn_tax_dl').replace('🖨️ ','');
-
-  // Order items list + VAT
-  const _sub=cart.reduce((s,c)=>s+c.price*c.qty,0);
-  const _vat=Math.round(_sub*VAT_RATE*100)/100;
-  const _total=Math.round((_sub+_vat)*100)/100;
-  currentTotal=_total; currentSubtotal=_sub; currentVat=_vat;
-  document.getElementById('pay-items-list').innerHTML=cart.map(item=>{
-    const name=currentLang==='en'&&item.name_en?item.name_en:currentLang==='zh'&&item.name_zh?item.name_zh:item.name_th;
+  const sub   = cart.reduce((s,c)=>s+c.price*c.qty, 0);
+  const vat   = Math.round(sub*VAT_RATE*100)/100;
+  const total = Math.round((sub+vat)*100)/100;
+  currentTotal=total; currentSubtotal=sub; currentVat=vat;
+  document.getElementById('pay-items-list').innerHTML = cart.map(item => {
+    const name = currentLang==='en'&&item.name_en ? item.name_en : currentLang==='zh'&&item.name_zh ? item.name_zh : item.name_th;
     return `<div class="pay-item-row"><span>${name} × ${item.qty}</span><span>${(item.price*item.qty).toFixed(2)} ฿</span></div>`;
-  }).join('')+`
-    <div class="pay-item-row" style="color:var(--ink-muted);font-size:0.82rem;border-top:1px dashed rgba(155,34,38,0.15);padding-top:6px;margin-top:4px;">
-      <span>${t('subtotal')}</span><span>${_sub.toFixed(2)} ฿</span>
-    </div>
-    <div class="pay-item-row" style="color:var(--ink-muted);font-size:0.82rem;">
-      <span>${t('vat')}</span><span>${_vat.toFixed(2)} ฿</span>
-    </div>`;
-  document.getElementById('pay-total-amount').textContent=`${_total.toFixed(2)} ฿`;
-  document.getElementById('pay-qr-amount').textContent=_total.toFixed(2);
-
-  // Generate PromptPay QR
+  }).join('') +
+  `<div class="pay-item-row" style="color:var(--ink-muted);font-size:.82rem;border-top:1px dashed rgba(155,34,38,.15);margin-top:4px;padding-top:6px;">
+    <span>ยอดก่อน VAT</span><span>${sub.toFixed(2)} ฿</span>
+   </div>
+   <div class="pay-item-row" style="color:var(--ink-muted);font-size:.82rem;">
+    <span>VAT 7%</span><span>${vat.toFixed(2)} ฿</span>
+   </div>`;
+  document.getElementById('pay-total-amount').textContent = `${total.toFixed(2)} ฿`;
+  document.getElementById('pay-qr-amount').textContent = total.toFixed(2);
   generatePromptPayQR(total);
-
   document.getElementById('payment-screen').classList.add('show');
   window.scrollTo(0,0);
 }
+function confirmPayment() {
+  document.getElementById('payment-screen').classList.remove('show');
+  cart = [];
+  updateCartBar();
+  renderMenus();
+  document.getElementById('success-title').textContent = 'ชำระเงินเรียบร้อย!';
+  document.getElementById('success-sub').textContent = 'ขอบคุณที่ใช้บริการ\nOhoi Kyoza 🥟';
+  document.getElementById('btn-order-more').style.display = 'none';
+  document.getElementById('btn-to-payment').textContent = '📄 ดาวน์โหลดใบเสร็จ';
+  document.getElementById('success-screen').classList.add('show');
+}
+function toggleTaxForm() { document.getElementById('tax-form').classList.toggle('show'); }
 
 // ===== PROMPTPAY QR =====
 function generatePromptPayQR(amount) {
-  const qrBox=document.getElementById('pay-qr-box');
-  qrBox.innerHTML='';
-
-  // สร้าง PromptPay QR payload (EMVCo format)
-  const payload = buildPromptPayPayload(PROMPTPAY_ID, amount);
-  const qrNote = document.getElementById('pay-qr-note');
-  qrNote.textContent = `PromptPay: ${PROMPTPAY_ID.replace(/(\d{3})(\d{3})(\d{4})/,'$1-$2-$3')}`;
-
+  const box = document.getElementById('pay-qr-box');
+  box.innerHTML = '';
+  document.getElementById('pay-qr-note').textContent = `PromptPay: ${PROMPTPAY_ID}`;
   try {
-    new QRCode(qrBox, {
-      text:         payload,
-      width:        200, height:200,
-      colorDark:    '#9B2226',
-      colorLight:   '#FDF6EC',
-      correctLevel: QRCode.CorrectLevel.M
-    });
+    new QRCode(box, { text: buildPromptPayPayload(PROMPTPAY_ID, amount), width:200, height:200, colorDark:'#9B2226', colorLight:'#FDF6EC', correctLevel: QRCode.CorrectLevel.M });
   } catch(e) {
-    qrBox.innerHTML=`<div style="padding:20px;text-align:center;color:var(--crimson);">⚠️ QR Code ไม่สามารถแสดงได้<br>กรุณาโอนผ่านเลขบัญชี</div>`;
+    box.innerHTML = '<div style="padding:20px;color:var(--crimson);text-align:center;">⚠️ ไม่สามารถสร้าง QR ได้</div>';
   }
 }
-
-// PromptPay EMVCo payload builder
 function buildPromptPayPayload(id, amount) {
-  const isPhone = /^\d{10}$/.test(id.replace(/-/g,''));
-  const isNatId = /^\d{13}$/.test(id.replace(/-/g,''));
   let aid = id.replace(/-/g,'');
-  // Phone: format to 66XXXXXXXXX
+  const isPhone = /^\d{10}$/.test(aid);
   if (isPhone) aid = '0066' + aid.slice(1);
-  // Merchant ID tag
-  const merchant = isNatId ? '0213' : '0113';
-  const tag29 = '0002' + 'A000000677010111' + merchant + String(aid.length).padStart(2,'0') + aid;
-  const tag29Full = '29' + String(tag29.length).padStart(2,'0') + tag29;
-  // Amount tag 54
+  const merchant = /^\d{13}$/.test(aid) ? '0213' : '0113';
+  const tag29 = '0002A000000677010111' + merchant + String(aid.length).padStart(2,'0') + aid;
+  const t29   = '29' + String(tag29.length).padStart(2,'0') + tag29;
   const amtStr = amount.toFixed(2);
-  const tag54 = '54' + String(amtStr.length).padStart(2,'0') + amtStr;
-  // Build full payload (without CRC first)
-  const partial = '000201' + tag29Full + '5303764' + tag54 + '5802TH6304';
-  // CRC16
-  const crc = crc16(partial).toString(16).toUpperCase().padStart(4,'0');
-  return partial + crc;
+  const t54   = '54' + String(amtStr.length).padStart(2,'0') + amtStr;
+  const partial = '000201' + t29 + '5303764' + t54 + '5802TH6304';
+  return partial + crc16(partial).toString(16).toUpperCase().padStart(4,'0');
 }
-
 function crc16(str) {
-  let crc=0xFFFF;
-  for (let i=0;i<str.length;i++) {
-    crc^=str.charCodeAt(i)<<8;
-    for(let j=0;j<8;j++) crc=crc&0x8000?(crc<<1)^0x1021:(crc<<1);
-  }
-  return crc&0xFFFF;
+  let crc = 0xFFFF;
+  for (let i=0;i<str.length;i++) { crc ^= str.charCodeAt(i)<<8; for(let j=0;j<8;j++) crc = crc&0x8000?(crc<<1)^0x1021:(crc<<1); }
+  return crc & 0xFFFF;
 }
 
-// ===== CONFIRM PAYMENT =====
-function confirmPayment() {
-  // แสดง paid success screen
-  document.getElementById('payment-screen').classList.remove('show');
-  document.getElementById('success-screen').classList.add('show');
-  document.getElementById('success-icon').style.display='block';
-  document.getElementById('success-title').textContent=t('paid_success_title');
-  document.getElementById('success-sub').textContent=t('paid_success_sub');
-  document.getElementById('success-order-code').textContent=`#${currentOrderId.split('-')[1]||'------'}`;
-  document.getElementById('btn-order-more').style.display='none';
-  document.getElementById('btn-to-payment').textContent='📄 ' + t('btn_receipt').replace('📄 ','');
-  document.getElementById('btn-to-payment').onclick = downloadReceipt;
-  // reset cart
-  cart=[];
-  updateCartBar();
-  renderMenus();
-}
-
-function backToMenu() {
-  document.getElementById('payment-screen').classList.remove('show');
-  document.getElementById('success-screen').classList.remove('show');
-}
-
-// ===== TOGGLE TAX FORM =====
-function toggleTaxForm() {
-  document.getElementById('tax-form').classList.toggle('show');
-}
-
-// ===== DOWNLOAD RECEIPT =====
-function downloadReceipt() {
-  const now=new Date();
-  const html=buildReceiptHTML(false, now);
-  printOrDownload(html, 'receipt');
-}
-
-// ===== DOWNLOAD TAX INVOICE =====
+// ===== RECEIPT =====
+function downloadReceipt() { printOrDownload(buildReceiptHTML(false), 'receipt'); }
 function downloadTaxInvoice() {
-  const buyerName  = document.getElementById('tax-name').value.trim();
-  const buyerTaxId = document.getElementById('tax-taxid').value.trim();
-  const buyerAddr  = document.getElementById('tax-addr').value.trim();
-  const buyerBranch= document.getElementById('tax-branch').value.trim();
-  if (!buyerName || !buyerTaxId) {
-    alert(currentLang==='en'?'Please fill in company name and tax ID':currentLang==='zh'?'请填写公司名称和纳税人识别号':'กรุณากรอกชื่อบริษัทและเลขประจำตัวผู้เสียภาษี');
-    return;
-  }
-  const now=new Date();
-  const html=buildReceiptHTML(true, now, {name:buyerName, taxId:buyerTaxId, addr:buyerAddr, branch:buyerBranch});
-  printOrDownload(html, 'tax-invoice');
+  const name = document.getElementById('tax-name').value.trim();
+  const taxid = document.getElementById('tax-taxid').value.trim();
+  if (!name || !taxid) { alert('กรุณากรอกชื่อและเลขผู้เสียภาษี'); return; }
+  printOrDownload(buildReceiptHTML(true, { name, taxid, addr: document.getElementById('tax-addr').value, branch: document.getElementById('tax-branch').value }), 'tax-invoice');
 }
-
-function buildReceiptHTML(isTax, date, buyer={}) {
-  const title = isTax ? t('tax_inv_title') : t('receipt_title');
-  const itemsHTML = cart.length ? cart.map(item=>{
-    const name=currentLang==='en'&&item.name_en?item.name_en:currentLang==='zh'&&item.name_zh?item.name_zh:item.name_th;
-    return `<tr>
-      <td>${name}</td>
-      <td align="center">${item.qty}</td>
-      <td align="right">${item.price.toFixed(2)}</td>
-      <td align="right">${(item.price*item.qty).toFixed(2)}</td>
-    </tr>`;
+function buildReceiptHTML(isTax, buyer={}) {
+  const now = new Date();
+  const rows = cart.length ? cart.map(item => {
+    const name = currentLang==='en'&&item.name_en?item.name_en:currentLang==='zh'&&item.name_zh?item.name_zh:item.name_th;
+    return `<tr><td>${name}</td><td align="center">${item.qty}</td><td align="right">${item.price.toFixed(2)}</td><td align="right">${(item.price*item.qty).toFixed(2)}</td></tr>`;
   }).join('') : '<tr><td colspan="4" align="center">—</td></tr>';
-
-  // VAT คำนวณจาก currentSubtotal, currentVat, currentTotal ที่ set ไว้แล้ว
-
-  return `
-<head><meta charset="UTF-8">
-  <title>${title}</title>
-  <style>
-    body{font-family:'Noto Sans Thai',Arial,sans-serif;max-width:380px;margin:0 auto;padding:20px;font-size:13px;color:#000;}
-    h1{text-align:center;font-size:18px;margin-bottom:4px;}
-    .center{text-align:center;} .sub{font-size:11px;color:#555;margin-bottom:3px;}
-    hr{border:none;border-top:1px dashed #999;margin:10px 0;}
-    table{width:100%;border-collapse:collapse;}
-    th{background:#f5f5f5;padding:6px 4px;font-size:11px;border-bottom:1px solid #ddd;}
-    td{padding:5px 4px;vertical-align:top;}
-    tr:nth-child(even){background:#fafafa;}
-    .total-row{font-weight:700;font-size:14px;border-top:2px solid #333;}
-    .badge{background:#9B2226;color:white;padding:2px 10px;border-radius:20px;font-size:11px;}
-    @media print{button{display:none!important;}}
-  </style></head><body>
-  <h1>🥟 ${SHOP_NAME}</h1>
-  <div class="center sub">${SHOP_ADDRESS}</div>
-  ${isTax?`<div class="center sub">เลขประจำตัวผู้เสียภาษี: ${SHOP_TAX_ID} (${SHOP_BRANCH})</div>`:''}
-  <hr>
-  <div class="center" style="font-size:15px;font-weight:700;">${title}</div>
-  <div class="center sub">📋 ${currentOrderId} &nbsp;|&nbsp; 🪑 ${t('receipt_table')} ${tableNo}</div>
-  <div class="center sub">📅 ${formatDate(date)} ${formatTime(date)}</div>
-  <hr>
-  ${isTax?`<div style="font-size:12px;margin-bottom:8px;">
-    <strong>${t('tax_label_name')}:</strong> ${buyer.name}<br>
-    <strong>${t('tax_label_taxid')}:</strong> ${buyer.taxId}<br>
-    <strong>${t('tax_label_addr')}:</strong> ${buyer.addr}<br>
-    ${buyer.branch?`<strong>${t('tax_label_branch')}:</strong> ${buyer.branch}`:''}
-  </div><hr>`:''}
-  <table>
-    <thead><tr>
-      <th align="left">${t('receipt_item')}</th>
-      <th align="center">${t('receipt_qty')}</th>
-      <th align="right">${t('receipt_price')}</th>
-      <th align="right">${t('receipt_total')}</th>
-    </tr></thead>
-    <tbody>${itemsHTML}</tbody>
-    <tfoot>
-      <tr>
-        <td colspan="3" style="padding:5px 4px;">${t('receipt_subtotal')}</td>
-        <td align="right" style="padding:5px 4px;">${currentSubtotal.toFixed(2)} ฿</td>
-      </tr>
-      <tr>
-        <td colspan="3" style="padding:5px 4px;color:#666;">${t('vat')} (${(VAT_RATE*100).toFixed(0)}%)</td>
-        <td align="right" style="padding:5px 4px;color:#666;">${currentVat.toFixed(2)} ฿</td>
-      </tr>
-      <tr class="total-row">
-        <td colspan="3">${t('total')}</td>
-        <td align="right">${currentTotal.toFixed(2)} ฿</td>
-      </tr>
-    </tfoot>
-  </table>
-  <hr>
-  <div class="center" style="margin-top:10px;">
-    <span class="badge">PromptPay: ${PROMPTPAY_ID}</span>
-  </div>
-  <div class="center sub" style="margin-top:10px;">${t('receipt_thank')} 🙏</div>
-  <br>
-  <button onclick="window.print()" style="width:100%;padding:12px;background:#9B2226;color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer;">🖨️ พิมพ์</button>
-  </body></html>`;
+  return `<head><meta charset="UTF-8"><title>${isTax?'ใบกำกับภาษี':'ใบเสร็จ'}</title>
+<style>body{font-family:'Noto Sans Thai',Arial,sans-serif;max-width:380px;margin:0 auto;padding:20px;font-size:13px;}
+h1{text-align:center;font-size:18px;} .center{text-align:center;} .sub{font-size:11px;color:#555;}
+hr{border:none;border-top:1px dashed #999;margin:8px 0;}
+table{width:100%;border-collapse:collapse;} th{background:#f5f5f5;padding:6px 4px;font-size:11px;}
+td{padding:5px 4px;} .total-row{font-weight:700;border-top:2px solid #333;}
+@media print{button{display:none!important;}}
+</style></head><body>
+<h1>🥟 ${SHOP_NAME}</h1>
+<div class="center sub">${SHOP_ADDRESS}</div>
+${isTax?`<div class="center sub">เลขผู้เสียภาษี: ${SHOP_TAX_ID}</div>`:''}
+<hr><div class="center" style="font-size:15px;font-weight:700;">${isTax?'ใบกำกับภาษี':'ใบเสร็จรับเงิน'}</div>
+<div class="center sub">📋 ${currentOrderId} | 🪑 โต๊ะ ${tableNo}</div>
+<div class="center sub">📅 ${now.toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'})} ${now.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})}</div>
+<hr>
+${isTax?`<div style="font-size:12px;margin-bottom:8px;"><strong>ผู้ซื้อ:</strong> ${buyer.name}<br><strong>เลขผู้เสียภาษี:</strong> ${buyer.taxid}<br><strong>ที่อยู่:</strong> ${buyer.addr||'—'}<br>${buyer.branch?`<strong>สาขา:</strong> ${buyer.branch}`:''}</div><hr>`:'' }
+<table>
+<thead><tr><th align="left">รายการ</th><th align="center">จำนวน</th><th align="right">ราคา</th><th align="right">รวม</th></tr></thead>
+<tbody>${rows}</tbody>
+<tfoot>
+<tr><td colspan="3">ยอดก่อน VAT</td><td align="right">${currentSubtotal.toFixed(2)} ฿</td></tr>
+<tr><td colspan="3">VAT 7%</td><td align="right">${currentVat.toFixed(2)} ฿</td></tr>
+<tr class="total-row"><td colspan="3">รวมทั้งสิ้น</td><td align="right">${currentTotal.toFixed(2)} ฿</td></tr>
+</tfoot></table>
+<hr><div class="center sub">PromptPay: ${PROMPTPAY_ID}</div>
+<div class="center sub" style="margin-top:8px;">ขอบคุณที่ใช้บริการ 🙏</div>
+<br><button onclick="window.print()" style="width:100%;padding:12px;background:#9B2226;color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer;">🖨️ พิมพ์</button>
+</body>`;
 }
-
 function printOrDownload(html, type) {
   const w = window.open('','_blank');
   if (w) { w.document.write(html); w.document.close(); }
   else {
-    // Fallback: download as HTML file
-    const blob=new Blob([html],{type:'text/html;charset=utf-8'});
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');
-    a.href=url; a.download=`${type}-${currentOrderId}.html`; a.click();
-    URL.revokeObjectURL(url);
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([html],{type:'text/html;charset=utf-8'}));
+    a.download = `${type}-${currentOrderId}.html`;
+    a.click();
   }
 }
 
-// ===== SET LANG =====
+// ===== LANG =====
 function setLang(lang) {
-  currentLang=lang;
-  localStorage.setItem('ok_lang',lang);
-  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));
-  renderTableBadge(); renderCatTabs(); renderMenus(); updateCartBar();
+  currentLang = lang;
+  localStorage.setItem('ok_lang', lang);
+  setLangBtn(lang);
+  document.getElementById('table-badge').textContent = `🪑 ${lang==='en'?'Table':lang==='zh'?'桌':'โต๊ะ'} ${tableNo}`;
+  renderCatTabs();
+  renderMenus();
+  updateCartBar();
+}
+function setLangBtn(lang) {
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang===lang));
 }
 </script>
 </body>
