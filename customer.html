@@ -221,7 +221,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--warm-white);color:
       <span class="qr-badge">🔒 ชำระผ่าน PromptPay</span>
     </div>
     <button class="pay-btn pay-btn-jade" onclick="confirmPayment()">✅ ยืนยันชำระเงินแล้ว</button>
-    <button class="pay-btn pay-btn-blue" onclick="downloadReceipt()">📄 ดาวน์โหลดใบเสร็จ</button>
+    <!-- ใบเสร็จพิมพ์โดยทางร้านผ่าน report.html -->
     <button class="pay-btn pay-btn-ghost" onclick="toggleTaxForm()">🗂️ ขอใบกำกับภาษี</button>
     <div class="tax-form" id="tax-form">
       <h3>🗂️ ข้อมูลใบกำกับภาษี</h3>
@@ -282,6 +282,7 @@ const VAT_RATE     = 0.07;
 const SHOP_NAME    = 'Ohoi Kyoza';
 const SHOP_ADDRESS = '123 ถนนตัวอย่าง กรุงเทพฯ';
 const SHOP_TAX_ID  = '0000000000000';
+const SESSION_KEY  = 'ok_session'; // key สำหรับจำ session ของโต๊ะ
 
 // ===== FIREBASE =====
 const _app = firebase.apps.length ? firebase.app() : firebase.initializeApp({
@@ -323,6 +324,8 @@ let currentOrderId = '';
 let currentTotal = 0;
 let currentSubtotal = 0;
 let currentVat = 0;
+let sessionOrders = []; // รวม order ทุกรอบของโต๊ะนี้
+let sessionKey = '';    // key ของ session นี้
 
 // ===== HELPERS =====
 function getMenuName(m) {
@@ -343,8 +346,19 @@ function checkMenuAvail(m) {
 // ===== INIT =====
 window.addEventListener('DOMContentLoaded', () => {
   tableNo = parseInt(new URLSearchParams(window.location.search).get('table')) || 1;
+  sessionKey = `ok_session_table${tableNo}`;
   document.getElementById('table-badge').textContent = `🪑 โต๊ะ ${tableNo}`;
   setLangBtn(currentLang);
+
+  // โหลด session เดิม (ถ้ามี)
+  try {
+    const saved = sessionStorage.getItem(sessionKey);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      sessionOrders = parsed.orders || [];
+      if (sessionOrders.length) showSessionBar();
+    }
+  } catch(e) {}
 
   // โหลดจาก Firebase realtime
   db.ref('menus').on('value', snap => {
@@ -528,20 +542,24 @@ window.confirmOrder = async function() {
     items: cart.map(c=>({menuId:c.menuId,name_th:c.name_th,name_en:c.name_en,name_zh:c.name_zh,price:c.price,qty:c.qty,subtotal:c.price*c.qty})),
     note, subtotal, vat, total, createdAt: new Date().toISOString()
   };
-  function showSuccess() {
+  function showSuccess(fbKey) {
     document.getElementById('loading-overlay').classList.remove('show');
     closeCart();
+    // บันทึก order นี้เข้า session
+    sessionOrders.push({ ...orderData, fbKey: fbKey || orderId });
+    try { sessionStorage.setItem(sessionKey, JSON.stringify({ orders: sessionOrders })); } catch(e) {}
+    showSessionBar();
     document.getElementById('success-order-code').textContent = '#'+orderId.split('-')[1];
     document.getElementById('success-screen').classList.add('show');
     btn.disabled = false;
   }
-  const t = setTimeout(() => showSuccess(), 8000);
+  const tmr = setTimeout(() => showSuccess(), 8000);
   try {
-    await db.ref('orders').push(orderData);
-    clearTimeout(t);
-    showSuccess();
+    const ref = await db.ref('orders').push(orderData);
+    clearTimeout(tmr);
+    showSuccess(ref.key);
   } catch(e) {
-    clearTimeout(t);
+    clearTimeout(tmr);
     console.error('Order error:', e.message);
     showSuccess();
   }
@@ -553,45 +571,98 @@ function orderMore() {
   updateCartBar();
   renderMenus();
 }
+function showSessionBar() {
+  let bar = document.getElementById('session-bar');
+  if (!bar) {
+    bar = document.createElement('div');
+    bar.id = 'session-bar';
+    bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:300;background:linear-gradient(135deg,#2980B9,#1a5276);color:white;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 10px rgba(0,0,0,.2);font-family:Noto Sans Thai,sans-serif;';
+    bar.innerHTML = `
+      <div>
+        <div style="font-size:.75rem;opacity:.85;">📋 ออเดอร์ในเซสชันนี้</div>
+        <div style="font-weight:700;font-size:.95rem;" id="session-bar-summary"></div>
+      </div>
+      <button onclick="goToSessionSummary()" style="background:white;color:#1a5276;border:none;padding:8px 14px;border-radius:10px;font-weight:700;font-size:.8rem;cursor:pointer;">💳 ดูใบเสร็จ / ชำระ</button>`;
+    document.body.prepend(bar);
+    document.querySelector('.header').style.marginTop = bar.offsetHeight + 'px';
+  }
+  const totalAmt = sessionOrders.reduce((s,o) => s+(o.total||0), 0);
+  const totalItems = sessionOrders.reduce((s,o) => s+(o.items||[]).reduce((ss,i)=>ss+i.qty,0), 0);
+  document.getElementById('session-bar-summary').textContent = `${sessionOrders.length} ออเดอร์ · ${totalItems} รายการ · รวม ${totalAmt.toFixed(2)} ฿`;
+}
+function goToSessionSummary() {
+  showSessionPaymentScreen();
+}
 function goToPayment() {
   document.getElementById('success-screen').classList.remove('show');
-  showPaymentScreen();
+  showSessionPaymentScreen();
 }
 function backToMenu() {
   document.getElementById('payment-screen').classList.remove('show');
 }
 
 // ===== PAYMENT =====
-function showPaymentScreen() {
-  const sub   = cart.reduce((s,c)=>s+c.price*c.qty, 0);
+function showSessionPaymentScreen() {
+  // รวม items จากทุก order ใน session
+  const allItems = [];
+  sessionOrders.forEach(o => {
+    (o.items||[]).forEach(item => {
+      const ex = allItems.find(x => x.menuId===item.menuId);
+      if (ex) ex.qty += item.qty;
+      else allItems.push({ ...item });
+    });
+  });
+  const sub   = sessionOrders.reduce((s,o) => s+(o.subtotal||0), 0);
   const vat   = Math.round(sub*VAT_RATE*100)/100;
   const total = Math.round((sub+vat)*100)/100;
   currentTotal=total; currentSubtotal=sub; currentVat=vat;
-  document.getElementById('pay-items-list').innerHTML = cart.map(item => {
-    const name = currentLang==='en'&&item.name_en ? item.name_en : currentLang==='zh'&&item.name_zh ? item.name_zh : item.name_th;
-    return `<div class="pay-item-row"><span>${name} × ${item.qty}</span><span>${(item.price*item.qty).toFixed(2)} ฿</span></div>`;
-  }).join('') +
-  `<div class="pay-item-row" style="color:var(--ink-muted);font-size:.82rem;border-top:1px dashed rgba(155,34,38,.15);margin-top:4px;padding-top:6px;">
-    <span>ยอดก่อน VAT</span><span>${sub.toFixed(2)} ฿</span>
-   </div>
-   <div class="pay-item-row" style="color:var(--ink-muted);font-size:.82rem;">
-    <span>VAT 7%</span><span>${vat.toFixed(2)} ฿</span>
-   </div>`;
+
+  const orderIds = sessionOrders.map(o=>'#'+(o.orderId||o.fbKey||'').slice(-6)).join(', ');
+  document.getElementById('pay-items-list').innerHTML =
+    `<div style="font-size:.78rem;color:var(--ink-muted);margin-bottom:8px;">ออเดอร์: ${orderIds} · โต๊ะ ${tableNo}</div>` +
+    allItems.map(item => {
+      const name = currentLang==='en'&&item.name_en ? item.name_en : currentLang==='zh'&&item.name_zh ? item.name_zh : item.name_th;
+      return `<div class="pay-item-row"><span>${name} × ${item.qty}</span><span>${(item.price*item.qty).toFixed(2)} ฿</span></div>`;
+    }).join('') +
+    `<div class="pay-item-row" style="color:var(--ink-muted);font-size:.82rem;border-top:1px dashed rgba(155,34,38,.15);margin-top:4px;padding-top:6px;"><span>ยอดก่อน VAT</span><span>${sub.toFixed(2)} ฿</span></div>
+     <div class="pay-item-row" style="color:var(--ink-muted);font-size:.82rem;"><span>VAT 7%</span><span>${vat.toFixed(2)} ฿</span></div>`;
+
   document.getElementById('pay-total-amount').textContent = `${total.toFixed(2)} ฿`;
   document.getElementById('pay-qr-amount').textContent = total.toFixed(2);
   generatePromptPayQR(total);
   document.getElementById('payment-screen').classList.add('show');
   window.scrollTo(0,0);
 }
-function confirmPayment() {
+function showPaymentScreen() { showSessionPaymentScreen(); }
+async function confirmPayment() {
+  // เก็บ taxInfo ถ้ากรอกไว้
+  const taxName   = document.getElementById('tax-name').value.trim();
+  const taxTaxid  = document.getElementById('tax-taxid').value.trim();
+  const taxAddr   = document.getElementById('tax-addr').value.trim();
+  const taxBranch = document.getElementById('tax-branch').value.trim();
+
+  // อัปเดต status ทุก order ใน session → paid + เก็บ taxInfo ถ้ามี
+  for (const o of sessionOrders) {
+    if (o.fbKey) {
+      const update = { status: 'paid', paidAt: new Date().toISOString(), tableNo };
+      if (taxName) update.taxInfo = { name:taxName, taxId:taxTaxid, addr:taxAddr, branch:taxBranch };
+      try { await db.ref(`orders/${o.fbKey}`).update(update); } catch(e) {}
+    }
+  }
+  // ล้าง session
+  try { sessionStorage.removeItem(sessionKey); } catch(e) {}
+  const bar = document.getElementById('session-bar');
+  if (bar) { bar.remove(); document.querySelector('.header').style.marginTop=''; }
+
   document.getElementById('payment-screen').classList.remove('show');
-  cart = [];
-  updateCartBar();
-  renderMenus();
+  cart = []; sessionOrders = [];
+  updateCartBar(); renderMenus();
+
   document.getElementById('success-title').textContent = 'ชำระเงินเรียบร้อย!';
   document.getElementById('success-sub').textContent = 'ขอบคุณที่ใช้บริการ\nOhoi Kyoza 🥟';
   document.getElementById('btn-order-more').style.display = 'none';
-  document.getElementById('btn-to-payment').textContent = '📄 ดาวน์โหลดใบเสร็จ';
+  document.getElementById('btn-to-payment').textContent = '🧾 ดูใบเสร็จในหน้า Report';
+  document.getElementById('btn-to-payment').onclick = () => window.open('report.html?tab=receipts','_blank');
   document.getElementById('success-screen').classList.add('show');
 }
 function toggleTaxForm() { document.getElementById('tax-form').classList.toggle('show'); }
