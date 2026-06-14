@@ -167,6 +167,22 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--warm-white);color:
 @media(max-width:400px){.menu-grid{grid-template-columns:1fr;}}
 @media print{body>*:not(#print-receipt){display:none!important;}#print-receipt{display:block!important;}}
 #print-receipt{display:none;}
+
+/* RECEIPT SCREEN */
+.receipt-screen{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--warm-white);z-index:900;overflow-y:auto;padding-bottom:40px;}
+.receipt-screen.show{display:block;animation:fade-in .3s ease;}
+.receipt-header{background:linear-gradient(135deg,var(--jade),var(--jade-light));padding:22px 20px;text-align:center;color:white;}
+.receipt-header h2{font-family:'Cormorant Garamond',serif;font-size:1.8rem;margin-bottom:4px;}
+.receipt-body{max-width:480px;margin:0 auto;padding:20px;}
+.receipt-card{background:#fff;border-radius:18px;padding:20px;margin-bottom:14px;border:1px solid rgba(155,34,38,.08);box-shadow:0 2px 12px var(--shadow-warm);}
+.receipt-card h3{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:700;color:var(--crimson);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(155,34,38,.1);}
+.r-row{display:flex;justify-content:space-between;padding:6px 0;font-size:.88rem;color:var(--ink-light);border-bottom:1px solid rgba(155,34,38,.04);}
+.r-total{display:flex;justify-content:space-between;padding:10px 0 0;font-weight:700;font-size:1.05rem;color:var(--crimson);border-top:2px solid rgba(155,34,38,.15);margin-top:6px;}
+.r-total-amt{font-family:'Cormorant Garamond',serif;font-size:1.5rem;}
+.r-order-badge{display:inline-block;background:var(--jade-soft);color:var(--jade);padding:3px 12px;border-radius:20px;font-size:.78rem;font-weight:700;margin-bottom:8px;border:1px solid rgba(88,129,87,.2);}
+.r-btn{width:100%;padding:14px;border:none;border-radius:14px;font-family:inherit;font-weight:700;font-size:.95rem;cursor:pointer;transition:all .3s;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.r-btn-print{background:linear-gradient(135deg,var(--crimson),var(--crimson-light));color:white;box-shadow:0 4px 16px rgba(155,34,38,.3);}
+.r-btn-ghost{background:var(--cream);color:var(--ink-muted);border:1.5px solid rgba(155,34,38,.15);}
 </style>
 </head>
 <body>
@@ -221,21 +237,44 @@ body{font-family:'Noto Sans Thai',sans-serif;background:var(--warm-white);color:
       <span class="qr-badge">🔒 ชำระผ่าน PromptPay</span>
     </div>
     <button class="pay-btn pay-btn-jade" onclick="confirmPayment()">✅ ยืนยันชำระเงินแล้ว</button>
-    <!-- ใบเสร็จพิมพ์โดยทางร้านผ่าน report.html -->
-    <button class="pay-btn pay-btn-ghost" onclick="toggleTaxForm()">🗂️ ขอใบกำกับภาษี</button>
+    <button class="pay-btn pay-btn-ghost" onclick="toggleTaxForm()">🗂️ ต้องการใบกำกับภาษี</button>
     <div class="tax-form" id="tax-form">
       <h3>🗂️ ข้อมูลใบกำกับภาษี</h3>
+      <p style="font-size:.8rem;color:var(--ink-muted);margin-bottom:12px;">กรอกข้อมูลแล้วกด "ยืนยันชำระเงิน" ทางร้านจะออกใบกำกับภาษีให้</p>
       <div class="tax-field"><label>ชื่อผู้ซื้อ / บริษัท</label><input type="text" id="tax-name" placeholder="บริษัท ABC จำกัด"></div>
       <div class="tax-field"><label>เลขประจำตัวผู้เสียภาษี (13 หลัก)</label><input type="text" id="tax-taxid" placeholder="0-0000-00000-00-0" maxlength="17"></div>
       <div class="tax-field"><label>ที่อยู่</label><textarea id="tax-addr"></textarea></div>
       <div class="tax-field"><label>สาขา (ถ้ามี)</label><input type="text" id="tax-branch" placeholder="สำนักงานใหญ่"></div>
-      <button class="pay-btn pay-btn-blue" style="margin-top:4px;" onclick="downloadTaxInvoice()">🖨️ พิมพ์ใบกำกับภาษี</button>
     </div>
     <button class="pay-btn pay-btn-ghost" style="margin-top:6px;" onclick="backToMenu()">🍽️ กลับสั่งอาหารเพิ่ม</button>
   </div>
 </div>
 
 <div id="print-receipt"></div>
+
+<!-- RECEIPT SCREEN (หลังชำระเงิน) -->
+<div class="receipt-screen" id="receipt-screen">
+  <div class="receipt-header">
+    <div style="font-size:2.5rem;margin-bottom:8px;">✅</div>
+    <h2>ชำระเงินเรียบร้อย!</h2>
+    <p style="opacity:.85;font-size:.9rem;">ขอบคุณที่ใช้บริการ Ohoi Kyoza 🥟</p>
+  </div>
+  <div class="receipt-body">
+    <div class="receipt-card">
+      <h3>🧾 ใบเสร็จรับเงิน</h3>
+      <div id="receipt-meta" style="margin-bottom:10px;"></div>
+      <div id="receipt-items"></div>
+      <div id="receipt-totals"></div>
+    </div>
+    <div class="receipt-card" id="receipt-tax-card" style="display:none;">
+      <h3>🗂️ ข้อมูลใบกำกับภาษีของคุณ</h3>
+      <div id="receipt-tax-info" style="font-size:.88rem;line-height:1.8;color:var(--ink-light);"></div>
+      <p style="font-size:.78rem;color:var(--ink-muted);margin-top:8px;">ทางร้านจะออกใบกำกับภาษีให้เมื่อชำระเงิน</p>
+    </div>
+    <button class="r-btn r-btn-print" onclick="printCustomerReceipt()">🖨️ พิมพ์ / บันทึกใบเสร็จ</button>
+    <button class="r-btn r-btn-ghost" onclick="closeReceiptBackToMenu()">🍽️ กลับสั่งอาหารเพิ่ม</button>
+  </div>
+</div>
 
 <!-- HEADER -->
 <div class="header">
@@ -641,6 +680,9 @@ async function confirmPayment() {
   const taxAddr   = document.getElementById('tax-addr').value.trim();
   const taxBranch = document.getElementById('tax-branch').value.trim();
 
+  // เก็บ snapshot ก่อน clear
+  const paidOrders = [...sessionOrders];
+
   // อัปเดต status ทุก order ใน session → paid + เก็บ taxInfo ถ้ามี
   for (const o of sessionOrders) {
     if (o.fbKey) {
@@ -655,15 +697,12 @@ async function confirmPayment() {
   if (bar) { bar.remove(); document.querySelector('.header').style.marginTop=''; }
 
   document.getElementById('payment-screen').classList.remove('show');
+
+  // แสดง receipt screen พร้อมข้อมูล
+  showCustomerReceipt(paidOrders, taxName ? { name:taxName, taxId:taxTaxid, addr:taxAddr, branch:taxBranch } : null);
+
   cart = []; sessionOrders = [];
   updateCartBar(); renderMenus();
-
-  document.getElementById('success-title').textContent = 'ชำระเงินเรียบร้อย!';
-  document.getElementById('success-sub').textContent = 'ขอบคุณที่ใช้บริการ\nOhoi Kyoza 🥟';
-  document.getElementById('btn-order-more').style.display = 'none';
-  document.getElementById('btn-to-payment').textContent = '🧾 ดูใบเสร็จในหน้า Report';
-  document.getElementById('btn-to-payment').onclick = () => window.open('report.html?tab=receipts','_blank');
-  document.getElementById('success-screen').classList.add('show');
 }
 function toggleTaxForm() { document.getElementById('tax-form').classList.toggle('show'); }
 
@@ -697,55 +736,130 @@ function crc16(str) {
 }
 
 // ===== RECEIPT =====
-function downloadReceipt() { printOrDownload(buildReceiptHTML(false), 'receipt'); }
-function downloadTaxInvoice() {
-  const name = document.getElementById('tax-name').value.trim();
-  const taxid = document.getElementById('tax-taxid').value.trim();
-  if (!name || !taxid) { alert('กรุณากรอกชื่อและเลขผู้เสียภาษี'); return; }
-  printOrDownload(buildReceiptHTML(true, { name, taxid, addr: document.getElementById('tax-addr').value, branch: document.getElementById('tax-branch').value }), 'tax-invoice');
+// ===== CUSTOMER RECEIPT SCREEN =====
+let _receiptOrders = [];
+let _receiptTax = null;
+
+function showCustomerReceipt(orders, taxInfo) {
+  _receiptOrders = orders || [];
+  _receiptTax = taxInfo || null;
+
+  // รวม items ทุก order
+  const allItems = [];
+  orders.forEach(o => {
+    (o.items||[]).forEach(item => {
+      const ex = allItems.find(x => x.menuId===item.menuId);
+      if (ex) ex.qty += item.qty;
+      else allItems.push({...item});
+    });
+  });
+
+  const sub   = orders.reduce((s,o) => s+(o.subtotal||0), 0);
+  const vat   = Math.round(sub*VAT_RATE*100)/100;
+  const total = Math.round((sub+vat)*100)/100;
+  const now   = new Date();
+  const ids   = orders.map(o=>'#'+(o.orderId||o.fbKey||'').slice(-6)).join(', ');
+
+  // Meta
+  document.getElementById('receipt-meta').innerHTML = `
+    <div class="r-order-badge">✅ ชำระเงินเรียบร้อย</div>
+    <div style="font-size:.82rem;color:var(--ink-muted);margin-top:4px;">
+      ออเดอร์: ${ids}<br>
+      🪑 โต๊ะ ${tableNo} &nbsp;·&nbsp; 📅 ${now.toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'})} ${now.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})}
+    </div>`;
+
+  // Items
+  document.getElementById('receipt-items').innerHTML = allItems.map(item => {
+    const name = currentLang==='en'&&item.name_en ? item.name_en : currentLang==='zh'&&item.name_zh ? item.name_zh : item.name_th;
+    return `<div class="r-row"><span>${name} × ${item.qty}</span><span>${(item.price*item.qty).toFixed(2)} ฿</span></div>`;
+  }).join('') +
+  `<div class="r-row" style="color:var(--ink-muted);font-size:.8rem;margin-top:4px;"><span>ยอดก่อน VAT</span><span>${sub.toFixed(2)} ฿</span></div>
+   <div class="r-row" style="color:var(--ink-muted);font-size:.8rem;"><span>VAT 7%</span><span>${vat.toFixed(2)} ฿</span></div>`;
+
+  // Total
+  document.getElementById('receipt-totals').innerHTML =
+    `<div class="r-total"><span>รวมทั้งสิ้น</span><span class="r-total-amt">${total.toFixed(2)} ฿</span></div>`;
+
+  // Tax card
+  if (taxInfo && taxInfo.name) {
+    document.getElementById('receipt-tax-card').style.display = 'block';
+    document.getElementById('receipt-tax-info').innerHTML = `
+      <strong>ผู้ซื้อ:</strong> ${taxInfo.name}<br>
+      <strong>เลขผู้เสียภาษี:</strong> ${taxInfo.taxId||'—'}<br>
+      <strong>ที่อยู่:</strong> ${taxInfo.addr||'—'}<br>
+      ${taxInfo.branch?`<strong>สาขา:</strong> ${taxInfo.branch}`:''}`;
+  } else {
+    document.getElementById('receipt-tax-card').style.display = 'none';
+  }
+
+  document.getElementById('receipt-screen').classList.add('show');
+  window.scrollTo(0,0);
 }
-function buildReceiptHTML(isTax, buyer={}) {
-  const now = new Date();
-  const rows = cart.length ? cart.map(item => {
-    const name = currentLang==='en'&&item.name_en?item.name_en:currentLang==='zh'&&item.name_zh?item.name_zh:item.name_th;
-    return `<tr><td>${name}</td><td align="center">${item.qty}</td><td align="right">${item.price.toFixed(2)}</td><td align="right">${(item.price*item.qty).toFixed(2)}</td></tr>`;
-  }).join('') : '<tr><td colspan="4" align="center">—</td></tr>';
-  return `<head><meta charset="UTF-8"><title>${isTax?'ใบกำกับภาษี':'ใบเสร็จ'}</title>
-<style>body{font-family:'Noto Sans Thai',Arial,sans-serif;max-width:380px;margin:0 auto;padding:20px;font-size:13px;}
-h1{text-align:center;font-size:18px;} .center{text-align:center;} .sub{font-size:11px;color:#555;}
+
+function closeReceiptBackToMenu() {
+  document.getElementById('receipt-screen').classList.remove('show');
+}
+
+function printCustomerReceipt() {
+  const orders = _receiptOrders;
+  const taxInfo = _receiptTax;
+  const allItems = [];
+  orders.forEach(o => {
+    (o.items||[]).forEach(item => {
+      const ex = allItems.find(x => x.menuId===item.menuId);
+      if (ex) ex.qty += item.qty;
+      else allItems.push({...item});
+    });
+  });
+  const sub   = orders.reduce((s,o) => s+(o.subtotal||0), 0);
+  const vat   = Math.round(sub*VAT_RATE*100)/100;
+  const total = Math.round((sub+vat)*100)/100;
+  const now   = new Date();
+  const ids   = orders.map(o=>'#'+(o.orderId||o.fbKey||'').slice(-6)).join(', ');
+  const rows  = allItems.map(item =>
+    `<tr><td>${item.name_th||item.name||'—'}</td><td align="center">${item.qty}</td><td align="right">${item.price?.toFixed(2)||'0.00'}</td><td align="right">${(item.price*item.qty).toFixed(2)}</td></tr>`
+  ).join('');
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
+<title>ใบเสร็จ</title>
+<style>
+body{font-family:'Noto Sans Thai',Arial,sans-serif;max-width:380px;margin:20px auto;padding:0 16px;font-size:13px;}
+h1{text-align:center;font-size:20px;letter-spacing:2px;margin-bottom:4px;}
+.c{text-align:center;}.s{font-size:11px;color:#666;}
 hr{border:none;border-top:1px dashed #999;margin:8px 0;}
-table{width:100%;border-collapse:collapse;} th{background:#f5f5f5;padding:6px 4px;font-size:11px;}
-td{padding:5px 4px;} .total-row{font-weight:700;border-top:2px solid #333;}
-@media print{button{display:none!important;}}
+table{width:100%;border-collapse:collapse;}
+th{background:#f5f5f5;padding:6px 4px;font-size:11px;border-bottom:1px solid #ddd;}
+td{padding:5px 4px;}tr:nth-child(even){background:#fafafa;}
+.tot td{font-weight:700;border-top:2px solid #333;font-size:14px;padding-top:7px;}
+@media print{.no-print{display:none!important;}}
 </style></head><body>
 <h1>🥟 ${SHOP_NAME}</h1>
-<div class="center sub">${SHOP_ADDRESS}</div>
-${isTax?`<div class="center sub">เลขผู้เสียภาษี: ${SHOP_TAX_ID}</div>`:''}
-<hr><div class="center" style="font-size:15px;font-weight:700;">${isTax?'ใบกำกับภาษี':'ใบเสร็จรับเงิน'}</div>
-<div class="center sub">📋 ${currentOrderId} | 🪑 โต๊ะ ${tableNo}</div>
-<div class="center sub">📅 ${now.toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'})} ${now.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})}</div>
+<div class="c s">${SHOP_ADDRESS}</div>
 <hr>
-${isTax?`<div style="font-size:12px;margin-bottom:8px;"><strong>ผู้ซื้อ:</strong> ${buyer.name}<br><strong>เลขผู้เสียภาษี:</strong> ${buyer.taxid}<br><strong>ที่อยู่:</strong> ${buyer.addr||'—'}<br>${buyer.branch?`<strong>สาขา:</strong> ${buyer.branch}`:''}</div><hr>`:'' }
+<div class="c" style="font-size:15px;font-weight:700;">ใบเสร็จรับเงิน</div>
+<div class="c s">ออเดอร์: ${ids}</div>
+<div class="c s">🪑 โต๊ะ ${tableNo} · ${now.toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'})} ${now.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})}</div>
+<hr>
+${taxInfo&&taxInfo.name?`<div style="font-size:12px;margin-bottom:8px;"><strong>ผู้ซื้อ:</strong> ${taxInfo.name}<br><strong>เลขผู้เสียภาษี:</strong> ${taxInfo.taxId||'—'}<br><strong>ที่อยู่:</strong> ${taxInfo.addr||'—'}<br>${taxInfo.branch?`<strong>สาขา:</strong> ${taxInfo.branch}`:''}</div><hr>`:''}
 <table>
-<thead><tr><th align="left">รายการ</th><th align="center">จำนวน</th><th align="right">ราคา</th><th align="right">รวม</th></tr></thead>
+<thead><tr><th align="left">รายการ</th><th>จำนวน</th><th align="right">ราคา</th><th align="right">รวม</th></tr></thead>
 <tbody>${rows}</tbody>
 <tfoot>
-<tr><td colspan="3">ยอดก่อน VAT</td><td align="right">${currentSubtotal.toFixed(2)} ฿</td></tr>
-<tr><td colspan="3">VAT 7%</td><td align="right">${currentVat.toFixed(2)} ฿</td></tr>
-<tr class="total-row"><td colspan="3">รวมทั้งสิ้น</td><td align="right">${currentTotal.toFixed(2)} ฿</td></tr>
+<tr><td colspan="3" style="color:#666;font-size:11px;">ยอดก่อน VAT</td><td align="right" style="color:#666;">${sub.toFixed(2)} ฿</td></tr>
+<tr><td colspan="3" style="color:#666;font-size:11px;">VAT 7%</td><td align="right" style="color:#666;">${vat.toFixed(2)} ฿</td></tr>
+<tr class="tot"><td colspan="3">รวมทั้งสิ้น</td><td align="right">${total.toFixed(2)} ฿</td></tr>
 </tfoot></table>
-<hr><div class="center sub">PromptPay: ${PROMPTPAY_ID}</div>
-<div class="center sub" style="margin-top:8px;">ขอบคุณที่ใช้บริการ 🙏</div>
-<br><button onclick="window.print()" style="width:100%;padding:12px;background:#9B2226;color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer;">🖨️ พิมพ์</button>
-</body>`;
-}
-function printOrDownload(html, type) {
+<hr>
+<div class="c s">ชำระผ่าน PromptPay: ${PROMPTPAY_ID}</div>
+<div class="c s" style="margin-top:8px;">ขอบคุณที่ใช้บริการ 🙏</div>
+<br><button class="no-print" onclick="window.print()" style="width:100%;padding:12px;background:#9B2226;color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-family:inherit;">🖨️ พิมพ์ใบเสร็จ</button>
+</body></html>`;
   const w = window.open('','_blank');
-  if (w) { w.document.write(html); w.document.close(); }
+  if (w) { w.document.write(html); w.document.close(); w.focus(); setTimeout(()=>w.print(),600); }
   else {
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([html],{type:'text/html;charset=utf-8'}));
-    a.download = `${type}-${currentOrderId}.html`;
+    a.download = `receipt-table${tableNo}.html`;
     a.click();
   }
 }
