@@ -104,6 +104,8 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background-
 .btn-danger:hover{transform:translateY(-2px);}
 .btn-info{background:linear-gradient(135deg,#2980B9,#3498DB);color:#FFF8F0;box-shadow:0 4px 15px rgba(41,128,185,0.25);}
 .btn-info:hover{transform:translateY(-2px);}
+.btn-line{background:linear-gradient(135deg,#06C755,#00B140);color:#FFF8F0;box-shadow:0 4px 15px rgba(6,199,85,0.25);}
+.btn-line:hover{transform:translateY(-2px);box-shadow:0 6px 25px rgba(6,199,85,0.35);}
 .btn-sm{padding:7px 12px;font-size:0.76rem;border-radius:10px;}
 .btn-group{display:flex;gap:7px;flex-wrap:wrap;}
 
@@ -154,6 +156,17 @@ tr:last-child td{border-bottom:none;}
 .hist-modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.65);z-index:9500;backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:18px;}
 .hist-modal-overlay.show{display:flex;}
 
+/* PRINT PREVIEW MODAL (replaces window.open for exportPDF so there's always a Back/Close button, and printing works reliably on iPad) */
+.print-modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(61,43,31,0.65);z-index:9800;backdrop-filter:blur(4px);align-items:flex-start;justify-content:center;padding:18px;overflow-y:auto;}
+.print-modal-overlay.show{display:flex;}
+.print-modal-box{background:#FFFFFF;border-radius:20px;padding:26px;width:100%;max-width:820px;margin:20px auto;box-shadow:0 20px 60px rgba(155,34,38,0.25);animation:slide-up 0.3s ease;position:relative;}
+.print-modal-box::before{content:'';position:absolute;top:0;left:0;width:100%;height:5px;background:linear-gradient(90deg,var(--crimson),var(--gold),var(--jade));border-radius:20px 20px 0 0;}
+.print-modal-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:10px;flex-wrap:wrap;}
+.print-modal-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:700;color:var(--crimson);}
+.print-modal-content table{font-size:0.82rem;}
+.print-modal-content th{background:var(--crimson);color:#fff;}
+.print-modal-content{overflow-x:auto;}
+
 /* EXPORT BAR */
 .export-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
 .export-bar .export-label{font-weight:700;color:var(--crimson);font-size:0.88rem;margin-right:4px;}
@@ -179,6 +192,15 @@ tr:last-child td{border-bottom:none;}
   table{font-size:0.76rem;}th,td{padding:9px 6px;}
   .btn-sm{padding:6px 9px;font-size:0.7rem;}
   .back-btn{left:52px;font-size:0.7rem;padding:5px 9px;}
+}
+
+/* Print only the report inside the modal */
+@media print{
+  body *{visibility:hidden;}
+  #print-modal-box, #print-modal-box *{visibility:visible;}
+  .print-modal-overlay{position:absolute;top:0;left:0;background:none;backdrop-filter:none;padding:0;display:block !important;}
+  #print-modal-box{position:absolute;top:0;left:0;width:100%;max-width:100%;box-shadow:none;margin:0;}
+  .print-modal-topbar, .print-modal-actions{display:none !important;}
 }
 </style>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -347,6 +369,7 @@ tr:last-child td{border-bottom:none;}
       <span class="export-label" data-i18n="label_export">ส่งออก:</span>
       <button class="btn btn-success btn-sm" onclick="exportDailyExcel()" data-i18n="btn_export_excel">📊 Excel</button>
       <button class="btn btn-danger btn-sm" onclick="exportDailyPDF()" data-i18n="btn_export_pdf">📄 PDF</button>
+      <button class="btn btn-line btn-sm" onclick="shareDailyToLine()" data-i18n="btn_send_line">💬 ส่ง LINE</button>
     </div>
     <div class="table-container"><div id="daily-report-container"></div></div>
   </div>
@@ -359,6 +382,7 @@ tr:last-child td{border-bottom:none;}
         <span class="export-label" data-i18n="label_export">ส่งออก:</span>
         <button class="btn btn-success btn-sm" onclick="exportMonthlyExcel()" data-i18n="btn_export_excel">📊 Excel</button>
         <button class="btn btn-danger btn-sm" onclick="exportMonthlyPDF()" data-i18n="btn_export_pdf">📄 PDF</button>
+        <button class="btn btn-line btn-sm" onclick="shareMonthlyToLine()" data-i18n="btn_send_line">💬 ส่ง LINE</button>
       </div>
     </div>
     <div class="table-container"><div id="monthly-report-container"></div></div>
@@ -414,6 +438,20 @@ tr:last-child td{border-bottom:none;}
       <button class="btn btn-primary" onclick="saveHistEdit()" data-i18n="btn_save_edit">💾 บันทึก</button>
       <button class="btn btn-sm" style="background:var(--cream);color:var(--ink);" onclick="closeHistModal()" data-i18n="btn_cancel">ยกเลิก</button>
     </div>
+  </div>
+</div>
+
+<!-- PRINT PREVIEW MODAL (used instead of window.open so there's always a visible Back/Close button on iPad) -->
+<div class="print-modal-overlay" id="print-modal-overlay">
+  <div class="print-modal-box" id="print-modal-box">
+    <div class="print-modal-topbar">
+      <div class="print-modal-title" id="print-modal-title"></div>
+      <div class="print-modal-actions" style="display:flex;gap:8px;">
+        <button class="btn btn-primary btn-sm" onclick="window.print()">🖨️ พิมพ์ / Print</button>
+        <button class="btn btn-sm" style="background:var(--cream);color:var(--ink);" onclick="closePrintModal()">← กลับ / Back</button>
+      </div>
+    </div>
+    <div class="print-modal-content" id="print-modal-content"></div>
   </div>
 </div>
 
@@ -512,7 +550,7 @@ const translations = {
     btn_save_product:'💾 บันทึกสินค้า', btn_stock_in:'✅ บันทึกรับเข้า',
     btn_stock_out:'📤 บันทึกจ่ายออก', btn_save_edit:'💾 บันทึกการแก้ไข',
     btn_delete:'🗑️ ลบ', btn_cancel:'ยกเลิก', btn_edit:'✏️ แก้ไข',
-    btn_export_excel:'📊 Excel', btn_export_pdf:'📄 PDF',
+    btn_export_excel:'📊 Excel', btn_export_pdf:'📄 PDF', btn_send_line:'💬 ส่ง LINE',
     product_list_title:'📋 รายการสินค้าทั้งหมด',
     stock_in_title:'📥 บันทึกรับสินค้าเข้า', stock_out_title:'📤 บันทึกจ่ายสินค้าออก',
     history_title:'📋 ประวัติการเคลื่อนไหว',
@@ -568,7 +606,7 @@ const translations = {
     btn_save_product:'💾 Save Product', btn_stock_in:'✅ Save Stock In',
     btn_stock_out:'📤 Save Stock Out', btn_save_edit:'💾 Save Changes',
     btn_delete:'🗑️ Delete', btn_cancel:'Cancel', btn_edit:'✏️ Edit',
-    btn_export_excel:'📊 Excel', btn_export_pdf:'📄 PDF',
+    btn_export_excel:'📊 Excel', btn_export_pdf:'📄 PDF', btn_send_line:'💬 Send LINE',
     product_list_title:'📋 All Products',
     stock_in_title:'📥 Record Stock In', stock_out_title:'📤 Record Stock Out',
     history_title:'📋 Transaction History',
@@ -624,7 +662,7 @@ const translations = {
     btn_save_product:'💾 保存商品', btn_stock_in:'✅ 保存入库',
     btn_stock_out:'📤 保存出库', btn_save_edit:'💾 保存修改',
     btn_delete:'🗑️ 删除', btn_cancel:'取消', btn_edit:'✏️ 编辑',
-    btn_export_excel:'📊 Excel', btn_export_pdf:'📄 PDF',
+    btn_export_excel:'📊 Excel', btn_export_pdf:'📄 PDF', btn_send_line:'💬 发送LINE',
     product_list_title:'📋 所有商品',
     stock_in_title:'📥 记录入库', stock_out_title:'📤 记录出库',
     history_title:'📋 交易历史',
@@ -1130,12 +1168,8 @@ function renderDailyReport() {
 }
 
 // [6] REPORT — MONTHLY
-function renderMonthlyReport() {
-  const ym = document.getElementById('month-picker').value; // "2025-03"
-  if (!ym) return;
+function getMonthlyData(ym) {
   const [yr, mo] = ym.split('-').map(Number);
-
-  // Group by date
   const byDate = {};
   transactions.filter(tx => {
     const d = new Date(tx.date);
@@ -1146,8 +1180,17 @@ function renderMonthlyReport() {
     if (tx.type==='in')  { byDate[key].inQty  += tx.quantity; byDate[key].inCost += (tx.total||0); }
     if (tx.type==='out') { byDate[key].outQty += tx.quantity; }
   });
-
   const dates = Object.keys(byDate).sort();
+  let totIn=0, totOut=0, totCost=0;
+  dates.forEach(d => { totIn+=byDate[d].inQty; totOut+=byDate[d].outQty; totCost+=byDate[d].inCost; });
+  return { byDate, dates, totIn, totOut, totCost };
+}
+
+function renderMonthlyReport() {
+  const ym = document.getElementById('month-picker').value; // "2025-03"
+  if (!ym) return;
+  const { byDate, dates, totIn, totOut, totCost } = getMonthlyData(ym);
+
   let html = `<table><thead><tr>
     <th>${t('col_monthly_date')}</th><th>${t('col_monthly_in')}</th>
     <th>${t('col_monthly_out')}</th><th>${t('col_monthly_cost')}</th>
@@ -1155,9 +1198,8 @@ function renderMonthlyReport() {
 
   if (!dates.length) { html+=`<tr><td colspan="4" class="empty-state"><p>${t('empty_report')}</p></td></tr>`; }
   else {
-    let totIn=0,totOut=0,totCost=0;
     dates.forEach(d => {
-      const r=byDate[d]; totIn+=r.inQty; totOut+=r.outQty; totCost+=r.inCost;
+      const r=byDate[d];
       html+=`<tr><td>${d}</td><td>${r.inQty.toFixed(2)}</td><td>${r.outQty.toFixed(2)}</td><td>${r.inCost.toFixed(2)}</td></tr>`;
     });
     html+=`<tr style="font-weight:700;background:var(--cream);">
@@ -1192,16 +1234,9 @@ function exportDailyExcel() {
 function exportMonthlyExcel() {
   const ym = document.getElementById('month-picker').value;
   if (!ym) return;
-  const [yr,mo] = ym.split('-').map(Number);
-  const byDate = {};
-  transactions.filter(tx => { const d=new Date(tx.date); return d.getFullYear()===yr && d.getMonth()+1===mo; }).forEach(tx => {
-    const key = tx.date.slice(0,10);
-    if (!byDate[key]) byDate[key]={inQty:0,outQty:0,inCost:0};
-    if (tx.type==='in')  { byDate[key].inQty+=tx.quantity; byDate[key].inCost+=(tx.total||0); }
-    if (tx.type==='out') { byDate[key].outQty+=tx.quantity; }
-  });
+  const { byDate, dates } = getMonthlyData(ym);
   const header = [t('col_monthly_date'),t('col_monthly_in'),t('col_monthly_out'),t('col_monthly_cost')];
-  const rows = Object.keys(byDate).sort().map(d => [d, byDate[d].inQty, byDate[d].outQty, byDate[d].inCost]);
+  const rows = dates.map(d => [d, byDate[d].inQty, byDate[d].outQty, byDate[d].inCost]);
   const ws = XLSX.utils.aoa_to_sheet([header,...rows]);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Monthly');
@@ -1209,31 +1244,20 @@ function exportMonthlyExcel() {
 }
 
 // ============================================================
-//  [6] EXPORT PDF (print window)
+//  [6] EXPORT PDF — now shown as an in-page modal (not a new
+//  window), so there's always a visible "← กลับ / Back" button.
+//  This fixes the iPad issue where window.open() left no way back.
 // ============================================================
-function buildPrintWindow(title, tableHtml) {
-  const w = window.open('','_blank');
-  w.document.write(`
-<head>
-    <meta charset="UTF-8">
-    <title>${title}</title>
-    <style>
-      body{font-family:'Noto Sans Thai',Arial,sans-serif;padding:20px;font-size:12px;}
-      h2{color:#9B2226;margin-bottom:12px;}
-      table{width:100%;border-collapse:collapse;}
-      th{background:#9B2226;color:white;padding:7px 8px;text-align:left;font-size:11px;}
-      td{padding:6px 8px;border-bottom:1px solid #ddd;}
-      tr:nth-child(even){background:#FAF3E8;}
-      @media print{button{display:none;}}
-    </style>
-  </head><body>
-    <h2>${title}</h2>
-    <p style="color:#888;margin-bottom:12px;">${new Date().toLocaleString('th-TH')}</p>
-    ${tableHtml}
-    <br><button onclick="window.print()" style="padding:10px 22px;background:#9B2226;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;">🖨️ พิมพ์ / Print</button>
-  </body></html>`);
-  w.document.close();
+function openPrintModal(title, tableHtml) {
+  document.getElementById('print-modal-title').textContent = title;
+  document.getElementById('print-modal-content').innerHTML =
+    `<p style="color:#888;margin-bottom:12px;font-size:0.85rem;">${new Date().toLocaleString('th-TH')}</p>${tableHtml}`;
+  document.getElementById('print-modal-overlay').classList.add('show');
 }
+function closePrintModal() {
+  document.getElementById('print-modal-overlay').classList.remove('show');
+}
+document.getElementById('print-modal-overlay').addEventListener('click', function(e){ if(e.target===this) closePrintModal(); });
 
 function exportDailyPDF() {
   const today = new Date().toDateString();
@@ -1249,22 +1273,14 @@ function exportDailyPDF() {
     <th>${t('col_daily_in')}</th><th>${t('col_daily_out')}</th>
     <th>${t('col_daily_stock')}</th><th>${t('col_daily_unit')}</th>
   </tr></thead><tbody>${rows}</tbody></table>`;
-  buildPrintWindow(t('report_daily_title'), html);
+  openPrintModal(t('report_daily_title'), html);
 }
 
 function exportMonthlyPDF() {
   const ym = document.getElementById('month-picker').value; if (!ym) return;
-  const [yr,mo] = ym.split('-').map(Number);
-  const byDate = {};
-  transactions.filter(tx=>{const d=new Date(tx.date);return d.getFullYear()===yr&&d.getMonth()+1===mo;}).forEach(tx=>{
-    const key=tx.date.slice(0,10);
-    if (!byDate[key]) byDate[key]={inQty:0,outQty:0,inCost:0};
-    if (tx.type==='in')  {byDate[key].inQty+=tx.quantity;byDate[key].inCost+=(tx.total||0);}
-    if (tx.type==='out') {byDate[key].outQty+=tx.quantity;}
-  });
-  let totIn=0,totOut=0,totCost=0;
-  const rows = Object.keys(byDate).sort().map(d=>{
-    const r=byDate[d]; totIn+=r.inQty; totOut+=r.outQty; totCost+=r.inCost;
+  const { byDate, dates, totIn, totOut, totCost } = getMonthlyData(ym);
+  const rows = dates.map(d=>{
+    const r=byDate[d];
     return `<tr><td>${d}</td><td>${r.inQty.toFixed(2)}</td><td>${r.outQty.toFixed(2)}</td><td>${r.inCost.toFixed(2)}</td></tr>`;
   }).join('');
   const html = `<table><thead><tr>
@@ -1274,7 +1290,48 @@ function exportMonthlyPDF() {
   <tr style="font-weight:700;background:#F5EBDC;">
     <td>รวม / Total</td><td>${totIn.toFixed(2)}</td><td>${totOut.toFixed(2)}</td><td>${totCost.toFixed(2)}</td>
   </tr></tbody></table>`;
-  buildPrintWindow(`${t('report_monthly_title')} — ${ym}`, html);
+  openPrintModal(`${t('report_monthly_title')} — ${ym}`, html);
+}
+
+// ============================================================
+//  [7] SEND TO LINE
+//  LINE Notify was shut down (Mar 2025), so this uses LINE's
+//  official share URL scheme instead: it opens the LINE app and
+//  lets the user pick who to send the summary text + link to.
+//  (Text/link only — LINE share links can't carry an attached
+//  Excel/PDF file without a backend + LINE Official Account.)
+// ============================================================
+function shareDailyToLine() {
+  const today = new Date().toDateString();
+  const todayTx = transactions.filter(tx => new Date(tx.date).toDateString()===today);
+  const totalIn  = todayTx.filter(tx=>tx.type==='in').reduce((s,tx)=>s+tx.quantity,0);
+  const totalOut = todayTx.filter(tx=>tx.type==='out').reduce((s,tx)=>s+tx.quantity,0);
+  const low = products.filter(p=>p.stock<=p.minStock);
+
+  let text = `🏮 Ohoi Kyoza - รายงานสต๊อกวันที่ ${new Date().toLocaleDateString('th-TH')}\n`;
+  text += `📥 รับเข้ารวม: ${totalIn.toFixed(2)}\n📤 จ่ายออกรวม: ${totalOut.toFixed(2)}\n`;
+  text += `⚠️ สินค้าใกล้หมด: ${low.length} รายการ\n`;
+  if (low.length) {
+    text += low.slice(0,5).map(p=>`• ${getProductName(p)} (${p.stock}/${p.minStock} ${getUnitDisplay(p.unit)})`).join('\n');
+    if (low.length>5) text += `\n...และอีก ${low.length-5} รายการ`;
+    text += '\n';
+  }
+  text += `\n🔗 ดูรายละเอียด: https://nuntavit1302.github.io/Ohoi-Gyoza-Stock/Cozy_Style_Thame.html`;
+
+  window.location.href = 'https://line.me/R/msg/text/?' + encodeURIComponent(text);
+}
+
+function shareMonthlyToLine() {
+  const ym = document.getElementById('month-picker').value;
+  if (!ym) return;
+  const { totIn, totOut, totCost } = getMonthlyData(ym);
+
+  let text = `🏮 Ohoi Kyoza - สรุปยอดรายเดือน ${ym}\n`;
+  text += `📥 รับเข้ารวม: ${totIn.toFixed(2)}\n📤 จ่ายออกรวม: ${totOut.toFixed(2)}\n`;
+  text += `💰 ต้นทุนรับเข้ารวม: ${totCost.toFixed(2)} บาท\n`;
+  text += `\n🔗 ดูรายละเอียด: https://nuntavit1302.github.io/Ohoi-Gyoza-Stock/Cozy_Style_Thame.html`;
+
+  window.location.href = 'https://line.me/R/msg/text/?' + encodeURIComponent(text);
 }
 
 // ============================================================
